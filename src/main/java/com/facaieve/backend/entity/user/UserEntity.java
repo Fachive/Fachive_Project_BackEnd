@@ -9,7 +9,10 @@ import com.facaieve.backend.entity.comment.PortfolioCommentEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
-import javax.persistence.*;import lombok.Getter;
+import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.*;
@@ -67,9 +70,11 @@ public class UserEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private UserEntity userFollowing = this; // 팔로잉 팔로우 정보 저장 위한 셀프 참조
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private UserEntity userFollower = this;
 
     @OneToMany(mappedBy = "userFollowing", cascade = CascadeType.ALL)
