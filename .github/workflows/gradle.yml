@@ -10,14 +10,12 @@ name: Java CI with Gradle
 #push 와 pull할 때 동작하도록함
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
- 
+    branches: [ main ]
 
 permissions:
   contents: read
-
 jobs:
   build:
 
