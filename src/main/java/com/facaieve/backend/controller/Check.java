@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class Check {
     @GetMapping("/")
     public String check(){
-        return "hello1";
+        return "hello1123123₩2133123123";
     }
 }
