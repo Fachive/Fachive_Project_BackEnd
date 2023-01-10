@@ -50,10 +50,10 @@ public class FundingEntityService {
         return fundingRepository.findAll(PageRequest.of(pageIndex, 30, Sort.by("updateTime").descending()));
     }
 
-    public Page<FundingEntity> findFundingEntitiesByMypick(int pageIndex) {// 펀딩 게시글 페이지 별로 호출(마이픽순)
-        log.info("펀딩 게시물이 호출되었습니다.(마이픽 숫자 기준)");
-        return fundingRepository.findAll(PageRequest.of(pageIndex, 30, Sort.by("myPick").descending()));// 마이픽 매핑 관련 에러 발생 가능능
-   }
+//    public Page<FundingEntity> findFundingEntitiesByMypick(int pageIndex) {// 펀딩 게시글 페이지 별로 호출(마이픽순)
+//        log.info("펀딩 게시물이 호출되었습니다.(마이픽 숫자 기준)");
+//        return fundingRepository.findAll(PageRequest.of(pageIndex, 30, Sort.by("myPick").descending()));// 마이픽 매핑 관련 에러 발생 가능능
+//   }
 
     public void removeFundingEntity(long deletingFundingEntityId) {// 펀딩 게시글 삭제
         log.info("펀딩 게시물이 삭제되었습니다.");
