@@ -97,8 +97,9 @@ public class UserDto {
         String email;
         @Schema(description = "비밀번호")
         String password;
-
     }
+
+
     @Getter
     @Setter
     @AllArgsConstructor
