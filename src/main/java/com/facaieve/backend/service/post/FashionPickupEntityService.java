@@ -34,9 +34,9 @@ public class FashionPickupEntityService {
     public FashionPickupEntity editFashionPickupEntity(FashionPickupEntity fashionPickupEntity) {//패션픽업 게시물 수정)
 
         FashionPickupEntity newFashionPickupEntity = new FashionPickupEntity();
-        Optional.ofNullable(newFashionPickupEntity.getTitle())
+        Optional.ofNullable(fashionPickupEntity.getTitle())
                 .ifPresent(newFashionPickupEntity::setTitle);
-        Optional.ofNullable(newFashionPickupEntity.getBody())
+        Optional.ofNullable(fashionPickupEntity.getBody())
                 .ifPresent(newFashionPickupEntity::setBody);
         // 추후 첨부 이미지 수정하는 기능도 추가 필요
 
