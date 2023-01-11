@@ -3,17 +3,15 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle정
-#todo you should add mysql database with this configurations
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
 name: Java CI with Gradle
 
-#push 와 pull할 때 동작하도록함
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -21,7 +19,7 @@ permissions:
 jobs:
   build:
 
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -30,12 +28,11 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-
-    - name: Run chmod to make gradlew executable
+        
+    - name: give a x right to git actions runner
       run: chmod +x ./gradlew
+      
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
-        arguments: build --stacktrace
-    - name: Execute Jar File
-      run: sudo kill -9 `sudo lsof -t -i:80` & sudo java -jar /home/ubuntu/actions-runner/_work/Fachive_Project_BackEnd/Fachive_Project_BackEnd/build/libs/backend-0.0.1-SNAPSHOT.jar &
+        arguments: clean build
