@@ -10,6 +10,7 @@ import lombok.Setter;
 
 @Getter
 public class FashionPickupDto {
+    //이미지, 댓글 , 태그 , 제목 , 추천수, 조회수,
 
     @Getter
     @Setter
