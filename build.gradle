@@ -44,6 +44,10 @@ dependencies {
 
 
 }
+//plain.jar 파일은 만들어 지지않도록 build gradle 설정함.
+jar {
+    enabled = false
+}
 
 tasks.named('test') {
     useJUnitPlatform()
