@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Getter
@@ -98,6 +99,30 @@ public class UserDto {
         @Schema(description = "비밀번호")
         String password;
     }
+
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Schema(description = "팔로우 회원 정보 Response")
+    public static class FollowUserInfoResponseDto{
+
+        @Schema(description = "팔로우 유저의 식별자")
+        long userEntityId;
+
+        @Schema(description = "유저 닉네임")
+        @Column
+        String displayName;
+
+//        @Schema(description = "유저 프로필 사진")
+//        @Column
+//        MultipartFile profileImage;
+
+    }
+
+
 
 
     @Getter

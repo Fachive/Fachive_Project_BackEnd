@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -89,7 +90,6 @@ public class UserEntityController {
         UserStubData testStub = new UserStubData();
         // 컨트롤러단만 작성하기 위해 Stub 데이터로 대체
         return new ResponseEntity(userMapper.userStubEntityToToUserStubEntity(testStub), HttpStatus.OK);
-
     }
 
     @Operation(summary = "유저 정보 요청 삭제 메서드 예제", description = "json 바디값을 통한 회원 정보 삭제 요청 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
@@ -106,6 +106,19 @@ public class UserEntityController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @GetMapping("/get/following")//내가 팔로우하는 사람의 목록 반환
+    public ResponseEntity getUserFollowList(@RequestParam int myUserEntityId, @RequestParam int pageIndex){
+        Page<UserDto.FollowUserInfoResponseDto> foundUserFollowList = userService.getUserFollowList(myUserEntityId, pageIndex);
+
+        return new ResponseEntity(foundUserFollowList, HttpStatus.OK);
+    }
+
+    @GetMapping("/get/follow")//나를 팔로우하는 사람의 목록 반환
+    public ResponseEntity getUserFollowerList(@RequestParam long myUserEntityId, @RequestParam int pageIndex){
+        Page<UserDto.FollowUserInfoResponseDto> foundUserFollowList = userService.getUserFollowingList(myUserEntityId, pageIndex);
+
+        return new ResponseEntity(foundUserFollowList, HttpStatus.OK);
+    }
 
 
 }

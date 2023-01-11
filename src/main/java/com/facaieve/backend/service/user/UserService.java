@@ -1,17 +1,21 @@
 package com.facaieve.backend.service.user;
 
+import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import com.facaieve.backend.dto.UserDto;
+import com.facaieve.backend.entity.FollowEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.entity.user.WithdrawalEntity;
+import com.facaieve.backend.repository.FollowRepository;
 import com.facaieve.backend.repository.user.UserRepository;
 import com.facaieve.backend.repository.user.WithdrawalRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,8 @@ import static com.facaieve.backend.Constant.UserActive.Withdrawal;
 public class UserService {
     UserRepository userRepository;
     WithdrawalRepository withdrawalRepository;
+
+    FollowRepository followRepository;
 
     //입력 값으로 들어온 userEntity 저장 그리고 반환 todo 보안 설정 아직 안함
     public UserEntity createUserEntity(final UserEntity userEntity){
@@ -48,7 +54,13 @@ public class UserService {
     public UserEntity findUserEntity(UserEntity userEntity){
         checkIsUserExist(userEntity);
 
-        return userRepository.findById(userEntity.getUserEntityId()).orElseThrow();//에러 추가 예정
+        return findUserEntityById(userEntity.getUserEntityId());//에러 추가 예정
+
+    }
+
+    public UserEntity findUserEntityById(long userEntityId){
+
+        return userRepository.findById(userEntityId).orElseThrow();//에러 추가 예정
 
     }
 
@@ -147,6 +159,35 @@ public class UserService {
     }
 
 
+    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowList(long myUserEntityId, int pageIndex) {// id에 해당하는 유저가 팔로우하는 사용자 목록 반환 메서드
+        Page<FollowEntity> followingList = followRepository.findAllByFollowingUserEntityId(myUserEntityId, PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
+
+        List<UserDto.FollowUserInfoResponseDto> followList =  followingList.stream()
+                        .map(FollowEntity -> UserDto.FollowUserInfoResponseDto.builder()
+                                .userEntityId(FollowEntity.getFollowedUser().getUserEntityId())
+                                .displayName(FollowEntity.getFollowedUser().getDisplayName())
+                                .build())
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(followList);
+    }
+
+    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowingList(long myUserEntityId, int pageIndex) {// id에 해당하는 유저를 팔로우하는 사용자 목록 반환 메서드
+        Page<FollowEntity> followingList = followRepository.findAllByFollowedUserEntityId(myUserEntityId, PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
+
+        List<UserDto.FollowUserInfoResponseDto> followList =  followingList.stream()
+                .map(FollowEntity -> UserDto.FollowUserInfoResponseDto.builder()
+                        .userEntityId(FollowEntity.getFollowedUser().getUserEntityId())
+                        .displayName(FollowEntity.getFollowedUser().getDisplayName())
+                        .build())
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(followList);
+    }
+
+
+
+
 
 
     public void checkIsUserExist(UserEntity userEntity){
@@ -162,4 +203,5 @@ public class UserService {
             new RuntimeException();//추후 수정 예정
         }
     }
+
 }
