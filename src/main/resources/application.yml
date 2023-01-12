@@ -1,0 +1,23 @@
+
+
+spring:
+
+  datasource:
+    url: jdbc:mysql://facaiev-server-db.ck9dnzgajauz.ap-northeast-2.rds.amazonaws.com:3306
+    username: admin
+    password: hjkas1541
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+    hibernate:
+      ddl-auto: update  # ??? ?? ??
+    show-sql: true      # SQL ?? ??
+
+    properties:
+      hibernate:
+        format_sql: true  # SQL pretty print
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
