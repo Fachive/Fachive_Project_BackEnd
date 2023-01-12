@@ -1,5 +1,5 @@
 
-package com.facaieve.backend.mapper.user;
+package com.facaieve.backend.entity.user.user;
 import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.stubDate.UserStubData;

@@ -68,6 +68,8 @@ public class UserEntity extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     UserActive userActive;
 
+
+
     //패션픽업 댓글, 펀딩 댓글, 포폴 댓글 엔티티 매핑
     @Schema(description = "패션 픽업 게시물에 단 댓글 목록")
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.PERSIST)
