@@ -1,6 +1,5 @@
 package com.facaieve.backend.service.user;
 
-import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -160,12 +159,12 @@ public class UserService {
 
 
     public Page<UserDto.FollowUserInfoResponseDto> getUserFollowList(long myUserEntityId, int pageIndex) {// id에 해당하는 유저가 팔로우하는 사용자 목록 반환 메서드
-        Page<FollowEntity> followingList = followRepository.findAllByFollowingUserEntityId(myUserEntityId, PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
+        List<FollowEntity> followingList = followRepository.findByFollowingUserEntity(userRepository.findById(myUserEntityId).orElseThrow(), PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
 
         List<UserDto.FollowUserInfoResponseDto> followList =  followingList.stream()
                         .map(FollowEntity -> UserDto.FollowUserInfoResponseDto.builder()
-                                .userEntityId(FollowEntity.getFollowedUser().getUserEntityId())
-                                .displayName(FollowEntity.getFollowedUser().getDisplayName())
+                                .userEntityId(FollowEntity.getFollowedUserEntity().getUserEntityId())
+                                .displayName(FollowEntity.getFollowedUserEntity().getDisplayName())
                                 .build())
                 .collect(Collectors.toList());
 
@@ -173,12 +172,12 @@ public class UserService {
     }
 
     public Page<UserDto.FollowUserInfoResponseDto> getUserFollowingList(long myUserEntityId, int pageIndex) {// id에 해당하는 유저를 팔로우하는 사용자 목록 반환 메서드
-        Page<FollowEntity> followingList = followRepository.findAllByFollowedUserEntityId(myUserEntityId, PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
+        List<FollowEntity> followingList = followRepository.findByFollowedUserEntity(userRepository.findById(myUserEntityId).orElseThrow(), PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
 
         List<UserDto.FollowUserInfoResponseDto> followList =  followingList.stream()
                 .map(FollowEntity -> UserDto.FollowUserInfoResponseDto.builder()
-                        .userEntityId(FollowEntity.getFollowedUser().getUserEntityId())
-                        .displayName(FollowEntity.getFollowedUser().getDisplayName())
+                        .userEntityId(FollowEntity.getFollowedUserEntity().getUserEntityId())
+                        .displayName(FollowEntity.getFollowedUserEntity().getDisplayName())
                         .build())
                 .collect(Collectors.toList());
 

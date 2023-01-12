@@ -106,6 +106,12 @@ public class UserEntityController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+
+    @Operation(summary = "유저 팔로우 목록 삭제 메서드 예제", description = "json 바디값을 통한 팔로우 목록 요청 메서드")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200" ,description = "사용자의 팔로우 목록을 정상적으로 가져왔습니다  ", content = @Content(schema = @Schema(allOf = UserDto.FollowUserInfoResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
     @GetMapping("/get/following")//내가 팔로우하는 사람의 목록 반환
     public ResponseEntity getUserFollowList(@RequestParam int myUserEntityId, @RequestParam int pageIndex){
         Page<UserDto.FollowUserInfoResponseDto> foundUserFollowList = userService.getUserFollowList(myUserEntityId, pageIndex);
@@ -113,6 +119,11 @@ public class UserEntityController {
         return new ResponseEntity(foundUserFollowList, HttpStatus.OK);
     }
 
+    @Operation(summary = "유저 팔로워 목록 삭제 메서드 예제", description = "json 바디값을 통한 팔로워 목록 요청 메서드")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200" ,description = "사용자의 팔로워 목록을 정상적으로 가져왔습니다  ", content = @Content(schema = @Schema(allOf = UserDto.FollowUserInfoResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
     @GetMapping("/get/follow")//나를 팔로우하는 사람의 목록 반환
     public ResponseEntity getUserFollowerList(@RequestParam long myUserEntityId, @RequestParam int pageIndex){
         Page<UserDto.FollowUserInfoResponseDto> foundUserFollowList = userService.getUserFollowingList(myUserEntityId, pageIndex);
