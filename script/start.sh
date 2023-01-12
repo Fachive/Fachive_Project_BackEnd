@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PROJECT_ROOT="/home/ubuntu/Fachive_Porject_Backend_main"
-JAR_FILE="$PROJECT_ROOT/backend-0.0.1-SNAPSHOT.jar"
+JAR_FILE="$PROJECT_ROOT/Fachive_Porject_Backend_main-0.0.1-SNAPSHOT.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
 ERROR_LOG="$PROJECT_ROOT/error.log"
