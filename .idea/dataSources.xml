@@ -8,12 +8,11 @@
       <jdbc-url>jdbc:mysql://localhost:3306/facaieve</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="rds-facaiev-database" uuid="25700165-e701-4b99-b2df-b0a03d0a1807">
+    <data-source source="LOCAL" name="rds-facaiev" uuid="1f1bdb37-deda-42a9-9a05-ab1e7405a2f2">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
-      <remarks>this is for the aws rds connection test</remarks>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://facaiev-server-db.ck9dnzgajauz.ap-northeast-2.rds.amazonaws.com:3306</jdbc-url>
+      <jdbc-url>jdbc:mysql://facaiev2-database.ck9dnzgajauz.ap-northeast-2.rds.amazonaws.com:3306</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
