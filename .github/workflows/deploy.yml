@@ -15,9 +15,9 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: my-fachiev-github-actions-s3-bucket
-  CODE_DEPLOY_APPLICATION_NAME: codedeploy-fachiev-backend-app
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: codedeploy-fachiev-backend-deployment-group
+  S3_BUCKET_NAME: facaiev-bucket
+  CODE_DEPLOY_APPLICATION_NAME: facaiev2
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: facaiev2-deploy-group
 
 
 permissions:
@@ -26,7 +26,7 @@ permissions:
 jobs:
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     environment: production
 
 
