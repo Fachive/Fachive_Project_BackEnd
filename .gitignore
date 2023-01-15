@@ -21,7 +21,7 @@ application-local.properties
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-.idea/**/modules/
+backend.test.iml
 
 # AWS User-specific
 .idea/**/aws.xml
