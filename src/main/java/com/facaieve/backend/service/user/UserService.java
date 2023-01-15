@@ -126,7 +126,7 @@ public class UserService {
         newWithdrawalEntity.setWithdrawalUserEntity(userEntity);
         newWithdrawalEntity.setUserActive(Withdrawal);
 
-        UserEntity foundUserEntity = findUserEntity(userEntity);
+        UserEntity foundUserEntity = findUserEntityById(userEntity.getUserEntityId());
         foundUserEntity.setUserActive(Withdrawal);//유저 엔티티 활동 -> 탈퇴처리
 
         userRepository.save(foundUserEntity);//탈퇴처리 정보 저장
