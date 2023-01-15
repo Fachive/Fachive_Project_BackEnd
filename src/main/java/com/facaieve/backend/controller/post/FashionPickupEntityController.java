@@ -100,6 +100,7 @@ public class FashionPickupEntityController {
     public ResponseEntity deleteFashionPickupEntity(@RequestBody FashionPickupDto.DeleteFashionPickupDto deleteFashionPickupDto){
 
 //        fashionPickupEntityService.removeFashionPickupEntity(deleteFashionPickupDto.getFashionPickupEntityId());
+
         log.info("기존 패션픽업 게시글을 삭제합니다.");
         return new ResponseEntity(HttpStatus.OK);
 
