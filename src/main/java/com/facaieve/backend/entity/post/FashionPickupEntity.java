@@ -24,8 +24,13 @@ public class FashionPickupEntity extends BaseEntity {
     Long fashionPickupEntityId;
     @Column
     String title;
+
     @Column
     String body;
+
+    @Column
+    List<String> imgUri;
+
     @Column
     int views;
 

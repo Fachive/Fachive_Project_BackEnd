@@ -33,6 +33,9 @@ public enum ExceptionCode {
     DORMANCY_DURATION_UNDER_2Y(CONFLICT, "휴면 기준인 2년에 맞지 않습니다."),
     PASSWORD_IS_WRONG(CONFLICT, "비밀번호가 잘못 입력되었습니다."),
     ;
+
+
+
     private final HttpStatus httpStatus;
     private final String message;
 }

@@ -4,9 +4,8 @@ package com.facaieve.backend.controller.user;
 import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.UserDto.PostUserDto;
 import com.facaieve.backend.entity.user.UserEntity;
-import com.facaieve.backend.entity.user.user.UserMapper;
+import com.facaieve.backend.mapper.user.UserMapper;
 import com.facaieve.backend.service.user.UserService;
-import com.facaieve.backend.stubDate.UserStubData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -97,7 +96,9 @@ public class UserEntityController {
         log.info("기존 유저를 삭제합니다.");
 
         UserEntity deletingUserEntity= userMapper.userDeleteDtoToUserEntity(deleteUserDto);
-        userService.deleteUserEntity(deletingUserEntity);
+//        userService.deleteUserEntity(deletingUserEntity);
+
+        userService.withdrawalUser(deletingUserEntity);
 
         return new ResponseEntity(HttpStatus.OK);
     }
