@@ -1,4 +1,4 @@
-package com.facaieve.backend.entity;
+package com.facaieve.backend.entity.user.user;
 
 
 import com.facaieve.backend.entity.basetime.BaseEntity;

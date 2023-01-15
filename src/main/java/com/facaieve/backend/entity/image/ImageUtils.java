@@ -1,4 +1,4 @@
-package com.facaieve.backend.entity;
+package com.facaieve.backend.entity.image;
 
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;

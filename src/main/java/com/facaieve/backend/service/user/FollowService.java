@@ -1,9 +1,8 @@
-package com.facaieve.backend.service;
+package com.facaieve.backend.service.user;
 
-import com.facaieve.backend.entity.FollowEntity;
-import com.facaieve.backend.repository.FollowRepository;
+import com.facaieve.backend.entity.user.user.FollowEntity;
+import com.facaieve.backend.repository.user.FollowRepository;
 import com.facaieve.backend.repository.user.UserRepository;
-import com.facaieve.backend.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

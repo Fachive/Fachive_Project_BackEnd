@@ -1,6 +1,6 @@
-package com.facaieve.backend.repository;
+package com.facaieve.backend.repository.user;
 
-import com.facaieve.backend.entity.FollowEntity;
+import com.facaieve.backend.entity.user.user.FollowEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

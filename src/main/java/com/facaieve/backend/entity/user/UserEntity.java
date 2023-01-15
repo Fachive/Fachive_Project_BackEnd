@@ -1,7 +1,7 @@
 package com.facaieve.backend.entity.user;
 
 
-import com.facaieve.backend.entity.FollowEntity;
+import com.facaieve.backend.entity.user.user.FollowEntity;
 import com.facaieve.backend.entity.basetime.BaseEntity;
 import com.facaieve.backend.Constant.UserActive;
 import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;

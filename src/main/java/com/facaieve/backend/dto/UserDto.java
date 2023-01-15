@@ -93,10 +93,8 @@ public class UserDto {
 
         @Schema(description = "유저 식별ID")
         long UserEntityId;
-        @Email
-        @Schema(description = "유저 이메일")
-        String email;
-        @Schema(description = "비밀번호")
+
+        @Schema(description = "확인용 비밀번호")
         String password;
     }
 

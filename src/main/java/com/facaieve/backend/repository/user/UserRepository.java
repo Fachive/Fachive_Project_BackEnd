@@ -5,10 +5,16 @@ import com.facaieve.backend.entity.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity,Long> {
 
     UserEntity findUserEntityByUserEntityId(Long userEntityId);
-    boolean existsByEmail(String email);
     UserEntity findUserEntityByEmailAndPassword(String email, String password);
+
+    Optional<UserEntity> findByDisplayName(String displayName);
+    Optional<UserEntity> findByEmail(String email);
+    boolean existsByDisplay(String displayName);
+    boolean existsByEmail(String email);
 }

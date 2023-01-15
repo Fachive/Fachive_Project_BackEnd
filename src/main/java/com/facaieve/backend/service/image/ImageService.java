@@ -1,17 +1,16 @@
-package com.facaieve.backend.service;
+package com.facaieve.backend.service.image;
 
-import com.facaieve.backend.entity.ImageEntity;
-import com.facaieve.backend.entity.ImageUtils;
-import com.facaieve.backend.repository.ImageRepository;
+import com.facaieve.backend.entity.image.ImageEntity;
+import com.facaieve.backend.entity.image.ImageUtils;
+import com.facaieve.backend.repository.image.ImageRepository;
 import com.facaieve.backend.repository.user.UserRepository;
-import com.facaieve.backend.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.image.ImagingOpException;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 @Service
@@ -39,8 +38,24 @@ public class ImageService {
         return imageEntity;
     }
 
+    public ImageEntity replaceImage(Long imageEntityId , @NotNull MultipartFile imgFile) throws IOException{
+        ImageEntity foundImageEntity = imageRepository.findById(imageEntityId).orElseThrow();
+
+        foundImageEntity.setImageData(ImageUtils.compressImage(ImageUtils.compressImage(imgFile.getBytes())));
+        foundImageEntity.setImageFileType(imgFile.getContentType());
+        foundImageEntity.setFileName(imgFile.getOriginalFilename());
+
+        imageRepository.save(foundImageEntity);
+
+        log.info("기존의 이미지를 수정함 ");
+
+        return foundImageEntity;
+    }
 
     public void removeImage(long imageEntityId) {
+
+        log.info("이미지 파일을 확인 후 삭제 : {}", imageEntityId);
+
         if(imageRepository.existsById(imageEntityId))
             imageRepository.deleteById(imageEntityId);
 

@@ -48,14 +48,12 @@ public class UserEntityController {
     )
     @PostMapping("/post")// 유저 등록
     public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @RequestBody PostUserDto postUserDto){
+       log.info("신규 유저를 등록합니다.");
 
-//       UserEntity postingUserEntity= userMapper.userPostDtoToUserEntity(postUserDto);
-//       UserEntity postedUserEntity = userService.create(postingUserEntity);
-//        return new ResponseEntity(userMapper.userEntityToResponseDto(postedUserEntity), HttpStatus.CREATED);
-        log.info("신규 유저를 등록합니다.");
-        UserStubData testStub = new UserStubData();
-        // 컨트롤러단만 작성하기 위해 Stub 데이터로 대체
-        return new ResponseEntity(userMapper.userStubEntityToToUserStubEntity(testStub), HttpStatus.CREATED);
+       UserEntity postingUserEntity= userMapper.userPostDtoToUserEntity(postUserDto);
+       UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
+        return new ResponseEntity(userMapper.userEntityToResponseDto(postedUserEntity), HttpStatus.CREATED);
+
     }
 
     @Operation(summary = "유저 정보 수정 메서드 예제", description = "json 바디값을 통한 회원 정보 수정 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
@@ -65,15 +63,14 @@ public class UserEntityController {
     })
     @PatchMapping("/patch")//유저 정보 수정
     public ResponseEntity patchUserEntity(@RequestBody UserDto.PatchUserDto patchUserDto){
-        UserEntity editingUserEntity= userMapper.userPatchDtoToUserEntity(patchUserDto);
-//        UserEntity editedUserEntity = userService.updateUserEntity(editingUserEntity);
-//        editingUserEntity.setDisplayName(editingUserEntity.getDisplayName()+"TEST");
         log.info("기존 유저 정보를 수정합니다.");
-//        return new ResponseEntity( userMapper.userEntityToResponseDto(editedUserEntity), HttpStatus.OK);
 
-        UserStubData testStub = new UserStubData();
+        UserEntity editingUserEntity= userMapper.userPatchDtoToUserEntity(patchUserDto);
+        UserEntity editedUserEntity = userService.updateUserEntity(editingUserEntity);
+        editingUserEntity.setDisplayName(editingUserEntity.getDisplayName()+"TEST");
 
-        return new ResponseEntity( userMapper.userStubEntityToToUserStubEntity(testStub), HttpStatus.OK);
+        return new ResponseEntity( userMapper.userEntityToResponseDto(editedUserEntity), HttpStatus.OK);
+
     }
 
     @Operation(summary = "유저 정보 요청 메서드 예제", description = "json 바디값을 통한 회원 정보 요청 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
@@ -83,13 +80,12 @@ public class UserEntityController {
     })
     @GetMapping("/get")//유저 정보(1인) 요청
     public ResponseEntity getUserEntity(@RequestBody UserDto.GetUserDto getUserDto){
-//        UserEntity foundUserEntity = userService.findUserEntity(getUserDto.getUserEntityId());
 
-//        return new ResponseEntity( userMapper.userEntityToResponseDto(foundUserEntity), HttpStatus.OK);
-        UserStubData testStub = new UserStubData();
-        // 컨트롤러단만 작성하기 위해 Stub 데이터로 대체
-        return new ResponseEntity(userMapper.userStubEntityToToUserStubEntity(testStub), HttpStatus.OK);
+        UserEntity foundUserEntity = userService.findUserEntityById(getUserDto.getUserEntityId());
+
+        return new ResponseEntity( userMapper.userEntityToResponseDto(foundUserEntity), HttpStatus.OK);
     }
+
 
     @Operation(summary = "유저 정보 요청 삭제 메서드 예제", description = "json 바디값을 통한 회원 정보 삭제 요청 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
@@ -98,15 +94,16 @@ public class UserEntityController {
     })
     @DeleteMapping("/delete")//유저 정보(1인) 요청
     public ResponseEntity deleteUserEntity(@RequestBody UserDto.DeleteUserDto deleteUserDto){
-//        UserEntity deletingUserEntity= userMapper.userDeleteDtoToUserEntity(deleteUserDto);
-//        UserEntity deletedUserEntity = userService.deleteUserEntity(deletingUserEntity);
         log.info("기존 유저를 삭제합니다.");
-        // 컨트롤러단만 작성하기 위해 Stub 데이터로 대체
+
+        UserEntity deletingUserEntity= userMapper.userDeleteDtoToUserEntity(deleteUserDto);
+        userService.deleteUserEntity(deletingUserEntity);
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
 
-    @Operation(summary = "유저 팔로우 목록 삭제 메서드 예제", description = "json 바디값을 통한 팔로우 목록 요청 메서드")
+    @Operation(summary = "유저 팔로우 목록 호출 메서드 예제", description = "json 바디값을 통한 팔로우 목록 요청 메서드")
     @ApiResponses({
             @ApiResponse(responseCode = "200" ,description = "사용자의 팔로우 목록을 정상적으로 가져왔습니다  ", content = @Content(schema = @Schema(allOf = UserDto.FollowUserInfoResponseDto.class))),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
