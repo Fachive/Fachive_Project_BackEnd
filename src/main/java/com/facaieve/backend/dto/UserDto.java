@@ -50,7 +50,7 @@ public class UserDto {
     @Schema(description = "회원 정보 수정 DTO")
     public static class PatchUserDto{
 
-        @Schema(description = "사용자 활동명")
+        @Schema(description = "사용자 식별자")
         long userEntityId;
         @Schema(description = "사용자 활동명")
         String displayName;
@@ -119,9 +119,6 @@ public class UserDto {
 //        MultipartFile profileImage;
 
     }
-
-
-
 
     @Getter
     @Setter

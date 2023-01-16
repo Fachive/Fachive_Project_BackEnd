@@ -7,7 +7,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-
 public class BadWordFiltering implements ForbiddenWords, AddRemove {
     private final Set<String> set = new HashSet<>(List.of(koreaWord1));// 욕설 패키지
     private String substituteValue = "*";
