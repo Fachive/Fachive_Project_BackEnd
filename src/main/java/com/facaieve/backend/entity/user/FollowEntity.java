@@ -18,6 +18,7 @@ public class FollowEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "팔로우 객체 식별자")
     long followEntityId;
 
 
