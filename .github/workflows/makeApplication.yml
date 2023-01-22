@@ -44,10 +44,11 @@ jobs:
       
       # 경로에 해당하는 파일을 생성함.
       - name: make Application.yml file in the actions
-      - uses: actions/checkout@v3
-      - run: touch ./src/main/resources/application.yml
-      - run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
-      - run: cat ./src/main/resources/application.yml
+        run: touch ./src/main/resources/application.yml
+      - name: write Application.yml file in the actions
+        run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
+      - name: confirm Application.yml file in the actions
+        run: cat ./src/main/resources/application.yml
 
       #샐행 권한 부여함.
       - name: give a x right to git actions runner
