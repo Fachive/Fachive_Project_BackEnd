@@ -44,6 +44,8 @@ jobs:
       
       # 경로에 해당하는 파일을 생성함.
       - uses: actions/checkout@v3
+      - name: check currnet location
+        run: pwd
       - name: make Application.yml file in the actions
         run: touch src/main/resources/application.yml
       - name: write Application.yml file in the actions
