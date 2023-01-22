@@ -1,6 +1,6 @@
 package com.facaieve.backend.controller.awsS3;
 
-import com.facaieve.backend.service.aswS3.FileService;
+import com.facaieve.backend.service.aswS3.S3FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -21,7 +21,7 @@ public class FileController {
     private static final String FILE_NAME = "fileName";
 
     @Autowired
-    FileService fileService;
+    S3FileService s3FileService;
 
     @GetMapping
     public ResponseEntity<Resource> findByName(@RequestBody(required = false) Map<String, String> params) {
@@ -30,13 +30,13 @@ public class FileController {
                 .cacheControl(CacheControl.noCache())
                 .header("Content-type", "application/octet-stream")
                 .header("Content-disposition", "attachment; filename=\"" + params.get(FILE_NAME) + "\"")
-                .body(new InputStreamResource(fileService.findByName(params.get(FILE_NAME))));
+                .body(new InputStreamResource(s3FileService.findByName(params.get(FILE_NAME))));
 
     }
 
     @PostMapping
     public ResponseEntity<Object> save(@RequestParam("file") MultipartFile multipartFile) {
-        fileService.save(multipartFile);
+        s3FileService.uploadMultiFile(multipartFile);
         return new ResponseEntity<>(MESSAGE_1, HttpStatus.OK);
     }
 

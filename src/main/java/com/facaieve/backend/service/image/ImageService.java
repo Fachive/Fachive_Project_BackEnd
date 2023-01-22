@@ -1,7 +1,7 @@
 package com.facaieve.backend.service.image;
 
-import com.facaieve.backend.entity.image.ImageEntity;
-import com.facaieve.backend.entity.image.ImageUtils;
+import com.facaieve.backend.entity.image.ImageEntityProfile;
+import com.facaieve.backend.entity.image.ProfileImageUtils;
 import com.facaieve.backend.repository.image.ImageRepository;
 import com.facaieve.backend.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
@@ -21,35 +21,35 @@ public class ImageService {
     ImageRepository imageRepository;
     UserRepository userRepository;
 
-    public ImageEntity uploadImage(@Nullable Long userEntityId , MultipartFile imgFile) throws IOException {
+    public ImageEntityProfile uploadImage(@Nullable Long userEntityId , MultipartFile imgFile) throws IOException {
         log.info("이미지 파일 업로드 : {}", imgFile);
 
-        ImageEntity imageEntity =  imageRepository.save(
-                ImageEntity.builder()
+        ImageEntityProfile imageEntityProfile =  imageRepository.save(
+                ImageEntityProfile.builder()
                         .fileName(imgFile.getOriginalFilename())//원본 파일명
                         .imageFileType(imgFile.getContentType())//이미지 파일 타입
-                        .imageData(ImageUtils.compressImage(imgFile.getBytes()))//원본 이미지 파일
+                        .imageData(ProfileImageUtils.compressImage(imgFile.getBytes()))//원본 이미지 파일
                         .build());
 
         if(userEntityId!=null){
-            imageEntity.setProfileImgOwner(userRepository.findById(userEntityId).orElseThrow());
+            imageEntityProfile.setProfileImgOwner(userRepository.findById(userEntityId).orElseThrow());
         }
 
-        return imageEntity;
+        return imageEntityProfile;
     }
 
-    public ImageEntity replaceImage(Long imageEntityId , @NotNull MultipartFile imgFile) throws IOException{
-        ImageEntity foundImageEntity = imageRepository.findById(imageEntityId).orElseThrow();
+    public ImageEntityProfile replaceImage(Long imageEntityId , @NotNull MultipartFile imgFile) throws IOException{
+        ImageEntityProfile foundImageEntityProfile = imageRepository.findById(imageEntityId).orElseThrow();
 
-        foundImageEntity.setImageData(ImageUtils.compressImage(ImageUtils.compressImage(imgFile.getBytes())));
-        foundImageEntity.setImageFileType(imgFile.getContentType());
-        foundImageEntity.setFileName(imgFile.getOriginalFilename());
+        foundImageEntityProfile.setImageData(ProfileImageUtils.compressImage(ProfileImageUtils.compressImage(imgFile.getBytes())));
+        foundImageEntityProfile.setImageFileType(imgFile.getContentType());
+        foundImageEntityProfile.setFileName(imgFile.getOriginalFilename());
 
-        imageRepository.save(foundImageEntity);
+        imageRepository.save(foundImageEntityProfile);
 
         log.info("기존의 이미지를 수정함 ");
 
-        return foundImageEntity;
+        return foundImageEntityProfile;
     }
 
     public void removeImage(long imageEntityId) {

@@ -13,7 +13,9 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ImageEntity extends BaseEntity {
+@AllArgsConstructor
+@Builder
+public class ImageEntityProfile extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,13 +30,6 @@ public class ImageEntity extends BaseEntity {
     @Column(name = "image_data", length = 1000)
     private byte[] imageData;
 
-    @Builder
-    public ImageEntity(String fileName, String imageFileType, byte[] imageData, UserEntity imgOwner) {
-        this.fileName = fileName;
-        this.imageFileType = imageFileType;
-        this.imageData = imageData;
-        this.profileImgOwner = imgOwner;
-    }
     @OneToOne
     @JoinColumn(name = "imgOwner")
     @Schema(name = "이미지를 올린 사람")

@@ -5,6 +5,7 @@ import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.comment.FundingCommentEntity;
+import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class FundingEntity extends BaseEntity {
     @Column
     String title;
     @Column
-    String Body;
+    String body;
     @Column
     Date dueDate;
     @Column
@@ -50,4 +51,7 @@ public class FundingEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "userEntity_Id")
     private UserEntity userEntity;  // 유저 - 펀딩  매핑
+
+    @OneToMany (mappedBy = "fundingEntity", cascade = CascadeType.ALL)
+    private List<PostImageEntity> postImageEntities = new ArrayList<>();
 }

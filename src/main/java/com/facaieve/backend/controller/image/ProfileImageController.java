@@ -1,7 +1,7 @@
 package com.facaieve.backend.controller.image;
 
 import com.facaieve.backend.dto.image.ImageEntityDto;
-import com.facaieve.backend.entity.image.ImageEntity;
+import com.facaieve.backend.entity.image.ImageEntityProfile;
 import com.facaieve.backend.service.image.ImageService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -13,7 +13,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Null;
 import java.io.IOException;
 
 @Slf4j
@@ -30,7 +29,7 @@ public class ProfileImageController {
     public ResponseEntity postImage(@Nullable @RequestParam("userid") long userId, @RequestPart MultipartFile profileImg) throws IOException {
         log.info("이미지를 업로드합니다.");
 
-       ImageEntity uploadImage = imageService.uploadImage(userId, profileImg);
+       ImageEntityProfile uploadImage = imageService.uploadImage(userId, profileImg);
 
        return new ResponseEntity<>(
                ImageEntityDto.ResponseDto.builder().imageEntityId(uploadImage.getImageEntityId()).userEntityId(uploadImage.getProfileImgOwner().getUserEntityId()),//userEntity가 null일 경우 exception 발생하는지 확인 필요
@@ -43,7 +42,7 @@ public class ProfileImageController {
     public ResponseEntity patchImage(@Nullable @RequestParam("imgId") long imgId, @RequestPart MultipartFile profileImg) throws IOException {
         log.info("이미지를 변경합니다.");
 
-        ImageEntity uploadImage = imageService.replaceImage(imgId, profileImg);
+        ImageEntityProfile uploadImage = imageService.replaceImage(imgId, profileImg);
 
         return new ResponseEntity<>(
                 ImageEntityDto.ResponseDto.builder().imageEntityId(uploadImage.getImageEntityId()).userEntityId(uploadImage.getProfileImgOwner().getUserEntityId()),//userEntity가 null일 경우 exception 발생하는지 확인 필요

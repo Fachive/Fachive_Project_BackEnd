@@ -3,10 +3,14 @@ package com.facaieve.backend.controller.post;
 
 
 import com.facaieve.backend.dto.UserDto;
+import com.facaieve.backend.dto.image.PostImageDto;
+import com.facaieve.backend.dto.post.FashionPickupDto;
+import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.mapper.post.FundingMapper;
 
 import com.facaieve.backend.dto.post.FundingDto;
 import com.facaieve.backend.entity.post.FundingEntity;
+import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.post.FundingEntityService;
 import com.facaieve.backend.stubDate.FundingStubData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -28,8 +36,42 @@ public class FundingEntityController {
 
     FundingEntityService fundingEntityService;
     FundingMapper fundingMapper;
+    S3FileService s3FileService;
 
     static final FundingStubData fundingStubData = new FundingStubData();
+    
+    @PostMapping("/multipartPost")//test pass
+    public ResponseEntity postFundingEntityWithMultiPart(@ModelAttribute FundingDto.RequestFundingIncludeMultiPartFileDto
+                                                                 requestFundingIncludeMultiPartFileDto){
+
+        List<MultipartFile> multipartFileList = requestFundingIncludeMultiPartFileDto.getMultiPartFiles();
+        List<PostImageDto> postImageDtoList = s3FileService.uploadMultiFileList(multipartFileList);
+
+        FundingDto.ResponseFundingIncludeURI responseFundingIncludeURI =
+        FundingDto.ResponseFundingIncludeURI.builder()
+                .title(requestFundingIncludeMultiPartFileDto.getTitle())
+                .body(requestFundingIncludeMultiPartFileDto.getBody())
+                .targetPrice(requestFundingIncludeMultiPartFileDto.getTargetPrice())
+                .fundedPrice(requestFundingIncludeMultiPartFileDto.getFundedPrice())
+                .multiPartFileList(postImageDtoList).build();
+
+        FundingEntity fundingEntity = fundingMapper.ResponseFundingIncludeURIToFundingEntity(responseFundingIncludeURI);
+        List<PostImageEntity> postImageEntities = fundingEntity.getPostImageEntities();
+
+        //cascade type all 하고 다른 entity 와 함께 저장되기 위해서 jpa context를 사용함.
+        for(PostImageEntity postImageEntity : postImageEntities){
+            postImageEntity.setFundingEntity(fundingEntity);
+        }
+
+        return new ResponseEntity(fundingMapper
+                .FundingEntityToResponseFundingIncludeURI(
+                        fundingEntityService.createFundingEntity(fundingEntity)), HttpStatus.OK);
+    }
+
+
+
+
+
 
     // 서비스 레이어 구현이 안되어 Stub 데이터로 대체(추후 변경 예정)
 
