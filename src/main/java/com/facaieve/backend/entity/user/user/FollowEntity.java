@@ -25,6 +25,8 @@ public class FollowEntity extends BaseEntity {
     @JoinColumn(name="followingUserEntity_Id")
     @Schema(description = "팔로우 하는 사람")
     private UserEntity followingUserEntity;
+
+
     @ManyToOne
     @JoinColumn(name="followedUserEntity_Id")
     @Schema(description = "팔로우 되는 사람")

@@ -1,12 +1,17 @@
 package com.facaieve.backend.controller.post;
 
 
+import com.facaieve.backend.dto.image.PostImageDto;
+import com.facaieve.backend.dto.multi.ResponseDTO;
 import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.dto.post.FundingDto;
+import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.mapper.post.PortfolioMapper;
 import com.facaieve.backend.dto.post.PortfolioDto;
 import com.facaieve.backend.entity.post.PortfolioEntity;
+import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.post.PortfolioEntityService;
+import com.facaieve.backend.stubDate.PortfolioMagePageStubData;
 import com.facaieve.backend.stubDate.PortfolioStubData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -27,8 +36,51 @@ public class PortfolioEntityController {
 
     PortfolioEntityService portfolioEntityService;
     PortfolioMapper portfolioMapper;
+    S3FileService s3FileService;
 
     static final PortfolioStubData portfolioStubData = new PortfolioStubData();
+
+    @GetMapping("/mainPageGet")
+    public ResponseEntity getPortfolioMainPage(@RequestParam(required = false, defaultValue = "30") int want){
+        ResponseDTO<PortfolioMagePageStubData> responseDTO = new ResponseDTO<>();
+        List<PortfolioMagePageStubData> portfolioMagePageStubDataList = new ArrayList<>();
+        for(int i = 0; i< want; i++){
+            portfolioMagePageStubDataList.add(new PortfolioMagePageStubData());
+        }
+        responseDTO.setData(portfolioMagePageStubDataList);
+        return new ResponseEntity(responseDTO,HttpStatus.OK);
+    }
+
+    @PostMapping("/multipartPost")
+    public ResponseEntity postPortfolioEntity(@ModelAttribute PortfolioDto.RequestPortfolioIncludeMultiPartFiles
+                                                          requestPortfolioIncludeMultiPartFiles){
+
+        List<MultipartFile> multipartFileList = requestPortfolioIncludeMultiPartFiles.getMultipartFileList();
+        List<PostImageDto> postImageDtoList = s3FileService.uploadMultiFileList(multipartFileList);
+
+        PortfolioDto.ResponsePortfolioIncludeURI responsePortfolioIncludeURI =
+                PortfolioDto.ResponsePortfolioIncludeURI.builder()
+                        .portfolioEntityId(requestPortfolioIncludeMultiPartFiles.getPortfolioEntityId())
+                        .title(requestPortfolioIncludeMultiPartFiles.getTitle())
+                        .body(requestPortfolioIncludeMultiPartFiles.getBody())
+                        .views(requestPortfolioIncludeMultiPartFiles.getViews())
+                        .postImageDtoList(postImageDtoList)
+                        .build();
+
+        PortfolioEntity portfolio = portfolioMapper
+                .responsePortfolioIncludeURIToPortfolioEntity(responsePortfolioIncludeURI);
+        List<PostImageEntity> postImageEntities = portfolio.getPostImageEntities();
+
+        //context 로 foregin key 저장하기 위해서 사용함
+        for(PostImageEntity postImageEntity: postImageEntities){
+            postImageEntity.setPortfolioEntity(portfolio);
+        }
+
+        return new ResponseEntity(portfolioMapper
+                .portfolioEntityToResponsePortfolioIncludeURI(
+                        portfolioEntityService.createPortfolioEntity(portfolio))
+                ,HttpStatus.OK);
+    }
 
     // 서비스 레이어 구현이 안되어 Stub 데이터로 대체(추후 변경 예정)
 

@@ -6,6 +6,7 @@ import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
+import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 
 import lombok.Getter;
@@ -45,6 +46,7 @@ public class FashionPickupEntity extends BaseEntity {
     @JoinColumn(name = "userEntity_Id")
     private UserEntity userEntity;  // 유저 - 패션픽업  매핑
 
-
+    @OneToMany(mappedBy = "fashionPickupEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<PostImageEntity> postImageEntities = new ArrayList<>();
 
 }
