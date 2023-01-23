@@ -2,11 +2,14 @@ package com.facaieve.backend.exception.swearingFilter;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 @AllArgsConstructor
+@NoArgsConstructor
 public class BadWordFiltering implements ForbiddenWords, AddRemove {
     private final Set<String> set = new HashSet<>(List.of(koreaWord1));// 욕설 패키지
     private String substituteValue = "*";

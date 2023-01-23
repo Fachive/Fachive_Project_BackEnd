@@ -33,9 +33,9 @@ public class FashionPickupEntity extends BaseEntity {
     @Schema(description = "패션 픽업 본문 내용")
     String body;
 
-    @Column
-    @Schema(description = "패션 픽업 이미지 목록(S3 버킷 uri)")
-    List<String> imgUri;
+//    @Column
+//    @Schema(description = "패션 픽업 이미지 목록(S3 버킷 uri)")
+//    List<String> imgUri;
 
     @Column
     @Schema(description = "조회수")

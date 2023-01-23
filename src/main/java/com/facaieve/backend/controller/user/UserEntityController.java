@@ -44,7 +44,7 @@ public class UserEntityController {
     })
     @io.swagger.annotations.ApiResponses(
             @io.swagger.annotations.ApiResponse(
-                    response = UserEntity.class, message = "ok", code=201)
+                    response = UserEntity.class, message = "created", code=201)
     )
     @PostMapping("/post")// 유저 등록
     public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @RequestBody PostUserDto postUserDto){
@@ -61,6 +61,10 @@ public class UserEntityController {
             @ApiResponse(responseCode = "200" ,description = "사용자가 정상적으로 수정되었습니다 ", content = @Content(schema = @Schema(implementation = UserDto.ResponseUserDto.class))),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
+    @io.swagger.annotations.ApiResponses(
+            @io.swagger.annotations.ApiResponse(
+                    response = UserDto.ResponseUserDto.class, message = "ok", code=200)
+    )
     @PatchMapping("/patch")//유저 정보 수정
     public ResponseEntity patchUserEntity(@RequestBody UserDto.PatchUserDto patchUserDto){
         log.info("기존 유저 정보를 수정합니다.");
