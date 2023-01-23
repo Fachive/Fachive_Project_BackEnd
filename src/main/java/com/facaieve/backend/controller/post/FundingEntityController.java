@@ -3,7 +3,9 @@ package com.facaieve.backend.controller.post;
 
 
 import com.facaieve.backend.dto.UserDto;
+import com.facaieve.backend.dto.image.ImageEntityDto;
 import com.facaieve.backend.dto.image.PostImageDto;
+import com.facaieve.backend.dto.multi.ResponseDTO;
 import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.mapper.post.FundingMapper;
@@ -12,6 +14,7 @@ import com.facaieve.backend.dto.post.FundingDto;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.post.FundingEntityService;
+import com.facaieve.backend.stubDate.FundingMainPageStubData;
 import com.facaieve.backend.stubDate.FundingStubData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +43,18 @@ public class FundingEntityController {
     S3FileService s3FileService;
 
     static final FundingStubData fundingStubData = new FundingStubData();
+
+    @GetMapping("/mainPageGet")
+    public ResponseEntity getFundingEntityMainPage(@RequestParam(required = false, defaultValue = "30") int want){
+
+        ResponseDTO<FundingMainPageStubData> responseDTO = new ResponseDTO<>();
+        List<FundingMainPageStubData> fundingMainPageStubDataList = new ArrayList<>();
+        for(int i= 0; i < want; i++){
+            fundingMainPageStubDataList.add(new FundingMainPageStubData());
+        }
+        responseDTO.setData(fundingMainPageStubDataList);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
+    }
     
     @PostMapping("/multipartPost")//test pass
     public ResponseEntity postFundingEntityWithMultiPart(@ModelAttribute FundingDto.RequestFundingIncludeMultiPartFileDto
