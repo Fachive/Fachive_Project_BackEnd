@@ -129,6 +129,7 @@ public class UserEntityController {
         return new ResponseEntity(
                 new Multi_ResponseDTO<>(foundUserFollowList.getContent(), foundUserFollowList), //페이지 정보와 함께 복수 객체 반환
                 HttpStatus.OK);
+
     }
 
     @Operation(summary = "유저 팔로워 목록 삭제 메서드 예제", description = "json 바디값을 통한 팔로워 목록 요청 메서드")

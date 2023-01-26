@@ -147,7 +147,11 @@ public class UserService {
     }
 
     public Page<UserDto.FollowUserInfoResponseDto> getUserFollowList ( long myUserEntityId, int pageIndex) {// id에 해당하는 유저가 팔로우하는 사용자 목록 반환 메서드
-        List<FollowEntity> followingList = followRepository.findByFollowingUserEntity(userRepository.findById(myUserEntityId).orElseThrow(), PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
+        List<FollowEntity> followingList =
+                followRepository.findByFollowingUserEntity(
+                        userRepository.findById(myUserEntityId).orElseThrow(),
+                        PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()
+                        ));
 
         List<UserDto.FollowUserInfoResponseDto> followList = followingList.stream()
                 .map(FollowEntity -> UserDto.FollowUserInfoResponseDto.builder()

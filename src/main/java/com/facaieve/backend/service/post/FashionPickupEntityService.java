@@ -1,5 +1,6 @@
 package com.facaieve.backend.service.post;
 
+import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.repository.post.FashionPickupRepository;
@@ -52,10 +53,9 @@ public class FashionPickupEntityService {
     }
 
 
-    public Page<FashionPickupEntity> findFashionPickupEntities(int pageIndex) {//패션픽업 게시물 페이지별로 호출
-        return fashionPickupRepository.findAll(PageRequest.of(pageIndex, 30, Sort.by("updateTime").descending()));
+    public Page<FashionPickupEntity> findFashionPickupEntities(int pageIndex) {//패션픽업 게시물 페이지별로 호출(최신순)
+        return fashionPickupRepository.findAll(PageRequest.of(pageIndex-1, 30, Sort.by("updateTime").descending()));
     }
-
 
     public void removeFashionPickupEntity(long deletingFashionPickupEntityId) {// 패션픽업 게시물 삭제
         fashionPickupRepository.deleteById(deletingFashionPickupEntityId);

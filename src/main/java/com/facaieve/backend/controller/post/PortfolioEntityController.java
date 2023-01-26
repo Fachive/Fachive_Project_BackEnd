@@ -39,7 +39,7 @@ public class PortfolioEntityController {
     S3FileService s3FileService;
 
     static final PortfolioStubData portfolioStubData = new PortfolioStubData();
-
+//최신순, 추천순
     @GetMapping("/mainPageGet")
     public ResponseEntity getPortfolioMainPage(@RequestParam(required = false, defaultValue = "30") int want){
         Multi_ResponseDTO<PortfolioMagePageStubData> responseDTO = new Multi_ResponseDTO<>();
