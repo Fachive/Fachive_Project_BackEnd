@@ -38,12 +38,16 @@ public class FashionPickupEntityService {
                 .ifPresent(newFashionPickupEntity::setTitle);
         Optional.ofNullable(fashionPickupEntity.getBody())
                 .ifPresent(newFashionPickupEntity::setBody);
-        // 추후 첨부 이미지 수정하는 기능도 추가 필요
+
+        Optional.ofNullable(newFashionPickupEntity.getPostImageEntities())
+                .ifPresent(newFashionPickupEntity::setPostImageEntities);
+        // 추후 첨부 이미지 수정하는 기능도 추가 완료
 
         return fashionPickupRepository.save(newFashionPickupEntity);
     }
     //
     public FashionPickupEntity findFashionPickupEntity(long foundingFashionPickupEntityId) {//패션픽업 게시물 호출
+
         return fashionPickupRepository.findById(foundingFashionPickupEntityId).orElseThrow();
     }
 

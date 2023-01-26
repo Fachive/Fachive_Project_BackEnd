@@ -6,6 +6,7 @@ import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
+import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -62,6 +63,7 @@ public class FashionPickupEntity extends BaseEntity {
     @Schema(description = "패션 픽업 작성자  객체 목록")
     private UserEntity userEntity;  // 유저 - 패션픽업  매핑
 
-
+    @OneToMany(mappedBy = "fashionPickupEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<PostImageEntity> postImageEntities = new ArrayList<>();
 
 }

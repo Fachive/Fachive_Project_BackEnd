@@ -5,6 +5,7 @@ import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.comment.FundingCommentEntity;
+import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class FundingEntity extends BaseEntity {
     String title;
     @Column
     @Schema(description = "펀딩 본문 내용")
-    String Body;
+    String body;
     @Column
     @Schema(description = "펀딩 마감일")
     Date dueDate;
@@ -68,4 +69,7 @@ public class FundingEntity extends BaseEntity {
     @JoinColumn(name = "userEntity_Id")
     @Schema(description = "펀딩 작성자  객체 목록")
     private UserEntity userEntity;  // 유저 - 펀딩  매핑
+
+    @OneToMany (mappedBy = "fundingEntity", cascade = CascadeType.ALL)
+    private List<PostImageEntity> postImageEntities = new ArrayList<>();
 }

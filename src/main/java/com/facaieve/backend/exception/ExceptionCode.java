@@ -32,8 +32,13 @@ public enum ExceptionCode {
     DUPLICATE_EMAIL(CONFLICT, "해당 이메일은 이미 존재합니다."),
     DORMANCY_DURATION_UNDER_2Y(CONFLICT, "휴면 기준인 2년에 맞지 않습니다."),
     PASSWORD_IS_WRONG(CONFLICT, "비밀번호가 잘못 입력되었습니다."),
-    ;
+    FILE_IS_NOT_EXIST_IN_BUCKET(CONFLICT, "해당 데이터가 존재하지 않습니다"),
+    NONE_IMAGE_EXCEPTION(CONFLICT,"해당 이미지가 존재하지 않습니다"),
+    REQUESTING_FILE_ALREADY_EXIST(CONFLICT,"해당 데이터가 이미 존재합니다");
 
+
+
+    ;
 
 
     private final HttpStatus httpStatus;

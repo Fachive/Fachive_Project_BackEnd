@@ -9,6 +9,9 @@
 application.properties
 application-test.yml
 application.yml
+appspec.yml
+application-local.properties
+
 
 
 
@@ -18,6 +21,7 @@ application.yml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+backend.test.iml
 
 # AWS User-specific
 .idea/**/aws.xml
