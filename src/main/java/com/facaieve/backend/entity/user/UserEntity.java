@@ -1,7 +1,6 @@
 package com.facaieve.backend.entity.user;
 
 
-import com.facaieve.backend.entity.user.user.FollowEntity;
 import com.facaieve.backend.entity.basetime.BaseEntity;
 import com.facaieve.backend.Constant.UserActive;
 import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
@@ -103,32 +102,6 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "followedUserEntity", cascade = CascadeType.ALL)
     List<FollowEntity> followerList = new ArrayList<FollowEntity>(); // 팔로우 정보 저장을 위한 셀프 참조
 
-//    public void addFollowing(UserEntity following) {
-//        this.followingList.add(following);
-//
-//        if(!following.getFollowerList().contains(this)) {
-//            following.getFollowerList().add(this);
-//        }
-//        //연관관계의 주인을 통한 확인
-//        if(!following.getUserFollower().getFollowerList().contains(this)) {
-//            following.getUserFollower().getFollowerList().add(this);
-//        }
-//    }
-//    public void addFollower(UserEntity follower) {
-//        this.followerList.add(follower);
-//
-//        if(follower.getFollowingList().contains(this)) {
-//            follower.getFollowingList().add(this);
-//        }
-//        //연관관계의 주인을 통한 확인
-//        if(!follower.getUserFollowing().getFollowingList().contains(this)) {
-//            follower.getUserFollowing().getFollowingList().add(this);
-//        }
-//    }
-
-    @Schema(description = "휴면 회원 정보 ")
-    @OneToOne   /*(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "withdrawalUserIdEntity")*/
-    WithdrawalEntity withdrawalEntity;// 휴탈 회원정보 - 유저 매핑
 
 
 

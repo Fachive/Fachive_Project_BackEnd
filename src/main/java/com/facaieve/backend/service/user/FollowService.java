@@ -1,6 +1,6 @@
 package com.facaieve.backend.service.user;
 
-import com.facaieve.backend.entity.user.user.FollowEntity;
+import com.facaieve.backend.entity.user.FollowEntity;
 import com.facaieve.backend.repository.user.FollowRepository;
 import com.facaieve.backend.repository.user.UserRepository;
 import lombok.AllArgsConstructor;

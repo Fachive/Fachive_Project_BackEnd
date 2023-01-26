@@ -24,8 +24,8 @@ public class ImageEntityProfile extends BaseEntity {
     @Schema(name = "이미지 원본 파일명")
     private String fileName;
     @Column
+    @Schema(name = "이미지 파일 형식(jpeg, png")
     private String imageFileType;
-
     @Lob
     @Column(name = "image_data", length = 1000)
     private byte[] imageData;

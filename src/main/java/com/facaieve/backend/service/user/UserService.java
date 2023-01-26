@@ -5,11 +5,13 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import com.facaieve.backend.dto.UserDto;
-import com.facaieve.backend.entity.user.user.FollowEntity;
+import com.facaieve.backend.entity.user.FollowEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.entity.user.WithdrawalEntity;
 import com.facaieve.backend.exception.BusinessLogicException;
 import com.facaieve.backend.exception.ExceptionCode;
+import com.facaieve.backend.exception.swearingFilter.BadWordFiltering;
+import com.facaieve.backend.mapper.user.UserMapper;
 import com.facaieve.backend.repository.user.FollowRepository;
 import com.facaieve.backend.repository.user.UserRepository;
 import com.facaieve.backend.repository.user.WithdrawalRepository;
@@ -25,7 +27,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.facaieve.backend.Constant.UserActive.UnActive;
+import static com.facaieve.backend.Constant.UserActive.DeActive;
 import static com.facaieve.backend.Constant.UserActive.Withdrawal;
 import static com.facaieve.backend.exception.ExceptionCode.*;
 
@@ -35,41 +37,52 @@ import static com.facaieve.backend.exception.ExceptionCode.*;
 public class UserService {
     UserRepository userRepository;
     WithdrawalRepository withdrawalRepository;
-
+    UserMapper userMapper;
     FollowRepository followRepository;
-
+    BadWordFiltering badWordFiltering;
 
     //입력 값으로 들어온 userEntity 저장 그리고 반환 todo 보안 설정 아직 안함
-    public UserEntity createUserEntity(@NotNull final UserEntity userEntity) throws BusinessLogicException{
+    public UserEntity createUserEntity(@NotNull final UserEntity userEntity) throws BusinessLogicException {
+        checkSwearingWord(userEntity.getDisplayName());
+        checkDuplicateDisplayName(userEntity.getDisplayName());
+        checkDuplicateEmail(userEntity.getEmail());
 
-
-      Set<String> forbiddenWords = new LinkedHashSet<String>();// 금지어, 비속어 필터링 테스트 따로 처리할 필요 있음
-        forbiddenWords.add("씨발");
-        forbiddenWords.add("개새끼");
-        forbiddenWords.add("병신");
-
-      for(String swearWord : forbiddenWords) {
-          if(userEntity.getDisplayName().contains(swearWord))
-              throw new BusinessLogicException(ExceptionCode.FORBIDDEN_WORD_USED);
-      }
-
-        if(userRepository.findByDisplayName(userEntity.getDisplayName()).isPresent()) {
-            log.error("회원 가입 중 중복된 이메일이 입력되었습니다. ", new BusinessLogicException(ExceptionCode.DUPLICATE_DISPLAY_NAME));
-            throw new BusinessLogicException(ExceptionCode.DUPLICATE_DISPLAY_NAME);//닉네임 중복 확인
-        }
-        if(userRepository.findByEmail(userEntity.getEmail()).isPresent()) {
-            log.error("회원 가입 중 중복된 이메일이 입력되었습니다. ", new BusinessLogicException(ExceptionCode.DUPLICATE_EMAIL));
-            throw new BusinessLogicException(ExceptionCode.DUPLICATE_EMAIL);//이메일 중복 확인
-        }
+        log.info("신규 유저를 생성합니다.");
 
         return userRepository.save(userEntity);
-
     }
-    public UserEntity findUserEntityById(long userEntityId){
+
+    public UserEntity updateUserEntity(UserEntity patchUserEntity) {
+
+        checkSwearingWord(patchUserEntity.getDisplayName());
+        checkDuplicateDisplayName(patchUserEntity.getDisplayName());
+        checkDuplicateEmail(patchUserEntity.getEmail());
+
+        UserEntity patchingUserEntity = findUserEntityById(patchUserEntity.getUserEntityId());//유저 확인
+
+        Optional.ofNullable(patchUserEntity.getEmail())
+                .ifPresent(patchingUserEntity::setEmail);
+        Optional.ofNullable(patchUserEntity.getState())
+                .ifPresent(patchingUserEntity::setState);
+        Optional.ofNullable(patchUserEntity.getCity())
+                .ifPresent(patchingUserEntity::setCity);
+        Optional.ofNullable(patchUserEntity.getUserInfo())
+                .ifPresent(patchingUserEntity::setUserInfo);
+        Optional.ofNullable(patchUserEntity.getCareer())
+                .ifPresent(patchingUserEntity::setCareer);
+        Optional.ofNullable(patchUserEntity.getEducation())
+                .ifPresent(patchingUserEntity::setEducation);
+        Optional.ofNullable(patchUserEntity.getCompany())
+                .ifPresent(patchingUserEntity::setCompany);
+
+        return userRepository.save(patchingUserEntity);// 수정된 내용으로 유저 엔티티 저장
+    }/*엔티티로 유저 정보 수정하기*/
+
+    public UserEntity findUserEntityById(long userEntityId) {
         return userRepository.findById(userEntityId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
     }/*엔티티 식별자(ID)로 유저 확인 */
 
-    public List<UserDto.ResponseUserDto> findAllUserEntityWithPaginationByUpdateTime(int page){/*업데이트 순으로 30개씩 유저 정보를 반환 */
+    public List<UserDto.ResponseUserDto> findAllUserEntityWithPaginationByUpdateTime(int page) {/*업데이트 순으로 30개씩 유저 정보를 반환 */
 
         return userRepository.findAll(PageRequest.of(page, 30, Sort.by("updateTime").descending()))
                 .stream()
@@ -77,10 +90,11 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserEntity getByCredentials(final String email, final String password){
+    public UserEntity getByCredentials(final String email, final String password) {
         return userRepository.findUserEntityByEmailAndPassword(email, password);
     }
-    public void deleteUserEntity(final UserEntity deleteUserEntity){
+
+    public void deleteUserEntity(final UserEntity deleteUserEntity) {
 
         UserEntity deletingUserEntity = findUserEntityById(deleteUserEntity.getUserEntityId());//유저 존재하는지 체크
         checkIsPasswordCorrect(deleteUserEntity.getPassword(), deletingUserEntity.getPassword());//확인용 비밀번호가 맞는지 체크
@@ -89,28 +103,8 @@ public class UserService {
         userRepository.save(deletingUserEntity);
         log.info("유저를 탈퇴 처리하였습니다 ");
     }/* 엔티티로 유저 삭제*/
-    public UserEntity updateUserEntity(UserEntity patchUserEntity){
 
-        UserEntity newUserEntity = new UserEntity();
-        Optional.ofNullable(patchUserEntity.getEmail())
-                .ifPresent(newUserEntity::setEmail);
-        Optional.ofNullable(patchUserEntity.getState())
-                .ifPresent(newUserEntity::setState);
-        Optional.ofNullable(patchUserEntity.getCity())
-                .ifPresent(newUserEntity::setCity);
-        Optional.ofNullable(patchUserEntity.getUserInfo())
-                .ifPresent(newUserEntity::setUserInfo);
-        Optional.ofNullable(patchUserEntity.getCareer())
-                .ifPresent(newUserEntity::setCareer);
-        Optional.ofNullable(patchUserEntity.getEducation())
-                .ifPresent(newUserEntity::setEducation);
-        Optional.ofNullable(patchUserEntity.getCompany())
-                .ifPresent(newUserEntity::setCompany);
-
-        return newUserEntity;
-    }/*엔티티로 유저 정보 수정하기*/
-
-    public List<Integer> userPostingCount(UserEntity userEntity){// 포트폴리오, 패션픽업, 펀딩 순으로 유저가 작성한 게시물의 수를 List로 반환
+    public List<Integer> userPostingCount(UserEntity userEntity) {// 포트폴리오, 패션픽업, 펀딩 순으로 유저가 작성한 게시물의 수를 List로 반환
         List<Integer> userPostCountList = new ArrayList<>();
         UserEntity foundUserEntity = userRepository.findById(userEntity.getUserEntityId()).orElseThrow();
 
@@ -121,60 +115,45 @@ public class UserService {
         return userPostCountList;
     }/*엔티티의 유저가 지금까지 작성한 게시글 수 반환환*/
 
-    public void withdrawalUser(UserEntity userEntity){//회원 탈퇴 엔티티 생성
-        WithdrawalEntity newWithdrawalEntity = new WithdrawalEntity();
-        newWithdrawalEntity.setWithdrawalUserEntity(userEntity);
-        newWithdrawalEntity.setUserActive(Withdrawal);
+    public void withdrawalUser(UserEntity userEntity) {//회원 탈퇴 엔티티 생성
 
-        UserEntity foundUserEntity = findUserEntityById(userEntity.getUserEntityId());
-        foundUserEntity.setUserActive(Withdrawal);//유저 엔티티 활동 -> 탈퇴처리
+        UserEntity withdrawalingUserEntity = findUserEntityById(userEntity.getUserEntityId());//삭제할 유저 엔티티 확인
+        checkIsPasswordCorrect(userEntity.getPassword(), withdrawalingUserEntity.getPassword());//확인용 비밀번호가 맞는지 체크
 
-        userRepository.save(foundUserEntity);//탈퇴처리 정보 저장
-        withdrawalRepository.save(newWithdrawalEntity);// 휴탈 회원 엔티티 새로 생성
+        WithdrawalEntity newWithdrawalEntity = userMapper.userEntityToWithdrawlENtity(withdrawalingUserEntity);//휴탈 회원 엔티티 생성
+        newWithdrawalEntity.setUserActive(Withdrawal);//유저 엔티티 활동 -> 탈퇴처리
+
+        userRepository.deleteById(withdrawalingUserEntity.getUserEntityId());//탈퇴 회원 정보를 기존 userEntity에서 삭제 -> 휴,탈회원 테이블로 이전
+        withdrawalRepository.save(newWithdrawalEntity);
     }
 
-    public void deActivateUser(UserEntity userEntity) throws BusinessLogicException{//휴면 회원 엔티티 생성
-        long userID =  userEntity.getUserEntityId();
-
-        WithdrawalEntity newWithdrawalEntity = new WithdrawalEntity();
-        newWithdrawalEntity.setWithdrawalUserEntity(userEntity);
-        newWithdrawalEntity.setUserActive(Withdrawal);
-        /* 휴면 처리 절차 확인 필요  */
-
-        UserEntity foundUserEntity = findUserEntityById(userID);//휴면처리할 유저의 정보 가져오기
+    public void deActiveCheckAllUsers() {
 
         int year = LocalDate.now().getYear();
-        int month =  LocalDate.now().getMonthValue();
-        LocalDateTime activationDate = LocalDateTime.of(year-2,month,1,0,0 );
+        int month = LocalDate.now().getMonthValue();
+        LocalDateTime activationDate = LocalDateTime.of(year - 2, month, 1, 0, 0);//휴면 기준(2년 설정), 현 시간 기준 2년 전
 
-        if(foundUserEntity.getUpdateTime().isBefore(activationDate)) {//최근활동 이력 > 현날짜 -2년 -> 휴면처리
-            foundUserEntity.setUserActive(UnActive);//유저 엔티티 활동 -> 휴면처리
-        }
-        else {
-            throw new BusinessLogicException(DORMANCY_DURATION_UNDER_2Y);// 휴면 기준이 되지 않는다는 에러 발생(2년)
-        }
+        List<UserEntity> deActivatingUserEntities = userRepository.findUserEntityByModifiedByGreaterThan(activationDate);
+        List<WithdrawalEntity> withdrawalEntities = new ArrayList<>();
 
-        userRepository.save(foundUserEntity);//탈퇴처리 정보 저장
-        withdrawalRepository.save(newWithdrawalEntity);// 휴탈 회원 엔티티 새로 생성
+        for(UserEntity user:deActivatingUserEntities){
+            WithdrawalEntity newDeActiveEntity = userMapper.userEntityToWithdrawlENtity(user);//휴탈 회원 엔티티 생성
+            newDeActiveEntity.setUserActive(DeActive);
+            withdrawalEntities.add(newDeActiveEntity);
+            log.info(" {}번 유저를 비활성화합니다. ", user.getUserEntityId());
+        }
+        userRepository.deleteAll(deActivatingUserEntities);
+        withdrawalRepository.saveAll(withdrawalEntities);
     }
 
+    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowList ( long myUserEntityId, int pageIndex) {// id에 해당하는 유저가 팔로우하는 사용자 목록 반환 메서드
+        List<FollowEntity> followingList =
+                followRepository.findByFollowingUserEntity(
+                        userRepository.findById(myUserEntityId).orElseThrow(),
+                        PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()
+                        ));
 
-    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowList(long myUserEntityId, int pageIndex) {// id에 해당하는 유저가 팔로우하는 사용자 목록 반환 메서드
-        List<FollowEntity> followingList = followRepository.findByFollowingUserEntity(userRepository.findById(myUserEntityId).orElseThrow(), PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
-
-        List<UserDto.FollowUserInfoResponseDto> followList =  followingList.stream()
-                        .map(FollowEntity -> UserDto.FollowUserInfoResponseDto.builder()
-                                .userEntityId(FollowEntity.getFollowedUserEntity().getUserEntityId())
-                                .displayName(FollowEntity.getFollowedUserEntity().getDisplayName())
-                                .build())
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(followList);
-    }
-    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowingList(long myUserEntityId, int pageIndex) {// id에 해당하는 유저를 팔로우하는 사용자 목록 반환 메서드
-        List<FollowEntity> followingList = followRepository.findByFollowedUserEntity(userRepository.findById(myUserEntityId).orElseThrow(), PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
-
-        List<UserDto.FollowUserInfoResponseDto> followList =  followingList.stream()
+        List<UserDto.FollowUserInfoResponseDto> followList = followingList.stream()
                 .map(FollowEntity -> UserDto.FollowUserInfoResponseDto.builder()
                         .userEntityId(FollowEntity.getFollowedUserEntity().getUserEntityId())
                         .displayName(FollowEntity.getFollowedUserEntity().getDisplayName())
@@ -184,14 +163,45 @@ public class UserService {
         return new PageImpl<>(followList);
     }
 
+    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowingList ( long myUserEntityId, int pageIndex)
+    {// id에 해당하는 유저를 팔로우하는 사용자 목록 반환 메서드
+        List<FollowEntity> followingList = followRepository.findByFollowedUserEntity(userRepository.findById(myUserEntityId).orElseThrow(), PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
 
-    public void checkIsPasswordCorrect(String inputPassword, String realPassword){
-        if(inputPassword.equals(realPassword)){
+        List<UserDto.FollowUserInfoResponseDto> followList = followingList.stream()
+                .map(FollowEntity -> UserDto.FollowUserInfoResponseDto.builder()
+                        .userEntityId(FollowEntity.getFollowedUserEntity().getUserEntityId())
+                        .displayName(FollowEntity.getFollowedUserEntity().getDisplayName())
+                        .build())
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(followList);
+    }
+
+    private void checkIsPasswordCorrect (String inputPassword, String realPassword){
+        if (inputPassword.equals(realPassword)) {
             log.info("확인용 비밀번호가 일치합니다.");
-        }
-        else {
+        } else {
             log.error("확인용 비밀번호가 불일치합니다.");
-           throw  new BusinessLogicException(PASSWORD_IS_WRONG);
+            throw new BusinessLogicException(PASSWORD_IS_WRONG);
         }
     }
+    private void checkDuplicateEmail(String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            log.error("회원 가입 중 중복된 이메일이 입력되었습니다. ", new BusinessLogicException(ExceptionCode.DUPLICATE_EMAIL));
+            throw new BusinessLogicException(ExceptionCode.DUPLICATE_EMAIL);//이메일 중복 확인
+        }
+    }// 이메일 중복 체크
+    private void checkDuplicateDisplayName(String displayName) {
+        if (userRepository.findByDisplayName(displayName).isPresent()) {
+            log.error("회원 가입 중 중복된 닉네임이 입력되었습니다. ", new BusinessLogicException(ExceptionCode.DUPLICATE_DISPLAY_NAME));
+            throw new BusinessLogicException(ExceptionCode.DUPLICATE_DISPLAY_NAME);//닉네임 중복 확인
+        }
+    } // 닉네임 중복 체크
+    private void checkSwearingWord(String displayName) {
+        if (badWordFiltering.check(displayName))//욕설이 닉네임이 들어 있다면(contains)
+        {   log.error("비속어가 포함된 닉네임입니다.", new BusinessLogicException(ExceptionCode.FORBIDDEN_WORD_USED));
+            throw new BusinessLogicException(ExceptionCode.FORBIDDEN_WORD_USED);
+        }
+    } // 닉네임 금지어 체크
 }
+

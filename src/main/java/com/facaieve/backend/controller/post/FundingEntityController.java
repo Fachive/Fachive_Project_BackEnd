@@ -1,12 +1,8 @@
 package com.facaieve.backend.controller.post;
 
 
-
-import com.facaieve.backend.dto.UserDto;
-import com.facaieve.backend.dto.image.ImageEntityDto;
 import com.facaieve.backend.dto.image.PostImageDto;
-import com.facaieve.backend.dto.multi.ResponseDTO;
-import com.facaieve.backend.dto.post.FashionPickupDto;
+import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.mapper.post.FundingMapper;
 
@@ -48,7 +44,7 @@ public class FundingEntityController {
     @GetMapping("/mainPageGet")
     public ResponseEntity getFundingEntityMainPage(@RequestParam(required = false, defaultValue = "30") int want){
 
-        ResponseDTO<FundingMainPageStubData> responseDTO = new ResponseDTO<>();
+        Multi_ResponseDTO<FundingMainPageStubData> responseDTO = new Multi_ResponseDTO<>();
         List<FundingMainPageStubData> fundingMainPageStubDataList = new ArrayList<>();
         for(int i= 0; i < want; i++){
             fundingMainPageStubDataList.add(new FundingMainPageStubData());
