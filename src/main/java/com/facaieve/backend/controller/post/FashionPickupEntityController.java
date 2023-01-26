@@ -1,9 +1,8 @@
 package com.facaieve.backend.controller.post;
 
 
-import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.image.PostImageDto;
-import com.facaieve.backend.dto.multi.ResponseDTO;
+import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.mapper.post.FashionPickupMapper;
 
@@ -16,7 +15,6 @@ import com.facaieve.backend.service.post.FashionPickupEntityService;
 import com.facaieve.backend.stubDate.FashionPickupMainPageStubData;
 import com.facaieve.backend.stubDate.FashionPuckupStubData;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,7 +22,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,7 +52,7 @@ public class FashionPickupEntityController {
 
 
 
-        ResponseDTO<FashionPickupMainPageStubData> responseDTO = new ResponseDTO<>();
+        Multi_ResponseDTO<FashionPickupMainPageStubData> responseDTO = new Multi_ResponseDTO<>();
         List<FashionPickupMainPageStubData> fashionPickupMainPageStubDataList = new ArrayList<>();
         for(int i = 0; i<want; i++){
             fashionPickupMainPageStubDataList.add(new FashionPickupMainPageStubData());

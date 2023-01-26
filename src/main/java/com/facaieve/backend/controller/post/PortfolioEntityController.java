@@ -2,7 +2,7 @@ package com.facaieve.backend.controller.post;
 
 
 import com.facaieve.backend.dto.image.PostImageDto;
-import com.facaieve.backend.dto.multi.ResponseDTO;
+import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.dto.post.FundingDto;
 import com.facaieve.backend.entity.image.PostImageEntity;
@@ -42,7 +42,7 @@ public class PortfolioEntityController {
 
     @GetMapping("/mainPageGet")
     public ResponseEntity getPortfolioMainPage(@RequestParam(required = false, defaultValue = "30") int want){
-        ResponseDTO<PortfolioMagePageStubData> responseDTO = new ResponseDTO<>();
+        Multi_ResponseDTO<PortfolioMagePageStubData> responseDTO = new Multi_ResponseDTO<>();
         List<PortfolioMagePageStubData> portfolioMagePageStubDataList = new ArrayList<>();
         for(int i = 0; i< want; i++){
             portfolioMagePageStubDataList.add(new PortfolioMagePageStubData());
