@@ -19,12 +19,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,6 +97,41 @@ public class FashionPickupEntityController {
                 .stream()
                 .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity))
                 .toList();
+
+        return new ResponseEntity(responseFashionPickupDtoList, HttpStatus.OK);
+//        Multi_ResponseDTO<FashionPickupMainPageStubData> responseDTO = new Multi_ResponseDTO<>();
+//        List<FashionPickupMainPageStubData> fashionPickupMainPageStubDataList = new ArrayList<>();
+//        for(int i = 0; i<want; i++){
+//            fashionPickupMainPageStubDataList.add(new FashionPickupMainPageStubData());
+//        }
+//        responseDTO.setData(fashionPickupMainPageStubDataList);
+//        return new ResponseEntity(responseDTO,HttpStatus.OK);
+    }
+    @Operation(summary = "패션픽업 게시물(마이픽) 호출 메서드", description = "패션픽업 페이지를 위한 패션픽업 객체 30개 반환 메서드(마이픽)")//대상 api의 대한 설명을 작성하는 어노테이션
+    @ApiResponses({
+            @ApiResponse(responseCode = "200" ,description = "객체가 정상적으로 호출됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupIncludeURI.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
+    @io.swagger.annotations.ApiResponses(
+            @io.swagger.annotations.ApiResponse(
+                    response = FashionPickupDto.ResponseFashionPickupIncludeURI.class, message = "ok", code=200)
+    )
+    @GetMapping("/get/mypick/{page}")
+    public ResponseEntity getFashionPickupEntitiesForMainPageByMyPick(@PathVariable(required = false) int pageIndex, @RequestHeader(value="userId") long userId){//헤더에 값 넣기
+
+
+        List<FashionPickupEntity> foundFashionPickupEntities = fashionPickupEntityService.findFashionPickupEntitiesByMyPick(pageIndex, userId);
+        List<FashionPickupDto.ResponseFashionPickupIncludeURI> responseFashionPickupDtoList = foundFashionPickupEntities
+                .stream()
+                .skip((pageIndex-1)*30L)
+                .limit(30)
+                .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity))
+                .toList();
+
+//        Pageable pageable = PageRequest.of(pageIndex - 1, 30);
+//        List<FashionPickupEntity> page = new PagedListHolder<>(foundFashionPickupEntities).getPageList();
 
         return new ResponseEntity(responseFashionPickupDtoList, HttpStatus.OK);
 //        Multi_ResponseDTO<FashionPickupMainPageStubData> responseDTO = new Multi_ResponseDTO<>();
