@@ -58,8 +58,16 @@ public class FashionPickupEntityController {
         ResponseDTO<FashionPickupMainPageStubData> responseDTO = new ResponseDTO<>();
         List<FashionPickupMainPageStubData> fashionPickupMainPageStubDataList = new ArrayList<>();
         for(int i = 0; i<want; i++){
+
             fashionPickupMainPageStubDataList.add(new FashionPickupMainPageStubData());
         }
+
+
+
+        //todo 정렬 메소드 삽입...
+
+
+
         responseDTO.setData(fashionPickupMainPageStubDataList);
         return new ResponseEntity(responseDTO,HttpStatus.OK);
 

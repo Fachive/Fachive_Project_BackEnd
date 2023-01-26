@@ -42,6 +42,7 @@ public class PortfolioEntityController {
 
     @GetMapping("/mainPageGet")
     public ResponseEntity getPortfolioMainPage(@RequestParam(required = false, defaultValue = "30") int want){
+
         ResponseDTO<PortfolioMagePageStubData> responseDTO = new ResponseDTO<>();
         List<PortfolioMagePageStubData> portfolioMagePageStubDataList = new ArrayList<>();
         for(int i = 0; i< want; i++){

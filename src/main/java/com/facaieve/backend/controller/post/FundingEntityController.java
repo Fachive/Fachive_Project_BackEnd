@@ -43,7 +43,8 @@ public class FundingEntityController {
     S3FileService s3FileService;
 
     static final FundingStubData fundingStubData = new FundingStubData();
-
+//카테고리, 최신순,추천순,조회순,
+    //
     @GetMapping("/mainPageGet")
     public ResponseEntity getFundingEntityMainPage(@RequestParam(required = false, defaultValue = "30") int want){
 
