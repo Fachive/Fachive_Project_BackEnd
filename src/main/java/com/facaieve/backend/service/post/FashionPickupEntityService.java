@@ -56,8 +56,8 @@ public class FashionPickupEntityService {
         return fashionPickupRepository.findAll(PageRequest.of(pageIndex-1, 30, Sort.by("updateTime").descending()));
     }
 
-    public Page<FashionPickupEntity> findFashionPickupEntitiesByView(int pageIndex) {//패션픽업 게시물 페이지별로 호출(조회순순)
-       return fashionPickupRepository.findAll(PageRequest.of(pageIndex-1, 30, Sort.by("views").descending()));
+    public Page<FashionPickupEntity> findFashionPickupEntitiesByPick(int pageIndex) {//패션픽업 게시물 페이지별로 호출(조회순순)
+       return fashionPickupRepository.findAll(PageRequest.of(pageIndex-1, 30, Sort.by("myPicks").descending()));
     }
 
     public List<FashionPickupEntity> findFashionPickupEntitiesByMyPick(int pageIndex, long userId) {//패션픽업 게시물 페이지별로 호출(조회순순)

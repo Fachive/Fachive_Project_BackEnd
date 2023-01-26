@@ -78,7 +78,7 @@ public class FashionPickupEntityController {
 //        return new ResponseEntity(responseDTO,HttpStatus.OK);
     }
 
-    @Operation(summary = "패션픽업 게시물(조회순) 호출 메서드", description = "패션픽업 페이지를 위한 패션픽업 객체 30개 반환 메서드(조회순)")//대상 api의 대한 설명을 작성하는 어노테이션
+    @Operation(summary = "패션픽업 게시물(추천순) 호출 메서드", description = "패션픽업 페이지를 위한 패션픽업 객체 30개 반환 메서드(추천순)")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "200" ,description = "객체가 정상적으로 호출됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupIncludeURI.class))),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
@@ -89,10 +89,10 @@ public class FashionPickupEntityController {
             @io.swagger.annotations.ApiResponse(
                     response = FashionPickupDto.ResponseFashionPickupIncludeURI.class, message = "ok", code=200)
     )
-    @GetMapping("/get/views/{page}")
-    public ResponseEntity getFashionPickupEntitiesForMainPageByViews(@PathVariable(required = false) int pageIndex){
+    @GetMapping("/get/mypicks/{page}")
+    public ResponseEntity getFashionPickupEntitiesForMainPageByPick(@PathVariable(required = false) int pageIndex){
 
-        Page<FashionPickupEntity> foundFashionPickupEntities = fashionPickupEntityService.findFashionPickupEntitiesByUpdatedBy(pageIndex);
+        Page<FashionPickupEntity> foundFashionPickupEntities = fashionPickupEntityService.findFashionPickupEntitiesByPick(pageIndex);
         List<FashionPickupDto.ResponseFashionPickupIncludeURI> responseFashionPickupDtoList = foundFashionPickupEntities
                 .stream()
                 .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity))
@@ -142,10 +142,6 @@ public class FashionPickupEntityController {
 //        responseDTO.setData(fashionPickupMainPageStubDataList);
 //        return new ResponseEntity(responseDTO,HttpStatus.OK);
     }
-
-
-
-
 
 
     //todo 추후에 서비스 로직을 전부다 fashionPickupService 레이어 하위에 생성해서 controller 단에서의 의존성을 줄일 예정

@@ -48,6 +48,8 @@ public class FundingEntity extends BaseEntity {
     @Schema(description = "펀딩 객체 조회수")
     int views;
 
+    @Schema(description ="추천수")
+    int myPicks;
 
     @OneToMany(mappedBy = "fundingEntity",fetch = FetchType.LAZY)
     @Schema(description = "펀딩에 달린 마이픽(좋아요) 객체 목록")

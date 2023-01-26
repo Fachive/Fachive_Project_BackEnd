@@ -33,6 +33,10 @@ public class PortfolioEntity extends BaseEntity {
     @Column
     @Schema(description = "포트폴리오 객체 조회수")
     int views;
+
+    @Schema(description ="추천수")
+    int myPicks;
+
 //    @Column
 //    @Schema(description = "포트폴리오 이미지 목록(S3 버킷 uri)")
 //    List<String> imgUri = new ArrayList<String>();;

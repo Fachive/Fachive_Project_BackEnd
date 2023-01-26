@@ -42,6 +42,10 @@ public class FashionPickupEntity extends BaseEntity {
     @Schema(description = "조회수")
     int views;
 
+    @Column
+    @Schema(description = "추천수")
+    int myPicks;
+
     @OneToMany(mappedBy = "fashionPickupEntity",fetch = FetchType.LAZY)
     @Schema(description = "패션 픽업에 달린 마이픽(좋아요) 객체 목록")
     private List<MyPickEntity> myPick = new ArrayList<MyPickEntity>();  // 패션픽업 - 마이픽 매핑

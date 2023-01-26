@@ -81,6 +81,9 @@ public class FashionPickupDto {
         @Schema(description ="조회수")
         int views;
 
+        @Schema(description ="추천수")
+        int myPicks;
+
         @Schema(description="URI for send to front end")
         List<PostImageDto>  multiPartFileList = new ArrayList<>();
     }
