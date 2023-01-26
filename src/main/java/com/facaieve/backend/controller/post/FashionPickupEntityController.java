@@ -3,6 +3,7 @@ package com.facaieve.backend.controller.post;
 
 import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.image.PostImageDto;
+import com.facaieve.backend.dto.multi.ResponseDTO;
 import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.mapper.post.FashionPickupMapper;
 
@@ -12,6 +13,7 @@ import com.facaieve.backend.mapper.post.PostImageMapper;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.image.PostImageService;
 import com.facaieve.backend.service.post.FashionPickupEntityService;
+import com.facaieve.backend.stubDate.FashionPickupMainPageStubData;
 import com.facaieve.backend.stubDate.FashionPuckupStubData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,6 +49,21 @@ public class FashionPickupEntityController {
 
 
     static final FashionPuckupStubData fashionPuckupStubData = new FashionPuckupStubData();
+    //원하는 갯수 만큼 반환하는 메소임
+    @GetMapping("/main/get")
+    public ResponseEntity getMainPage(@RequestParam(required = false, defaultValue = "30") int want){
+
+
+
+        ResponseDTO<FashionPickupMainPageStubData> responseDTO = new ResponseDTO<>();
+        List<FashionPickupMainPageStubData> fashionPickupMainPageStubDataList = new ArrayList<>();
+        for(int i = 0; i<want; i++){
+            fashionPickupMainPageStubDataList.add(new FashionPickupMainPageStubData());
+        }
+        responseDTO.setData(fashionPickupMainPageStubDataList);
+        return new ResponseEntity(responseDTO,HttpStatus.OK);
+
+    }
 
     //todo 추후에 서비스 로직을 전부다 fashionPickupService 레이어 하위에 생성해서 controller 단에서의 의존성을 줄일 예정
     @PostMapping(value = "/multipart/post")

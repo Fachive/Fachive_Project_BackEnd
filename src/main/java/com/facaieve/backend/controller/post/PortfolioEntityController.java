@@ -2,6 +2,7 @@ package com.facaieve.backend.controller.post;
 
 
 import com.facaieve.backend.dto.image.PostImageDto;
+import com.facaieve.backend.dto.multi.ResponseDTO;
 import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.dto.post.FundingDto;
 import com.facaieve.backend.entity.image.PostImageEntity;
@@ -10,6 +11,7 @@ import com.facaieve.backend.dto.post.PortfolioDto;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.post.PortfolioEntityService;
+import com.facaieve.backend.stubDate.PortfolioMagePageStubData;
 import com.facaieve.backend.stubDate.PortfolioStubData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -36,6 +39,18 @@ public class PortfolioEntityController {
     S3FileService s3FileService;
 
     static final PortfolioStubData portfolioStubData = new PortfolioStubData();
+
+    @GetMapping("/mainPageGet")
+    public ResponseEntity getPortfolioMainPage(@RequestParam(required = false, defaultValue = "30") int want){
+        ResponseDTO<PortfolioMagePageStubData> responseDTO = new ResponseDTO<>();
+        List<PortfolioMagePageStubData> portfolioMagePageStubDataList = new ArrayList<>();
+        for(int i = 0; i< want; i++){
+            portfolioMagePageStubDataList.add(new PortfolioMagePageStubData());
+        }
+        responseDTO.setData(portfolioMagePageStubDataList);
+        return new ResponseEntity(responseDTO,HttpStatus.OK);
+    }
+
     @PostMapping("/multipartPost")
     public ResponseEntity postPortfolioEntity(@ModelAttribute PortfolioDto.RequestPortfolioIncludeMultiPartFiles
                                                           requestPortfolioIncludeMultiPartFiles){
