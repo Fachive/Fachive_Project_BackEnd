@@ -2,15 +2,22 @@ package com.facaieve.backend.controller.post;
 
 
 import com.facaieve.backend.dto.image.PostImageDto;
+import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
+import com.facaieve.backend.dto.post.FundingDto;
+import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.image.PostImageEntity;
+import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.mapper.post.FashionPickupMapper;
 
 import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.mapper.post.PostImageMapper;
 import com.facaieve.backend.service.aswS3.S3FileService;
+import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.image.PostImageService;
 import com.facaieve.backend.service.post.FashionPickupEntityService;
+import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
+import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import com.facaieve.backend.stubDate.FashionPuckupStubData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,12 +51,11 @@ public class FashionPickupEntityController {
     FashionPickupMapper fashionPickupMapper;
     S3FileService s3FileService;
     PostImageMapper postImageMapper;
+    CategoryService categoryService;
 
     static final FashionPuckupStubData fashionPuckupStubData = new FashionPuckupStubData();
 
-
-    //원하는 갯수 만큼 반환하는 메소임
-    @Operation(summary = "패션픽업 게시물(최신순) 호출 메서드", description = "패션픽업 페이지를 위한 패션픽업 객체 30개 반환 메서드(최신순)")//대상 api의 대한 설명을 작성하는 어노테이션
+   /* @Operation(summary = "패션픽업 게시물(최신순) 호출 메서드", description = "패션픽업 페이지를 위한 패션픽업 객체 30개 반환 메서드(최신순)")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "200" ,description = "객체가 정상적으로 호출됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupIncludeURI.class))),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
@@ -70,16 +77,10 @@ public class FashionPickupEntityController {
                 .toList();
 
         return new ResponseEntity(responseFashionPickupDtoList, HttpStatus.OK);
-//        Multi_ResponseDTO<FashionPickupMainPageStubData> responseDTO = new Multi_ResponseDTO<>();
-//        List<FashionPickupMainPageStubData> fashionPickupMainPageStubDataList = new ArrayList<>();
-//        for(int i = 0; i<want; i++){
-//            fashionPickupMainPageStubDataList.add(new FashionPickupMainPageStubData());
-//        }
-//        responseDTO.setData(fashionPickupMainPageStubDataList);
-//        return new ResponseEntity(responseDTO,HttpStatus.OK);
     }
+    */
 
-    @Operation(summary = "패션픽업 게시물(추천순) 호출 메서드", description = "패션픽업 페이지를 위한 패션픽업 객체 30개 반환 메서드(추천순)")//대상 api의 대한 설명을 작성하는 어노테이션
+    /* @Operation(summary = "패션픽업 게시물(추천순) 호출 메서드", description = "패션픽업 페이지를 위한 패션픽업 객체 30개 반환 메서드(추천순)")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "200" ,description = "객체가 정상적으로 호출됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupIncludeURI.class))),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
@@ -108,6 +109,10 @@ public class FashionPickupEntityController {
 //        responseDTO.setData(fashionPickupMainPageStubDataList);
 //        return new ResponseEntity(responseDTO,HttpStatus.OK);
     }
+
+     */
+
+    /*
     @Operation(summary = "패션픽업 게시물(마이픽) 호출 메서드", description = "패션픽업 페이지를 위한 패션픽업 객체 30개 반환 메서드(마이픽)")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "200" ,description = "객체가 정상적으로 호출됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupIncludeURI.class))),
@@ -143,6 +148,51 @@ public class FashionPickupEntityController {
 //        responseDTO.setData(fashionPickupMainPageStubDataList);
 //        return new ResponseEntity(responseDTO,HttpStatus.OK);
     }
+
+     */
+
+    //todo 카테고리 정렬순서 그리고 페이지를 파라미터로 가지는 api  구현할 것
+
+    //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
+    //todo sortway mypick, update, duedate
+    @GetMapping("/mainfasionpickup")
+    public ResponseEntity getFundingEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String categoryName,
+                                                                    @RequestParam(required = false, defaultValue = "myPick") String sortWay,
+                                                                    @RequestParam(required = false, defaultValue = "1") int pageIndex) {
+        List<CategoryEntity> categoryEntities = new ArrayList<>();
+        categoryEntities.add(categoryService
+                .getCategory(CategoryEntity.builder()
+                        .categoryName(categoryName)
+                        .build()));
+
+        switch (sortWay){
+            case "myPick" : fashionPickupEntityService.setCondition(new FindFundingEntitiesByMyPicks());
+            case "update" : fashionPickupEntityService.setCondition(new FindFundingEntitiesByDueDate());
+            default : fashionPickupEntityService.setCondition(new FindFundingEntitiesByDueDate());
+        }
+
+        Page<FashionPickupEntity> fashionPickupEntityPage = fashionPickupEntityService.findFundingEntitiesByCondition(categoryEntities, pageIndex);
+        List<FashionPickupDto.ResponseFashionPickupIncludeURI> fashionPickupIncludeURIList = fashionPickupEntityPage.stream()
+                .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity))
+                .collect(Collectors.toList());
+
+        Multi_ResponseDTO<FashionPickupDto.ResponseFashionPickupIncludeURI> multi_responseDTO =
+                new Multi_ResponseDTO<FashionPickupDto.ResponseFashionPickupIncludeURI>(fashionPickupIncludeURIList, fashionPickupEntityPage);
+
+        return new ResponseEntity(multi_responseDTO,HttpStatus.OK);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
     //todo 추후에 서비스 로직을 전부다 fashionPickupService 레이어 하위에 생성해서 controller 단에서의 의존성을 줄일 예정

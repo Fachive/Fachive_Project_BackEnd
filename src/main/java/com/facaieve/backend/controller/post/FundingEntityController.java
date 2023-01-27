@@ -12,8 +12,9 @@ import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.post.FundingEntityService;
-import com.facaieve.backend.service.post.conditionsImp.FindFundingEntitiesByDueDate;
-import com.facaieve.backend.service.post.conditionsImp.FindFundingEntitiesByMyPicks;
+
+import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
+import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import com.facaieve.backend.stubDate.FundingMainPageStubData;
 import com.facaieve.backend.stubDate.FundingStubData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,7 +62,7 @@ public class FundingEntityController {
                 .getCategory(CategoryEntity.builder()
                         .categoryName(categoryName)
                         .build()));
-        if (sortWay == "mypick") {
+        if (sortWay == "myPick") {
             fundingEntityService.setCondition(new FindFundingEntitiesByMyPicks());
         } else if (sortWay.equals("update")) {
             fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());

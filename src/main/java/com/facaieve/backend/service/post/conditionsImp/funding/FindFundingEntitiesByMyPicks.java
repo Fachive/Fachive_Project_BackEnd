@@ -1,4 +1,4 @@
-package com.facaieve.backend.service.post.conditionsImp;
+package com.facaieve.backend.service.post.conditionsImp.funding;
 
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
@@ -18,12 +18,12 @@ public class FindFundingEntitiesByMyPicks implements Condition<FundingEntity, Ca
     @Autowired
     FundingRepository fundingRepository;
     @Override
-    public Page<FundingEntity> conditionSort(List<CategoryEntity> categoryEntities, int pageIndex) {
+    public Page<FundingEntity> conditionSort(List<CategoryEntity> categoryEntities, int pageIndex, int elementNum) {
 
         Page<FundingEntity> fundingEntities = fundingRepository
                 .findAllByCategoryEntities(
                         categoryEntities
-                        , PageRequest.of(pageIndex - 1, 30, Sort.by("views").descending()));
+                        , PageRequest.of(pageIndex - 1, elementNum, Sort.by("views").descending()));
 
         fundingEntities.stream().sorted(new Comparator<FundingEntity>() {
             @Override
