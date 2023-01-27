@@ -59,6 +59,7 @@ public class FashionPickupEntityController {
             @io.swagger.annotations.ApiResponse(
                     response = FashionPickupDto.ResponseFashionPickupIncludeURI.class, message = "ok", code=200)
     )
+
     @GetMapping("/get/updated/{page}")
     public ResponseEntity getFashionPickupEntitiesForMainPageByUpdatedBy(@PathVariable(required = false) int pageIndex){
 

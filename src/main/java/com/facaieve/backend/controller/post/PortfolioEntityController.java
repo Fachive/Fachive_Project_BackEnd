@@ -39,6 +39,28 @@ public class PortfolioEntityController {
     S3FileService s3FileService;
 
     static final PortfolioStubData portfolioStubData = new PortfolioStubData();
+    //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
+    //todo sortway mypick, update, duedate
+
+    @GetMapping("/portfolioMain")
+    public ResponseEntity getPortfolioEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String category,
+                                                                      @RequestParam(required = false, defaultValue = "myPick") String sortWay,
+                                                                      @RequestParam(required = false, defaultValue = "1")int pageIndex){
+
+
+
+        return null;
+
+
+
+
+
+
+
+
+    }
+
+
 //최신순, 추천순
     @GetMapping("/mainPageGet")
     public ResponseEntity getPortfolioMainPage(@RequestParam(required = false, defaultValue = "30") int want){
@@ -50,6 +72,9 @@ public class PortfolioEntityController {
         responseDTO.setData(portfolioMagePageStubDataList);
         return new ResponseEntity(responseDTO,HttpStatus.OK);
     }
+
+
+
 
     @PostMapping("/multipartPost")
     public ResponseEntity postPortfolioEntity(@ModelAttribute PortfolioDto.RequestPortfolioIncludeMultiPartFiles
