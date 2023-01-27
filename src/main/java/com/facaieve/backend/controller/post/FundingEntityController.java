@@ -14,6 +14,7 @@ import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.post.FundingEntityService;
 import com.facaieve.backend.service.post.conditionsImp.FindFundingEntitiesByDueDate;
 import com.facaieve.backend.service.post.conditionsImp.FindFundingEntitiesByMyPicks;
+import com.facaieve.backend.service.post.conditionsImp.FindFundingEntitiesByViews;
 import com.facaieve.backend.stubDate.FundingMainPageStubData;
 import com.facaieve.backend.stubDate.FundingStubData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,20 +62,24 @@ public class FundingEntityController {
                 .getCategory(CategoryEntity.builder()
                         .categoryName(categoryName)
                         .build()));
+
+
         if (sortWay == "mypick") {
             fundingEntityService.setCondition(new FindFundingEntitiesByMyPicks());
         } else if (sortWay.equals("update")) {
             fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());
         } else {
-            fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());
+            fundingEntityService.setCondition(new FindFundingEntitiesByViews());
         }
+
+
         Page<FundingEntity> fundingEntityPage = fundingEntityService.findFundingEntitiesByCondition(categoryEntities, pageIndex);
         List<FundingDto.ResponseFundingIncludeURI> fundingEntities = fundingEntityPage.stream()
                 .map(fundingEntity -> fundingMapper.FundingEntityToResponseFundingIncludeURI(fundingEntity))
                 .collect(Collectors.toList());
 
         Multi_ResponseDTO<FundingDto.ResponseFundingIncludeURI> multi_responseDTO =
-                new Multi_ResponseDTO<FundingDto.ResponseFundingIncludeURI>(fundingEntities, fundingEntityPage);
+                new Multi_ResponseDTO<FundingDto.ResponseFundingIncludeURI>(fundingEntities, (Page) null);
 
         return new ResponseEntity(multi_responseDTO,HttpStatus.OK);
 

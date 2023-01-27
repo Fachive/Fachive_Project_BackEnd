@@ -5,13 +5,17 @@ import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.repository.post.FundingRepository;
 import com.facaieve.backend.service.post.Condition;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+@RequiredArgsConstructor
+@Service
 
 public class FindFundingEntitiesByMyPicks implements Condition<FundingEntity, CategoryEntity> {
 
@@ -21,9 +25,8 @@ public class FindFundingEntitiesByMyPicks implements Condition<FundingEntity, Ca
     public Page<FundingEntity> conditionSort(List<CategoryEntity> categoryEntities, int pageIndex) {
 
         Page<FundingEntity> fundingEntities = fundingRepository
-                .findAllByCategoryEntities(
-                        categoryEntities
-                        , PageRequest.of(pageIndex - 1, 30, Sort.by("views").descending()));
+                .findFundingEntitiesByCategoryEntitiesIn(categoryEntities,
+                        PageRequest.of(pageIndex - 1, 30, Sort.by("views").descending()));
 
         fundingEntities.stream().sorted(new Comparator<FundingEntity>() {
             @Override
