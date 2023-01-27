@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses ={
         PostImageMapper.class
 })
-public interface FundingMapper {
+public interface FundingMapper extends PostMapper{
     // 포트폴리오 스텁데이터 -> 엔티티로 변환
     FundingEntity fundingDtoToFundingEntityStubData(FundingStubData fundingStubData);
 

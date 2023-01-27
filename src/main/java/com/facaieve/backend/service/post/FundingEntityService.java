@@ -27,8 +27,8 @@ public class FundingEntityService {
 
     Condition condition;//정렬 메소드 가지고 있는 객체
 
-    public Page<FundingEntity>  findFundingEntitiesByCondition(List<CategoryEntity> categoryEntities, int pageIndex){
-        return condition.conditionSort(categoryEntities,pageIndex,30);
+    public Page<FundingEntity>  findFundingEntitiesByCondition(List<CategoryEntity> categoryEntities, int pageIndex, int elementNum){
+        return condition.conditionSort(categoryEntities,pageIndex,elementNum);
     }
 
     public FundingEntity createFundingEntity(FundingEntity fundingEntity){// 펀딩 게시글 작성

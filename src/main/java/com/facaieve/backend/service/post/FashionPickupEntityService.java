@@ -2,8 +2,6 @@ package com.facaieve.backend.service.post;
 
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
-import com.facaieve.backend.entity.post.FundingEntity;
-import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.repository.post.FashionPickupRepository;
 import com.facaieve.backend.service.user.UserService;
 import lombok.AllArgsConstructor;
@@ -11,8 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -58,8 +54,8 @@ public class FashionPickupEntityService {
         return fashionPickupRepository.findById(foundingFashionPickupEntityId).orElseThrow();
     }
 
-    public Page<FashionPickupEntity>  findFundingEntitiesByCondition(List<CategoryEntity> categoryEntities, int pageIndex){
-        return condition.conditionSort(categoryEntities,pageIndex,30);
+    public Page<FashionPickupEntity> findFashionPickupEntitiesByCondition(List<CategoryEntity> categoryEntities, int pageIndex, int elementNum){
+        return condition.conditionSort(categoryEntities,pageIndex,elementNum);
     }
 
 

@@ -69,7 +69,7 @@ public class FundingEntityController {
         } else {
             fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());
         }
-        Page<FundingEntity> fundingEntityPage = fundingEntityService.findFundingEntitiesByCondition(categoryEntities, pageIndex);
+        Page<FundingEntity> fundingEntityPage = fundingEntityService.findFundingEntitiesByCondition(categoryEntities, pageIndex,30);
         List<FundingDto.ResponseFundingIncludeURI> fundingEntities = fundingEntityPage.stream()
                 .map(fundingEntity -> fundingMapper.FundingEntityToResponseFundingIncludeURI(fundingEntity))
                 .collect(Collectors.toList());

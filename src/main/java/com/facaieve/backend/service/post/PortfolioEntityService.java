@@ -1,9 +1,11 @@
 package com.facaieve.backend.service.post;
 
+import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.repository.post.PortfolioRepository;
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,15 +13,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Service
+@Setter
 @AllArgsConstructor
 public class PortfolioEntityService {
 
     PortfolioRepository portfolioRepository;
 
+    Condition condition;
     public PortfolioEntity createPortfolioEntity(PortfolioEntity PortfolioEntity){// 포트폴리오 게시물 작성
         return portfolioRepository.save(PortfolioEntity);
     };
@@ -46,4 +51,7 @@ public class PortfolioEntityService {
         portfolioRepository.deleteById(deletingPortfolioEntityId);
     }
 
+    public Page<PortfolioEntity>  findPortfolioEntitiesByCondition(List<CategoryEntity> categoryEntities, int pageIndex, int elementNum){
+        return condition.conditionSort(categoryEntities,pageIndex,elementNum);
+    }
 }

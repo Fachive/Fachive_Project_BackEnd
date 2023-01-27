@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 })
 public interface FashionPickupMapper {
     // 패션픽업 스텁데이터 -> 엔티티로 변환
+
     FashionPickupEntity fashionPickupDtoToFashionPickupStubData(FashionPuckupStubData fashionPuckupStubData);
 
     //postDto -> Entity
@@ -26,6 +27,7 @@ public interface FashionPickupMapper {
     FashionPickupEntity fashionPickupDeleteDtoToFashionPickupEntity(FashionPickupDto.DeleteFashionPickupDto deleteFashionPickupDto);
 
     FashionPickupDto.ResponseFashionPickupDto fashionPickupEntityToResponseFashionPickupEntity(FashionPickupEntity fashionPickupEntity);
+
 
     @Mapping(source = "multiPartFileList", target = "postImageEntities")
     FashionPickupEntity fashionPickupIncludeURIToFashionPickupEntity(

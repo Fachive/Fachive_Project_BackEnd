@@ -3,10 +3,8 @@ package com.facaieve.backend.controller.post;
 
 import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
-import com.facaieve.backend.dto.post.FundingDto;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.image.PostImageEntity;
-import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.mapper.post.FashionPickupMapper;
 
 import com.facaieve.backend.dto.post.FashionPickupDto;
@@ -26,16 +24,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -171,7 +165,7 @@ public class FashionPickupEntityController {
             default : fashionPickupEntityService.setCondition(new FindFundingEntitiesByDueDate());
         }
 
-        Page<FashionPickupEntity> fashionPickupEntityPage = fashionPickupEntityService.findFundingEntitiesByCondition(categoryEntities, pageIndex);
+        Page<FashionPickupEntity> fashionPickupEntityPage = fashionPickupEntityService.findFashionPickupEntitiesByCondition(categoryEntities, pageIndex,30);
         List<FashionPickupDto.ResponseFashionPickupIncludeURI> fashionPickupIncludeURIList = fashionPickupEntityPage.stream()
                 .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity))
                 .collect(Collectors.toList());

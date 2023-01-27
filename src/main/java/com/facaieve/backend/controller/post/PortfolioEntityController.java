@@ -5,12 +5,17 @@ import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.dto.post.FundingDto;
+import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.image.PostImageEntity;
+import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.mapper.post.PortfolioMapper;
 import com.facaieve.backend.dto.post.PortfolioDto;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.service.aswS3.S3FileService;
+import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.post.PortfolioEntityService;
+import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
+import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import com.facaieve.backend.stubDate.PortfolioMagePageStubData;
 import com.facaieve.backend.stubDate.PortfolioStubData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +33,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
 @RequestMapping("/portfolio")
 @AllArgsConstructor
 public class PortfolioEntityController {
-
+    CategoryService categoryService;
     PortfolioEntityService portfolioEntityService;
     PortfolioMapper portfolioMapper;
     S3FileService s3FileService;
@@ -42,21 +49,31 @@ public class PortfolioEntityController {
     //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
     //todo sortway mypick, update, duedate
 
-    @GetMapping("/portfolioMain")
-    public ResponseEntity getPortfolioEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String category,
+    @GetMapping("/mainportfolio")
+    public ResponseEntity getPortfolioEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String categoryName,
                                                                       @RequestParam(required = false, defaultValue = "myPick") String sortWay,
                                                                       @RequestParam(required = false, defaultValue = "1")int pageIndex){
+        List<CategoryEntity> categoryEntities = new ArrayList<>();
+        categoryEntities.add(categoryService
+                .getCategory(CategoryEntity.builder()
+                        .categoryName(categoryName)
+                        .build()));
 
+        switch (sortWay){
+            case "myPick" : portfolioEntityService.setCondition(new FindFundingEntitiesByMyPicks());
+            case "update" : portfolioEntityService.setCondition(new FindFundingEntitiesByDueDate());
+            default : portfolioEntityService.setCondition(new FindFundingEntitiesByDueDate());
+        }
 
+        Page<PortfolioEntity> portfolioEntityPage = portfolioEntityService.findPortfolioEntitiesByCondition(categoryEntities, pageIndex,30);
+        List<PortfolioDto.ResponsePortfolioIncludeURI> portfolioEntities = portfolioEntityPage.stream()
+                .map(portfolioEntity -> portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolioEntity))
+                .collect(Collectors.toList());
 
-        return null;
+        Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI> multi_responseDTO =
+                new Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI>(portfolioEntities, portfolioEntityPage);
 
-
-
-
-
-
-
+        return new ResponseEntity(multi_responseDTO,HttpStatus.OK);
 
     }
 
