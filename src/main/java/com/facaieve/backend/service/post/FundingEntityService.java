@@ -1,15 +1,18 @@
 package com.facaieve.backend.service.post;
 
+import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.repository.post.FundingRepository;
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static java.rmi.server.LogStream.log;
@@ -17,9 +20,16 @@ import static java.rmi.server.LogStream.log;
 @Slf4j
 @Service
 @AllArgsConstructor
+@Setter
 public class FundingEntityService {
 
     FundingRepository fundingRepository;
+
+    Condition condition;//정렬 메소드 가지고 있는 객체
+
+    public Page<FundingEntity>  findFundingEntitiesByCondition(List<CategoryEntity> categoryEntities, int pageIndex){
+        return condition.conditionSort(categoryEntities,pageIndex);
+    }
 
     public FundingEntity createFundingEntity(FundingEntity fundingEntity){// 펀딩 게시글 작성
        return fundingRepository.save(fundingEntity);
