@@ -12,7 +12,6 @@ import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.post.FundingEntityService;
-
 import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
 import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import com.facaieve.backend.stubDate.FundingMainPageStubData;
@@ -62,20 +61,21 @@ public class FundingEntityController {
                 .getCategory(CategoryEntity.builder()
                         .categoryName(categoryName)
                         .build()));
-        if (sortWay == "myPick") {
-            fundingEntityService.setCondition(new FindFundingEntitiesByMyPicks());
-        } else if (sortWay.equals("update")) {
-            fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());
-        } else {
-            fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());
+
+        switch (sortWay){
+            case "myPick" : fundingEntityService.setCondition(new FindFundingEntitiesByMyPicks());
+            case "update" : fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());
+            default : fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());
         }
+
         Page<FundingEntity> fundingEntityPage = fundingEntityService.findFundingEntitiesByCondition(categoryEntities, pageIndex,30);
+
         List<FundingDto.ResponseFundingIncludeURI> fundingEntities = fundingEntityPage.stream()
                 .map(fundingEntity -> fundingMapper.FundingEntityToResponseFundingIncludeURI(fundingEntity))
                 .collect(Collectors.toList());
 
         Multi_ResponseDTO<FundingDto.ResponseFundingIncludeURI> multi_responseDTO =
-                new Multi_ResponseDTO<FundingDto.ResponseFundingIncludeURI>(fundingEntities, fundingEntityPage);
+                new Multi_ResponseDTO<FundingDto.ResponseFundingIncludeURI>(fundingEntities, (Page) null);
 
         return new ResponseEntity(multi_responseDTO,HttpStatus.OK);
 

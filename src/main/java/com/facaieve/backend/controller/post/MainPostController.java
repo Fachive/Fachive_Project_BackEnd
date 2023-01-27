@@ -13,7 +13,7 @@ import com.facaieve.backend.service.post.FashionPickupEntityService;
 import com.facaieve.backend.service.post.FundingEntityService;
 import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
 import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
-import com.facaieve.backend.service.post.conditionsImp.portfolio.fashionPickup.FindPortfolioEntitiesByDueDate;
+import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioEntitiesByDueDate;
 import com.facaieve.backend.service.post.PortfolioEntityService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

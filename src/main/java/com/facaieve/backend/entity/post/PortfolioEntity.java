@@ -1,6 +1,7 @@
 package com.facaieve.backend.entity.post;
 
 import com.facaieve.backend.entity.basetime.BaseEntity;
+import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.comment.PortfolioCommentEntity;
@@ -53,6 +54,12 @@ public class PortfolioEntity extends BaseEntity {
     @OneToMany(mappedBy = "portfolioEntity", fetch = FetchType.LAZY) //cascade = CascadeType.ALL
     @Schema(description = "포트폴리오에 달린 태그 객체 목록")
     private List<TagEntity> tagEntities = new ArrayList<TagEntity>();  // 포트폴리오 - 카테고리 매핑
+
+    @OneToMany(mappedBy = "fundingEntity",fetch = FetchType.LAZY)
+    @Schema(description = "패션 픽업에 카테고리 객체 목록")
+    private List<CategoryEntity> categoryEntities = new ArrayList<CategoryEntity>();  // 펀딩 - 카테코리 매핑
+
+
 
     @ManyToOne
     @JoinColumn(name = "userEntity_Id")

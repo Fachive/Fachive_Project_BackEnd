@@ -1,9 +1,7 @@
-package com.facaieve.backend.service.post.conditionsImp.portfolio.fashionPickup;
+package com.facaieve.backend.service.post.conditionsImp.portfolio;
 
 import com.facaieve.backend.entity.etc.CategoryEntity;
-import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
-import com.facaieve.backend.repository.post.FashionPickupRepository;
 import com.facaieve.backend.repository.post.PortfolioRepository;
 import com.facaieve.backend.service.post.Condition;
 import lombok.AllArgsConstructor;
@@ -23,7 +21,7 @@ public class FindPortfolioPickupEntitiesByMyPicks implements Condition<Portfolio
     public Page<PortfolioEntity> conditionSort(List<CategoryEntity> categoryEntities, int pageIndex, int elementNum) {
 
         Page<PortfolioEntity> portfolioEntities = portfolioRepository
-                .findAllByCategoryEntities(
+                .findPortfolioEntitiesByCategoryEntitiesIn(
                         categoryEntities
                         , PageRequest.of(pageIndex - 1, elementNum, Sort.by("views").descending()));
 

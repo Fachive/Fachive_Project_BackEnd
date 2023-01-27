@@ -3,6 +3,7 @@ import javax.persistence.*;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 
+import com.facaieve.backend.entity.post.PortfolioEntity;
 import lombok.*;
 
 @Entity
@@ -28,4 +29,8 @@ public class CategoryEntity {
     @ManyToOne
     @JoinColumn(name = "funding_Entity_Id")
     FundingEntity fundingEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "portfolio_Entity_Id")
+    PortfolioEntity portfolioEntity;
 }

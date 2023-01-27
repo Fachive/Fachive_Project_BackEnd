@@ -13,6 +13,6 @@ import java.util.List;
 @Repository
 public interface FundingRepository extends JpaRepository<FundingEntity,Long> {
 
-    Page<FundingEntity> findAllByCategoryEntities(List<CategoryEntity> categoryEntity, Pageable pageable);
+    Page<FundingEntity> findFundingEntitiesByCategoryEntitiesIn(List<CategoryEntity> categoryEntities, Pageable pageable);
 
 }

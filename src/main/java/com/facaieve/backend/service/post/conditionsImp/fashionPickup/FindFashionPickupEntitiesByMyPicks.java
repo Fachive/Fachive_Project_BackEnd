@@ -23,7 +23,7 @@ public class FindFashionPickupEntitiesByMyPicks implements Condition<FashionPick
     public Page<FashionPickupEntity> conditionSort(List<CategoryEntity> categoryEntities, int pageIndex, int elementNum) {
 
         Page<FashionPickupEntity> fashionPickupEntities = fashionPickupRepository
-                .findAllByCategoryEntities(
+                .findFashionPickupEntitiesByCategoryEntitiesIn(
                         categoryEntities
                         , PageRequest.of(pageIndex - 1, elementNum, Sort.by("views").descending()));
 

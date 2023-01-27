@@ -1,7 +1,6 @@
-package com.facaieve.backend.service.post.conditionsImp.portfolio.fashionPickup;
+package com.facaieve.backend.service.post.conditionsImp.portfolio;
 
 import com.facaieve.backend.entity.etc.CategoryEntity;
-import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.repository.post.PortfolioRepository;
 import com.facaieve.backend.service.post.Condition;
@@ -22,7 +21,7 @@ public class FindPortfolioEntitiesByDueDate implements Condition<PortfolioEntity
     public Page<PortfolioEntity> conditionSort(List<CategoryEntity> categoryEntities, int pageIndex,  int elementNum) {
 
         return portfolioRepository
-                .findAllByCategoryEntities(
+                .findPortfolioEntitiesByCategoryEntitiesIn(
                         categoryEntities
                         , PageRequest.of(pageIndex - 1, elementNum, Sort.by("dueDate").descending()));
     }
