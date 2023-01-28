@@ -177,18 +177,6 @@ public class FashionPickupEntityController {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     //todo 추후에 서비스 로직을 전부다 fashionPickupService 레이어 하위에 생성해서 controller 단에서의 의존성을 줄일 예정
     @PostMapping(value = "/multipart/post")
     public ResponseEntity postFashionPickupEntityWithMultipart(
@@ -276,16 +264,6 @@ public class FashionPickupEntityController {
 
 
     }
-
-
-
-
-
-
-
-
-
-
 
 
     @Operation(summary = "패션픽업 게시글 등록 메서드 예제", description = "json 바디값을 통한 패션픽업 Post 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
