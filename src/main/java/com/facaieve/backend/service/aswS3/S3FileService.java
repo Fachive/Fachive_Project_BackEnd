@@ -111,7 +111,7 @@ public class S3FileService implements FileServiceCRUD{
         try {
 
             final File file = convertMultiPartFileToFile(multipartFile);
-            final String fileName = LocalDateTime.now() + "_" + file.getName();//change the file name
+            final String fileName = UUID.randomUUID() + "_" + file.getName();//change the file name
             LOG.info("Uploading file with name {}", fileName);
             final PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, fileName, file);
             amazonS3.putObject(putObjectRequest);//now send the data to S3
