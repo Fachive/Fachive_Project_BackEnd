@@ -23,15 +23,15 @@ public class PostImageEntity {
     @Column
     String fileURI;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "fashionPickupEntity_Id")
     FashionPickupEntity fashionPickupEntity;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "fundingEntity_Id")
     FundingEntity fundingEntity;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "portfolioEntity_Id")
     PortfolioEntity portfolioEntity;
 

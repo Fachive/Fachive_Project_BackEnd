@@ -32,7 +32,7 @@ public class FundingMainPageStubData {
     List<TagDTO.GetTagDTO> tags;
     Long targetPrice = 50000000L;//펀딩 목표금액
     Long fundedPrice = 30000000L;//펀딩된 현재 금액
-    int percentage = (int)(targetPrice/fundedPrice)*100;
+    Integer percentage = (int) (targetPrice/fundedPrice)*100;
 
     PostImageDto postImageDto = PostImageDto.builder()
             .fileName("fileName")

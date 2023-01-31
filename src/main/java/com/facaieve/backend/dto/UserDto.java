@@ -50,8 +50,8 @@ public class UserDto {
     @Schema(description = "회원 정보 수정 DTO")
     public static class PatchUserDto{
 
-        @Schema(description = "사용자 활동명")
-        long userEntityId;
+        @Schema(description = "사용자 식별자")
+        Long userEntityId;
         @Schema(description = "사용자 활동명")
         String displayName;
 
@@ -80,7 +80,7 @@ public class UserDto {
     @Schema(description = "회원 정보 요청 DTO")
     public static class GetUserDto{
         @Schema(description = "유저 식별ID")
-        long userEntityId;
+        Long userEntityId;
 
     }
 
@@ -92,7 +92,7 @@ public class UserDto {
     public static class DeleteUserDto{
 
         @Schema(description = "유저 식별ID")
-        long UserEntityId;
+        Long UserEntityId;
 
         @Schema(description = "확인용 비밀번호")
         String password;
@@ -108,7 +108,7 @@ public class UserDto {
     public static class FollowUserInfoResponseDto{
 
         @Schema(description = "팔로우 유저의 식별자")
-        long userEntityId;
+        Long userEntityId;
 
         @Schema(description = "유저 닉네임")
         @Column
@@ -119,9 +119,6 @@ public class UserDto {
 //        MultipartFile profileImage;
 
     }
-
-
-
 
     @Getter
     @Setter

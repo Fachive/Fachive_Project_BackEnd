@@ -2,15 +2,20 @@ package com.facaieve.backend.controller.post;
 
 
 import com.facaieve.backend.dto.image.PostImageDto;
-import com.facaieve.backend.dto.multi.ResponseDTO;
+import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.dto.post.FundingDto;
+import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.image.PostImageEntity;
+import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.mapper.post.PortfolioMapper;
 import com.facaieve.backend.dto.post.PortfolioDto;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.service.aswS3.S3FileService;
+import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.post.PortfolioEntityService;
+import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
+import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import com.facaieve.backend.stubDate.PortfolioMagePageStubData;
 import com.facaieve.backend.stubDate.PortfolioStubData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,22 +33,58 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
 @RequestMapping("/portfolio")
 @AllArgsConstructor
 public class PortfolioEntityController {
-
+    CategoryService categoryService;
     PortfolioEntityService portfolioEntityService;
     PortfolioMapper portfolioMapper;
     S3FileService s3FileService;
 
     static final PortfolioStubData portfolioStubData = new PortfolioStubData();
+    //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
+    //todo sortway mypick, update, duedate
 
-    @GetMapping("/mainPageGet")
+    @Operation(summary = "포트폴리오를 카테골와 정렬 조건에 따라서 반환하는 api", description = "Get 을 이용해서 정렬 방법과 카테고리별로 get 기능")//대상 api의 대한 설명을 작성하는 어노테이션
+    @ApiResponses({
+            @ApiResponse(responseCode = "200" ,description = "카테고리와 정렬 방볍에 따라서 정상적으로 가져옴"
+                    , content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
+
+    @GetMapping("/mainportfolio")//test pass
+    public ResponseEntity getPortfolioEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String categoryName,
+                                                                      @RequestParam(required = false, defaultValue = "myPick") String sortWay,
+                                                                      @RequestParam(required = false, defaultValue = "1")Integer pageIndex){
+        CategoryEntity categoryEntity = categoryService
+                .getCategory(CategoryEntity.builder().categoryName(categoryName).build());
+
+        portfolioEntityService.setCondition(sortWay);
+        Page<PortfolioEntity> portfolioEntityPage =
+                portfolioEntityService.findPortfolioEntitiesByCondition(categoryEntity, pageIndex,30);
+
+        List<PortfolioDto.ResponsePortfolioIncludeURI> portfolioEntities = portfolioEntityPage.stream()
+                .map(portfolioEntity -> portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolioEntity))
+                .collect(Collectors.toList());
+
+        Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI> multi_responseDTO =
+                                                        new Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI>(portfolioEntities, portfolioEntityPage);
+
+        return new ResponseEntity(multi_responseDTO,HttpStatus.OK);
+
+    }
+
+
+//최신순, 추천순
+    @GetMapping("/mainPageGet")//test pass
     public ResponseEntity getPortfolioMainPage(@RequestParam(required = false, defaultValue = "30") int want){
-        ResponseDTO<PortfolioMagePageStubData> responseDTO = new ResponseDTO<>();
+        Multi_ResponseDTO<PortfolioMagePageStubData> responseDTO = new Multi_ResponseDTO<>();
         List<PortfolioMagePageStubData> portfolioMagePageStubDataList = new ArrayList<>();
         for(int i = 0; i< want; i++){
             portfolioMagePageStubDataList.add(new PortfolioMagePageStubData());
@@ -51,12 +93,22 @@ public class PortfolioEntityController {
         return new ResponseEntity(responseDTO,HttpStatus.OK);
     }
 
-    @PostMapping("/multipartPost")
+
+    private CategoryEntity getCategoryFromService(String categoryName){
+        return categoryService.getCategory(CategoryEntity
+                .builder().categoryName(categoryName).build());
+    }
+
+    @PostMapping("/multipartPost")//test pass
     public ResponseEntity postPortfolioEntity(@ModelAttribute PortfolioDto.RequestPortfolioIncludeMultiPartFiles
                                                           requestPortfolioIncludeMultiPartFiles){
 
         List<MultipartFile> multipartFileList = requestPortfolioIncludeMultiPartFiles.getMultipartFileList();
         List<PostImageDto> postImageDtoList = s3FileService.uploadMultiFileList(multipartFileList);
+
+        CategoryEntity categoryEntity = getCategoryFromService(requestPortfolioIncludeMultiPartFiles
+                                                                                        .getPostCategoryDto()
+                                                                                        .getCategoryName());
 
         PortfolioDto.ResponsePortfolioIncludeURI responsePortfolioIncludeURI =
                 PortfolioDto.ResponsePortfolioIncludeURI.builder()
@@ -71,6 +123,9 @@ public class PortfolioEntityController {
                 .responsePortfolioIncludeURIToPortfolioEntity(responsePortfolioIncludeURI);
         List<PostImageEntity> postImageEntities = portfolio.getPostImageEntities();
 
+        portfolio.setCategoryEntity(categoryEntity);//category 도 함께 저장함.
+        categoryEntity.getPortfolioEntities().add(portfolio);
+
         //context 로 foregin key 저장하기 위해서 사용함
         for(PostImageEntity postImageEntity: postImageEntities){
             postImageEntity.setPortfolioEntity(portfolio);
@@ -81,6 +136,9 @@ public class PortfolioEntityController {
                         portfolioEntityService.createPortfolioEntity(portfolio))
                 ,HttpStatus.OK);
     }
+
+
+
 
     // 서비스 레이어 구현이 안되어 Stub 데이터로 대체(추후 변경 예정)
 

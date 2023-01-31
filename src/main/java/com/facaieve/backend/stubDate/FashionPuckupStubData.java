@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FashionPuckupStubData extends BaseEntity {
 
-    long fashionPickupEntityId = 100;
+    Long fashionPickupEntityId = Long.valueOf(100);
 
     String title = "패션 픽업 제목 테스트" ;
 

@@ -37,6 +37,10 @@ public enum ExceptionCode {
     REQUESTING_FILE_ALREADY_EXIST(CONFLICT,"해당 데이터가 이미 존재합니다");
 
 
+
+    ;
+
+
     private final HttpStatus httpStatus;
     private final String message;
 }

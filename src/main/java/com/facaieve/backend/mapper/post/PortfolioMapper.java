@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring"
         ,uses ={ PostImageMapper.class})
-public interface PortfolioMapper {
+public interface PortfolioMapper{
     // 포트폴리오 스텁데이터 -> 엔티티로 변환
     PortfolioEntity portfolioDtoToFashionPickupStubData(PortfolioStubData portfolioStubData);
 
@@ -31,6 +31,7 @@ public interface PortfolioMapper {
             PortfolioDto.ResponsePortfolioIncludeURI responsePortfolioIncludeURI);
 
     @Mapping(source = "postImageEntities", target = "postImageDtoList")
+    @Mapping(source = "categoryEntity", target = "responseCategoryDTO")
     PortfolioDto.ResponsePortfolioIncludeURI portfolioEntityToResponsePortfolioIncludeURI(PortfolioEntity portfolio);
 
 

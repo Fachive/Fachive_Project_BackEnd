@@ -73,6 +73,7 @@ public class S3FileService implements FileServiceCRUD{
         List<PostImageDto> savedFileNamed = new ArrayList<>();
 
         for(MultipartFile multipartFile: multipartFiles){
+            System.out.println("===================================================저장중");
             savedFileNamed.add(uploadMultiFile(multipartFile));
         }
         return savedFileNamed;
@@ -108,14 +109,17 @@ public class S3FileService implements FileServiceCRUD{
     @Async
     public PostImageDto uploadMultiFile(final MultipartFile multipartFile) {
 
+//        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)                .withCannedAcl(CannedAccessControlList.PublicRead));
+
         try {
 
             final File file = convertMultiPartFileToFile(multipartFile);
             final String fileName = UUID.randomUUID() + "_" + file.getName();//change the file name
             LOG.info("Uploading file with name {}", fileName);
             final PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, fileName, file);
-            amazonS3.putObject(putObjectRequest);//now send the data to S3
+            PutObjectResult putObjectResult = amazonS3.putObject(putObjectRequest);//now send the data to S3
             Files.delete(file.toPath()); // Remove the file locally created in the project folder
+
             String fileURI = findImgUrl(fileName);
             return PostImageDto.builder().fileName(fileName).fileURI(fileURI).build();
 

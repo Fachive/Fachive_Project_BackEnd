@@ -1,7 +1,8 @@
 
-package com.facaieve.backend.entity.user.user;
+package com.facaieve.backend.mapper.user;
 import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.entity.user.UserEntity;
+import com.facaieve.backend.entity.user.WithdrawalEntity;
 import com.facaieve.backend.stubDate.UserStubData;
 import org.mapstruct.Mapper;
 
@@ -18,6 +19,11 @@ public interface UserMapper {
 
     UserEntity userDeleteDtoToUserEntity(UserDto.DeleteUserDto deleteUserDto);
 
+    WithdrawalEntity userEntityToWithdrawlENtity(UserEntity userEntity);
+
     UserDto.ResponseUserDto userEntityToResponseDto(UserEntity userEntity);
+
+
+
 
 }

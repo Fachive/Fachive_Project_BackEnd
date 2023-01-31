@@ -1,4 +1,4 @@
-package com.facaieve.backend.entity.user.user;
+package com.facaieve.backend.entity.user;
 
 
 import com.facaieve.backend.entity.basetime.BaseEntity;
@@ -18,7 +18,8 @@ public class FollowEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long followEntityId;
+    @Schema(description = "팔로우 객체 식별자")
+    Long followEntityId;
 
 
     @ManyToOne

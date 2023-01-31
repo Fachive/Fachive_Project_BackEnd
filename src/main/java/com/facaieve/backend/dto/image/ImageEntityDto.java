@@ -19,8 +19,8 @@ public class ImageEntityDto {
     @NoArgsConstructor//필수
     @Builder
     public static class ResponseDto{
-        long imageEntityId;
+        Long imageEntityId;
 
-        long userEntityId;
+        Long userEntityId;
     }
 }

@@ -2,6 +2,7 @@ package com.facaieve.backend.service.image;
 
 import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.exception.BusinessLogicException;
+import com.facaieve.backend.exception.ExceptionCode;
 import com.facaieve.backend.repository.image.PostImageRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
