@@ -31,6 +31,7 @@ public interface PortfolioMapper{
             PortfolioDto.ResponsePortfolioIncludeURI responsePortfolioIncludeURI);
 
     @Mapping(source = "postImageEntities", target = "postImageDtoList")
+    @Mapping(source = "categoryEntity", target = "responseCategoryDTO")
     PortfolioDto.ResponsePortfolioIncludeURI portfolioEntityToResponsePortfolioIncludeURI(PortfolioEntity portfolio);
 
 

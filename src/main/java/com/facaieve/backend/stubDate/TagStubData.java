@@ -17,7 +17,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class TagStubData {
 
-    long tagId = 1L;
+    Long tagId = 1L;
 
     String tagName = "생애 첫 태그!";
 

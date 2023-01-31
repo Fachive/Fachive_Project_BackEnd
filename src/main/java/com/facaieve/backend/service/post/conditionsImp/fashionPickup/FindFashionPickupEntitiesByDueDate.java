@@ -6,23 +6,27 @@ import com.facaieve.backend.repository.post.FashionPickupRepository;
 import com.facaieve.backend.service.post.Condition;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 @AllArgsConstructor
-@RequiredArgsConstructor
+
+
 public class FindFashionPickupEntitiesByDueDate implements Condition<FashionPickupEntity, CategoryEntity> {
 
     FashionPickupRepository fashionPickupRepository;
 
     @Override
-    public Page<FashionPickupEntity> conditionSort(List<CategoryEntity> categoryEntities, int pageIndex,  int elementNum) {
+    public Page<FashionPickupEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
 
-        return fashionPickupRepository
-                .findFashionPickupEntitiesByCategoryEntitiesIn(
-                        categoryEntities
+        return fashionPickupRepository.findFashionPickupEntitiesByCategoryEntity(categoryEntity
                         , PageRequest.of(pageIndex - 1, elementNum, Sort.by("dueDate").descending()));
     }
 

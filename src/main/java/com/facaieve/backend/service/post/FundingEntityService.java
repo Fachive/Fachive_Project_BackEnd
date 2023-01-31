@@ -4,9 +4,13 @@ import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.repository.post.FundingRepository;
+import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
+import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -19,16 +23,28 @@ import static java.rmi.server.LogStream.log;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 @Setter
+@RequiredArgsConstructor
 public class FundingEntityService {
-
+    @Autowired
     FundingRepository fundingRepository;
 
-    Condition condition;//정렬 메소드 가지고 있는 객체
+    Condition condition = new FindFundingEntitiesByDueDate(fundingRepository);;//정렬 메소드 가지고 있는 객체
 
-    public Page<FundingEntity>  findFundingEntitiesByCondition(List<CategoryEntity> categoryEntities, int pageIndex, int elementNum){
-        return condition.conditionSort(categoryEntities,pageIndex,elementNum);
+    public void setCondition(String sortWay) {
+
+        switch (sortWay){
+            case "myPick" :  this.condition= new FindFundingEntitiesByMyPicks(fundingRepository);
+                break;
+            case "update" :  this.condition= new FindFundingEntitiesByDueDate(fundingRepository);
+                break;
+            default :  this.condition = new FindFundingEntitiesByDueDate(fundingRepository);
+                break;
+        }
+    }
+
+    public Page<FundingEntity>  findFundingEntitiesByCondition(CategoryEntity categoryEntity, int pageIndex, int elementNum){
+        return condition.conditionSort(categoryEntity,pageIndex,elementNum);
     }
 
     public FundingEntity createFundingEntity(FundingEntity fundingEntity){// 펀딩 게시글 작성
@@ -51,7 +67,7 @@ public class FundingEntityService {
 
     }
 
-    public FundingEntity findFundingEntity(long foundingFundingEntityId) {// 펀딩 게시글 호출
+    public FundingEntity findFundingEntity(Long foundingFundingEntityId) {// 펀딩 게시글 호출
          return fundingRepository.findById(foundingFundingEntityId).orElseThrow();
     }
 
@@ -65,7 +81,7 @@ public class FundingEntityService {
 //        return fundingRepository.findAll(PageRequest.of(pageIndex, 30, Sort.by("myPick").descending()));// 마이픽 매핑 관련 에러 발생 가능능
 //   }
 
-    public void removeFundingEntity(long deletingFundingEntityId) {// 펀딩 게시글 삭제
+    public void removeFundingEntity(Long deletingFundingEntityId) {// 펀딩 게시글 삭제
         log.info("펀딩 게시물이 삭제되었습니다.");
         fundingRepository.deleteById(deletingFundingEntityId);
     }

@@ -33,10 +33,10 @@ public class PortfolioEntity extends BaseEntity {
     String body;
     @Column
     @Schema(description = "포트폴리오 객체 조회수")
-    int views;
+    Integer views;
 
     @Schema(description ="추천수")
-    int myPicks;
+    Integer myPicks;
 
 //    @Column
 //    @Schema(description = "포트폴리오 이미지 목록(S3 버킷 uri)")
@@ -55,10 +55,9 @@ public class PortfolioEntity extends BaseEntity {
     @Schema(description = "포트폴리오에 달린 태그 객체 목록")
     private List<TagEntity> tagEntities = new ArrayList<TagEntity>();  // 포트폴리오 - 카테고리 매핑
 
-    @OneToMany(mappedBy = "fundingEntity",fetch = FetchType.LAZY)
-    @Schema(description = "패션 픽업에 카테고리 객체 목록")
-    private List<CategoryEntity> categoryEntities = new ArrayList<CategoryEntity>();  // 펀딩 - 카테코리 매핑
-
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "categoryEntity")
+    CategoryEntity categoryEntity;
 
 
     @ManyToOne

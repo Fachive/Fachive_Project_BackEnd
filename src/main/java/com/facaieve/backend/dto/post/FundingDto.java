@@ -1,6 +1,7 @@
 package com.facaieve.backend.dto.post;
 
 
+import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.image.PostImageDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -27,14 +28,23 @@ public class FundingDto {
         @Schema(description ="펀딩 본문")
         String body;
 
+        @Schema(description = "펀딩 객체 조회수")
+        Integer views;
+
+        @Schema(description ="추천수")
+        Integer myPicks;
+
         @Schema(description ="펀딩 목표액")
         Long targetPrice;//펀딩 목표금액
 
         @Schema(description ="펀딩 모금액")
         Long fundedPrice;//펀딩된 현재 금액
 
+        @Schema(description = "카테고리")
+        CategoryDTO.ResponseCategoryDTO responseCategoryDTO;
+
         @Schema(description="URI for send to front end")
-        List<PostImageDto>  multiPartFileList = new ArrayList<>();
+        List<PostImageDto>  postImageDtoList = new ArrayList<>();
     }
 
 
@@ -52,14 +62,23 @@ public class FundingDto {
         @Schema(description ="펀딩 본문")
         String body;
 
+        @Schema(description = "펀딩 객체 조회수")
+        Integer views;
+
+        @Schema(description ="추천수")
+        Integer myPicks;
+
         @Schema(description ="펀딩 목표액")
         Long targetPrice;//펀딩 목표금액
 
         @Schema(description ="펀딩 모금액")
         Long fundedPrice;//펀딩된 현재 금액
 
+        @Schema(description = "카테고리")
+        CategoryDTO.PostCategoryDto postCategoryDto;
+
         @Schema(description = "사진 URI")
-        List<MultipartFile> multiPartFiles = new ArrayList<>();
+        List<MultipartFile> multipartFileList = new ArrayList<>();
     }
 
 
@@ -70,7 +89,7 @@ public class FundingDto {
     public static class ResponsePortfolioDto{
 
         @Schema(description ="포트폴리오 식별자")
-        long portfolioEntityId;
+        Long portfolioEntityId;
 
         @Schema(description ="포트폴리오 제목")
         String title;
@@ -79,7 +98,7 @@ public class FundingDto {
         String body;
 
         @Schema(description ="포트폴리오 조회수")
-        int views;
+        Integer views;
     }
 
 
@@ -132,7 +151,7 @@ public class FundingDto {
     public static class GetFundingDto{
 
         @Schema(description ="펀딩 게시글 식별자")
-        long fundingEntityId;
+        Long fundingEntityId;
 
     }
     @Getter
@@ -142,7 +161,7 @@ public class FundingDto {
     public static class DeleteFundingDto{
 
         @Schema(description ="펀딩 게시글 식별자")
-        long fundingEntityId;
+        Long fundingEntityId;
 
     }
     @Getter

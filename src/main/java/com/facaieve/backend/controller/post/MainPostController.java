@@ -9,6 +9,7 @@ import com.facaieve.backend.mapper.post.FashionPickupMapper;
 import com.facaieve.backend.mapper.post.FundingMapper;
 import com.facaieve.backend.mapper.post.PortfolioMapper;
 import com.facaieve.backend.mapper.post.PostMapper;
+import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.post.FashionPickupEntityService;
 import com.facaieve.backend.service.post.FundingEntityService;
 import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
@@ -39,24 +40,25 @@ public class MainPostController {
     FashionPickupMapper fashionPickupMapper;
     FundingMapper fundingMapper;
     PortfolioMapper portfolioMapper;
+    CategoryService categoryService;
 
     PostMapper postMapper;
 
     @GetMapping("/get/ten")
     public ResponseEntity get10Each(){
 
-        List<CategoryEntity> categoryEntities = new ArrayList<>();
-        categoryEntities.add(CategoryEntity.builder()
-                        .categoryName("total")
-                        .build());
+        CategoryEntity categoryEntity = categoryService.getCategory(CategoryEntity.builder().categoryName("suit").build());
 
-        fashionPickupEntityService.setCondition(new FindFashionPickupEntitiesByDueDate());
-        fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());
-        fundingEntityService.setCondition(new FindPortfolioEntitiesByDueDate());
+        fashionPickupEntityService.setCondition("views");
+        fundingEntityService.setCondition("views");
+        portfolioEntityService.setCondition("views");
 
-        Page<FashionPickupEntity> fashionPickupEntityPage = fashionPickupEntityService.findFashionPickupEntitiesByCondition(categoryEntities, 1,10);
-        Page<FundingEntity> fundingEntityPage = fundingEntityService.findFundingEntitiesByCondition(categoryEntities, 1,10);
-        Page<PortfolioEntity> portfolioEntityPage = portfolioEntityService.findPortfolioEntitiesByCondition(categoryEntities, 1,10);
+        Page<FashionPickupEntity> fashionPickupEntityPage = fashionPickupEntityService
+                .findFashionPickupEntitiesByCondition(categoryEntity, 1,10);
+        Page<FundingEntity> fundingEntityPage = fundingEntityService
+                .findFundingEntitiesByCondition(categoryEntity, 1,10);
+        Page<PortfolioEntity> portfolioEntityPage = portfolioEntityService
+                .findPortfolioEntitiesByCondition(categoryEntity, 1,10);
 
         List<Object> postEntities = new ArrayList<>();//Object -> 새로운 dto 인터페이스로 추상화 필요
 

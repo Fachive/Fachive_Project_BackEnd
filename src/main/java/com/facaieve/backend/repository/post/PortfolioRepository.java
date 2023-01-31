@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface PortfolioRepository extends JpaRepository<PortfolioEntity,Long> {
-    Page<PortfolioEntity> findPortfolioEntitiesByCategoryEntitiesIn(List<CategoryEntity> categoryEntities, Pageable dueDate);
+    Page<PortfolioEntity> findPortfolioEntitiesByCategoryEntity(CategoryEntity categoryEntity, Pageable dueDate);
 
 }

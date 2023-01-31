@@ -13,17 +13,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-@RequiredArgsConstructor
-@Service
+
+@AllArgsConstructor
 
 public class FindFundingEntitiesByViews implements Condition<FundingEntity, CategoryEntity> {
 
-    @Autowired
     FundingRepository fundingRepository;
     @Override
-    public Page<FundingEntity> conditionSort(List<CategoryEntity> categoryEntities, int pageIndex, int elementNum) {
+    public Page<FundingEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
         return  fundingRepository
-                .findFundingEntitiesByCategoryEntitiesIn( categoryEntities,
+                .findFundingEntitiesByCategoryEntity( categoryEntity,
                         PageRequest.of(pageIndex-1, elementNum, Sort.by("views").descending()));
     }
 }

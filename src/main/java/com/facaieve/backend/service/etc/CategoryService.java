@@ -41,11 +41,11 @@ public class CategoryService {
     }
 
     public CategoryEntity getCategory(CategoryEntity categoryEntity){
-        if(categoryRepository.existsByCategoryName(categoryEntity.getCategoryName())){
+//        if(categoryRepository.existsByCategoryName(categoryEntity.getCategoryName())){
             return categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName());
-        }else{
-            throw new RuntimeException("there is no kind of category name");
-        }
+//        }else{
+//            throw new RuntimeException("there is no kind of category name");
+//        }
     }
 
     public void deleteCategoryEntity(CategoryEntity categoryEntity){

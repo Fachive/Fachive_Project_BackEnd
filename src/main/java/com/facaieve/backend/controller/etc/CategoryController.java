@@ -54,13 +54,13 @@ public class CategoryController {
     })
     @PostMapping("/post")//test pass
     public ResponseEntity postCategory(@RequestBody CategoryDTO.PostCategoryDto postCategoryDto){
-//        CategoryEntity postingCategoryEntity = categoryMapper.postCategoryDtoToCategoryEntity(postCategoryDto);
-//        CategoryEntity postedCategoryEntity= categoryService.createCategoryEntity(postingCategoryEntity);
-//
-//        return new ResponseEntity(categoryMapper.categoryEntityToResponseCategoryDto(postedCategoryEntity), HttpStatus.CREATED);
-//
-        CategoryStubData categoryStubData = new CategoryStubData();
-        return new ResponseEntity(categoryMapper.categoryStubDataToCategoryEntity(categoryStubData), HttpStatus.OK);
+        CategoryEntity postingCategoryEntity = categoryMapper.postCategoryDtoToCategoryEntity(postCategoryDto);
+        CategoryEntity postedCategoryEntity= categoryService.createCategoryEntity(postingCategoryEntity);
+
+        return new ResponseEntity(categoryMapper.categoryEntityToResponseCategoryDto(postedCategoryEntity), HttpStatus.CREATED);
+
+//        CategoryStubData categoryStubData = new CategoryStubData();
+//        return new ResponseEntity(categoryMapper.categoryStubDataToCategoryEntity(categoryStubData), HttpStatus.OK);
     }
 
     @Operation(summary = "카테고리 수정 메서드 예제", description = "json 바디값을 통한 카테고리 GET 메서드")//대상 api의 대한 설명을 작성하는 어노테이션

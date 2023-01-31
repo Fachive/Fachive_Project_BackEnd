@@ -49,29 +49,32 @@ public class PortfolioEntityController {
     //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
     //todo sortway mypick, update, duedate
 
-    @GetMapping("/mainportfolio")
+    @Operation(summary = "포트폴리오를 카테골와 정렬 조건에 따라서 반환하는 api", description = "Get 을 이용해서 정렬 방법과 카테고리별로 get 기능")//대상 api의 대한 설명을 작성하는 어노테이션
+    @ApiResponses({
+            @ApiResponse(responseCode = "200" ,description = "카테고리와 정렬 방볍에 따라서 정상적으로 가져옴"
+                    , content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
+
+    @GetMapping("/mainportfolio")//test pass
     public ResponseEntity getPortfolioEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String categoryName,
                                                                       @RequestParam(required = false, defaultValue = "myPick") String sortWay,
-                                                                      @RequestParam(required = false, defaultValue = "1")int pageIndex){
-        List<CategoryEntity> categoryEntities = new ArrayList<>();
-        categoryEntities.add(categoryService
-                .getCategory(CategoryEntity.builder()
-                        .categoryName(categoryName)
-                        .build()));
+                                                                      @RequestParam(required = false, defaultValue = "1")Integer pageIndex){
+        CategoryEntity categoryEntity = categoryService
+                .getCategory(CategoryEntity.builder().categoryName(categoryName).build());
 
-        switch (sortWay){
-            case "myPick" : portfolioEntityService.setCondition(new FindFundingEntitiesByMyPicks());
-            case "update" : portfolioEntityService.setCondition(new FindFundingEntitiesByDueDate());
-            default : portfolioEntityService.setCondition(new FindFundingEntitiesByDueDate());
-        }
+        portfolioEntityService.setCondition(sortWay);
+        Page<PortfolioEntity> portfolioEntityPage =
+                portfolioEntityService.findPortfolioEntitiesByCondition(categoryEntity, pageIndex,30);
 
-        Page<PortfolioEntity> portfolioEntityPage = portfolioEntityService.findPortfolioEntitiesByCondition(categoryEntities, pageIndex,30);
         List<PortfolioDto.ResponsePortfolioIncludeURI> portfolioEntities = portfolioEntityPage.stream()
                 .map(portfolioEntity -> portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolioEntity))
                 .collect(Collectors.toList());
 
         Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI> multi_responseDTO =
-                new Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI>(portfolioEntities, portfolioEntityPage);
+                                                        new Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI>(portfolioEntities, portfolioEntityPage);
 
         return new ResponseEntity(multi_responseDTO,HttpStatus.OK);
 
@@ -79,7 +82,7 @@ public class PortfolioEntityController {
 
 
 //최신순, 추천순
-    @GetMapping("/mainPageGet")
+    @GetMapping("/mainPageGet")//test pass
     public ResponseEntity getPortfolioMainPage(@RequestParam(required = false, defaultValue = "30") int want){
         Multi_ResponseDTO<PortfolioMagePageStubData> responseDTO = new Multi_ResponseDTO<>();
         List<PortfolioMagePageStubData> portfolioMagePageStubDataList = new ArrayList<>();
@@ -91,14 +94,21 @@ public class PortfolioEntityController {
     }
 
 
+    private CategoryEntity getCategoryFromService(String categoryName){
+        return categoryService.getCategory(CategoryEntity
+                .builder().categoryName(categoryName).build());
+    }
 
-
-    @PostMapping("/multipartPost")
+    @PostMapping("/multipartPost")//test pass
     public ResponseEntity postPortfolioEntity(@ModelAttribute PortfolioDto.RequestPortfolioIncludeMultiPartFiles
                                                           requestPortfolioIncludeMultiPartFiles){
 
         List<MultipartFile> multipartFileList = requestPortfolioIncludeMultiPartFiles.getMultipartFileList();
         List<PostImageDto> postImageDtoList = s3FileService.uploadMultiFileList(multipartFileList);
+
+        CategoryEntity categoryEntity = getCategoryFromService(requestPortfolioIncludeMultiPartFiles
+                                                                                        .getPostCategoryDto()
+                                                                                        .getCategoryName());
 
         PortfolioDto.ResponsePortfolioIncludeURI responsePortfolioIncludeURI =
                 PortfolioDto.ResponsePortfolioIncludeURI.builder()
@@ -113,6 +123,9 @@ public class PortfolioEntityController {
                 .responsePortfolioIncludeURIToPortfolioEntity(responsePortfolioIncludeURI);
         List<PostImageEntity> postImageEntities = portfolio.getPostImageEntities();
 
+        portfolio.setCategoryEntity(categoryEntity);//category 도 함께 저장함.
+        categoryEntity.getPortfolioEntities().add(portfolio);
+
         //context 로 foregin key 저장하기 위해서 사용함
         for(PostImageEntity postImageEntity: postImageEntities){
             postImageEntity.setPortfolioEntity(portfolio);
@@ -123,6 +136,9 @@ public class PortfolioEntityController {
                         portfolioEntityService.createPortfolioEntity(portfolio))
                 ,HttpStatus.OK);
     }
+
+
+
 
     // 서비스 레이어 구현이 안되어 Stub 데이터로 대체(추후 변경 예정)
 

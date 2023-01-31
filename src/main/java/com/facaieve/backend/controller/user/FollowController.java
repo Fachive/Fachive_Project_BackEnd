@@ -16,7 +16,7 @@ public class FollowController {
     FollowService followService;
 
     @PostMapping("/post")
-    public ResponseEntity createFollow(@PathVariable("id") long myUserId, long followedUserId){
+    public ResponseEntity createFollow(@PathVariable("id") Long myUserId, Long followedUserId){
 
         followService.saveFollow(myUserId, followedUserId);
         log.info("팔로우 저장");
@@ -24,7 +24,7 @@ public class FollowController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity deleteFollow(@PathVariable("id") long myUserId, long followedUserId){
+    public ResponseEntity deleteFollow(@PathVariable("id") Long myUserId, Long followedUserId){
 
         followService.unFollow(myUserId, followedUserId);
         log.info("언팔로우");
