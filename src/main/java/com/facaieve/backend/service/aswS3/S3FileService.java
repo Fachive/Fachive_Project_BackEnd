@@ -3,6 +3,7 @@ package com.facaieve.backend.service.aswS3;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.waiters.AmazonS3Waiters;
 import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.exception.BusinessLogicException;
 import com.facaieve.backend.exception.ExceptionCode;
@@ -40,11 +41,12 @@ public class S3FileService implements FileServiceCRUD{
     //multiPartFile to java file obj
     private File convertMultiPartFileToFile(final MultipartFile multipartFile) throws IOException {
 
+
         final File file = new File(multipartFile.getOriginalFilename());//application context file name return
         file.setWritable(true); //쓰기가능설정
         file.setReadable(true);	//읽기가능설정
 
-        try (final FileOutputStream outputStream = new FileOutputStream(file)) {
+        try (final FileOutputStream outputStream = new FileOutputStream(file,true)) {
             outputStream.write(multipartFile.getBytes());
         } catch (IOException e) {
             LOG.error("Error {} occurred while converting the multipart file", e.getLocalizedMessage());
@@ -120,13 +122,18 @@ public class S3FileService implements FileServiceCRUD{
 //        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)                .withCannedAcl(CannedAccessControlList.PublicRead));
 
         try {
-
             final File file = convertMultiPartFileToFile(multipartFile);
             final String fileName = UUID.randomUUID() + "_" + file.getName();//change the file name
             LOG.info("Uploading file with name {}", fileName);
             final PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, fileName, file);
-            putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+            putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);//configure upload file permission
+
             PutObjectResult putObjectResult = amazonS3.putObject(putObjectRequest);//now send the data to S3
+
+            AmazonS3Waiters waiter = amazonS3.waiters();
+
+
+            System.out.println("File " + fileName + " was uploaded.");
             Files.delete(file.toPath()); // Remove the file locally created in the project folder
 
             String fileURI = findImgUrl(fileName);
