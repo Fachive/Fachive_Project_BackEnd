@@ -36,6 +36,8 @@ public class S3FileService implements FileServiceCRUD{
     private File convertMultiPartFileToFile(final MultipartFile multipartFile) {
 
         final File file = new File(multipartFile.getOriginalFilename());//application context file name return
+        file.setWritable(true); //쓰기가능설정
+        file.setReadable(true);	//읽기가능설정
         try (final FileOutputStream outputStream = new FileOutputStream(file)) {
             outputStream.write(multipartFile.getBytes());
         } catch (IOException e) {
