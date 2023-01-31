@@ -39,22 +39,22 @@ public class S3FileService implements FileServiceCRUD{
 
 
 
-    //multiPartFile to java file obj
-    private File convertMultiPartFileToFile(final MultipartFile multipartFile) throws IOException {
-
-        //todo jar 배포시 발생하는 오류에 대해서 블로그에 작성할것
-        final File file = new File(uploadImagePath,multipartFile.getOriginalFilename());//application context file name return
-        file.setWritable(true); //쓰기가능설정
-        file.setReadable(true);	//읽기가능설정
-
-        try (final FileOutputStream outputStream = new FileOutputStream(file,true)) {//todo true 로 설정해서 해당 경로로 파일 생성되게 만듦
-            outputStream.write(multipartFile.getBytes());
-        } catch (IOException e) {
-            LOG.error("Error {} occurred while converting the multipart file", e.getLocalizedMessage());
-        }
-
-        return file;
-    }
+//    //multiPartFile to java file obj
+//    private File convertMultiPartFileToFile(final MultipartFile multipartFile) throws IOException {
+//
+//        //todo jar 배포시 발생하는 오류에 대해서 블로그에 작성할것
+//        final File file = new File(uploadImagePath,multipartFile.getOriginalFilename());//application context file name return
+//        file.setWritable(true); //쓰기가능설정
+//        file.setReadable(true);	//읽기가능설정
+//
+//        try (final FileOutputStream outputStream = new FileOutputStream(file,true)) {//todo true 로 설정해서 해당 경로로 파일 생성되게 만듦
+//            outputStream.write(multipartFile.getBytes());
+//        } catch (IOException e) {
+//            LOG.error("Error {} occurred while converting the multipart file", e.getLocalizedMessage());
+//        }
+//
+//        return file;
+//    }
 
     // @Async annotation ensures that the method is executed in a different thread
     // and get the S3 obj with file's name
@@ -111,7 +111,7 @@ public class S3FileService implements FileServiceCRUD{
 
     @Override
     public void changeMultiFileListAtS3(List<String> multiParFilesURIes, List<MultipartFile> multipartFiles) {
-
+        //new..
 
     }
 
@@ -123,22 +123,20 @@ public class S3FileService implements FileServiceCRUD{
 //        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)                .withCannedAcl(CannedAccessControlList.PublicRead));
 
         try {
-            final File file = convertMultiPartFileToFile(multipartFile);
-            final String fileName = UUID.randomUUID() + "_" + file.getName();//change the file name
+//            final File file = convertMultiPartFileToFile(multipartFile);
+            final String fileName = UUID.randomUUID() + "_" + multipartFile.getName();//change the file name
             LOG.info("Uploading file with name {}", fileName);
-            final PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, fileName, file);
+
+            InputStream inputStream = new BufferedInputStream(multipartFile.getInputStream());
+            final PutObjectRequest putObjectRequest =
+                    new PutObjectRequest(s3BucketName, fileName, inputStream,null);
             putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);//configure upload file permission
-
             PutObjectResult putObjectResult = amazonS3.putObject(putObjectRequest);//now send the data to S3
-
-            AmazonS3Waiters waiter = amazonS3.waiters();
-
-
             System.out.println("File " + fileName + " was uploaded.");
-            Files.delete(file.toPath()); // Remove the file locally created in the project folder
-
+//            Files.delete(file.toPath()); // Remove the file locally created in the project folder
             String fileURI = findImgUrl(fileName);
-            return PostImageDto.builder().fileName(fileName).fileURI(fileURI).build();
+            inputStream.close();//저장한 스트림 닫음
+           return PostImageDto.builder().fileName(fileName).fileURI(fileURI).build();
 
 
 
