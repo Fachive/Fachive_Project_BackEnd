@@ -111,7 +111,7 @@ public class S3FileService implements FileServiceCRUD{
 
     @Override
     public void changeMultiFileListAtS3(List<String> multiParFilesURIes, List<MultipartFile> multipartFiles) {
-
+        //new..
 
     }
 
@@ -136,7 +136,7 @@ public class S3FileService implements FileServiceCRUD{
 //            Files.delete(file.toPath()); // Remove the file locally created in the project folder
             String fileURI = findImgUrl(fileName);
             inputStream.close();//저장한 스트림 닫음
-            return PostImageDto.builder().fileName(fileName).fileURI(fileURI).build();
+           return PostImageDto.builder().fileName(fileName).fileURI(fileURI).build();
 
 
 
