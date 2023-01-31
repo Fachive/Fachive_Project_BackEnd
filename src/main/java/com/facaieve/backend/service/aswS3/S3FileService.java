@@ -6,10 +6,12 @@ import com.amazonaws.services.s3.model.*;
 import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.exception.BusinessLogicException;
 import com.facaieve.backend.exception.ExceptionCode;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -31,13 +34,16 @@ public class S3FileService implements FileServiceCRUD{
 
     @Value("${cloud.aws.s3.bucket}")
     private String s3BucketName;
+    @Value("${custom.path.upload-images}")
+    private String uploadImagePath;
 
     //multiPartFile to java file obj
-    private File convertMultiPartFileToFile(final MultipartFile multipartFile) {
+    private File convertMultiPartFileToFile(final MultipartFile multipartFile) throws IOException {
 
         final File file = new File(multipartFile.getOriginalFilename());//application context file name return
         file.setWritable(true); //쓰기가능설정
         file.setReadable(true);	//읽기가능설정
+
         try (final FileOutputStream outputStream = new FileOutputStream(file)) {
             outputStream.write(multipartFile.getBytes());
         } catch (IOException e) {
@@ -119,6 +125,7 @@ public class S3FileService implements FileServiceCRUD{
             final String fileName = UUID.randomUUID() + "_" + file.getName();//change the file name
             LOG.info("Uploading file with name {}", fileName);
             final PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, fileName, file);
+            putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
             PutObjectResult putObjectResult = amazonS3.putObject(putObjectRequest);//now send the data to S3
             Files.delete(file.toPath()); // Remove the file locally created in the project folder
 
