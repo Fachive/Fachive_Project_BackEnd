@@ -149,7 +149,7 @@ public class FashionPickupEntityController {
 
     //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
     //todo sortway mypick, update, duedate
-    @GetMapping("/mainfasionpickup")
+    @GetMapping("/mainfashionpickup")
     public ResponseEntity getFundingEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String categoryName,
                                                                     @RequestParam(required = false, defaultValue = "myPick") String sortWay,
                                                                     @RequestParam(required = false, defaultValue = "1") int pageIndex) {
@@ -178,7 +178,7 @@ public class FashionPickupEntityController {
     }
 
     //todo 추후에 서비스 로직을 전부다 fashionPickupService 레이어 하위에 생성해서 controller 단에서의 의존성을 줄일 예정
-    @PostMapping(value = "/multipart/post")
+    @PostMapping("/multipartPost")
     public ResponseEntity postFashionPickupEntityWithMultipart(
             @ModelAttribute FashionPickupDto.RequestFashionPickupIncludeMultiPartFileDto multiPartFileDto){
 

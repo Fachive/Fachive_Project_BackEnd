@@ -8,6 +8,7 @@
 ###Intellj IDEA ###
 application.properties
 application-test.yml
+application-server.yml
 application.yml
 appspec.yml
 application-local.properties

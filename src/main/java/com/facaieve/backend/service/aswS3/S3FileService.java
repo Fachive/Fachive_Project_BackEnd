@@ -113,7 +113,8 @@ public class S3FileService implements FileServiceCRUD{
             final File file = convertMultiPartFileToFile(multipartFile);
             final String fileName = LocalDateTime.now() + "_" + file.getName();//change the file name
             LOG.info("Uploading file with name {}", fileName);
-            final PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, fileName, file);
+            final PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, fileName, file)
+                    .withCannedAcl(CannedAccessControlList.PublicRead);
             amazonS3.putObject(putObjectRequest);//now send the data to S3
             Files.delete(file.toPath()); // Remove the file locally created in the project folder
             String fileURI = findImgUrl(fileName);
