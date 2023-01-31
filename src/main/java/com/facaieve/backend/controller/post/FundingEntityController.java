@@ -17,6 +17,7 @@ import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntiti
 import com.facaieve.backend.stubDate.FundingMainPageStubData;
 import com.facaieve.backend.stubDate.FundingStubData;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -56,9 +57,12 @@ public class FundingEntityController {
     //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
     //todo sortway mypick, update, duedate
     @GetMapping("/mainFunding")//test pass
-    public ResponseEntity getFundingEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String categoryName,
-                                                                    @RequestParam(required = false, defaultValue = "myPick") String sortWay,
-                                                                    @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
+    public ResponseEntity getFundingEntitySortingCategoryConditions(@Parameter(name="category" ,description="카테고리(피그마 참조) 문자열로 명시하면됨 기본값은 total 로 설정 되어있음 나머지 다른 유형의 post 동일함")
+                                                                        @RequestParam(required = false, defaultValue = "total") String categoryName,
+                                                                    @Parameter(name="sortWay" ,description="정렬 방식: myPick(좋아요 순서), views (조회수),dueDate(생성일) default: myPicks")
+                                                                        @RequestParam(required = false, defaultValue = "myPick") String sortWay,
+                                                                    @Parameter(name="pageIndex" ,description="페이지 인덱스 기본값 1")
+                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
 
         CategoryEntity categoryEntity = getCategoryFromService(categoryName);
 
