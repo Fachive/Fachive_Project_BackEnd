@@ -36,6 +36,8 @@ public class S3FileService implements FileServiceCRUD{
     private File convertMultiPartFileToFile(final MultipartFile multipartFile) {
 
         final File file = new File(multipartFile.getOriginalFilename());//application context file name return
+        file.setWritable(true); //쓰기가능설정
+        file.setReadable(true);	//읽기가능설정
         try (final FileOutputStream outputStream = new FileOutputStream(file)) {
             outputStream.write(multipartFile.getBytes());
         } catch (IOException e) {
@@ -73,6 +75,7 @@ public class S3FileService implements FileServiceCRUD{
         List<PostImageDto> savedFileNamed = new ArrayList<>();
 
         for(MultipartFile multipartFile: multipartFiles){
+            System.out.println("===================================================저장중");
             savedFileNamed.add(uploadMultiFile(multipartFile));
         }
         return savedFileNamed;
@@ -108,15 +111,20 @@ public class S3FileService implements FileServiceCRUD{
     @Async
     public PostImageDto uploadMultiFile(final MultipartFile multipartFile) {
 
+//        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)                .withCannedAcl(CannedAccessControlList.PublicRead));
+
         try {
 
             final File file = convertMultiPartFileToFile(multipartFile);
-            final String fileName = LocalDateTime.now() + "_" + file.getName();//change the file name
+            final String fileName = UUID.randomUUID() + "_" + file.getName();//change the file name
             LOG.info("Uploading file with name {}", fileName);
+
             final PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, fileName, file)
                     .withCannedAcl(CannedAccessControlList.PublicRead);
             amazonS3.putObject(putObjectRequest);//now send the data to S3
+
             Files.delete(file.toPath()); // Remove the file locally created in the project folder
+
             String fileURI = findImgUrl(fileName);
             return PostImageDto.builder().fileName(fileName).fileURI(fileURI).build();
 

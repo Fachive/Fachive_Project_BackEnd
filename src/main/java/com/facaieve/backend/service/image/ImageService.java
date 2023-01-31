@@ -52,7 +52,7 @@ public class ImageService {
         return foundImageEntityProfile;
     }
 
-    public void removeImage(long imageEntityId) {
+    public void removeImage(Long imageEntityId) {
 
         log.info("이미지 파일을 확인 후 삭제 : {}", imageEntityId);
 

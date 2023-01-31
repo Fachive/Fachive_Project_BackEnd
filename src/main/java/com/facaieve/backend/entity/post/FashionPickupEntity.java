@@ -40,11 +40,11 @@ public class FashionPickupEntity extends BaseEntity {
 
     @Column
     @Schema(description = "조회수")
-    int views;
+    Integer views;
 
     @Column
     @Schema(description = "추천수")
-    int myPicks;
+    Integer myPicks;
 
     @OneToMany(mappedBy = "fashionPickupEntity",fetch = FetchType.LAZY)
     @Schema(description = "패션 픽업에 달린 마이픽(좋아요) 객체 목록")
@@ -58,16 +58,16 @@ public class FashionPickupEntity extends BaseEntity {
     @Schema(description = "패션 픽업에 달린 태그 객체 목록")
     private List<TagEntity> tagEntities = new ArrayList<TagEntity>();  // 패션픽업 - 카테고리 매핑
 
-    @OneToMany(mappedBy = "fashionPickupEntity",fetch = FetchType.LAZY)
-    @Schema(description = "패션 픽업에 카테고리 객체 목록")
-    private List<CategoryEntity> categoryEntities = new ArrayList<CategoryEntity>();  // 패션픽업 - 카테코리 매핑
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "categoryEntity")
+    CategoryEntity categoryEntity;
 
     @ManyToOne
     @JoinColumn(name = "userEntity_Id")
     @Schema(description = "패션 픽업 작성자  객체 목록")
     private UserEntity userEntity;  // 유저 - 패션픽업  매핑
 
-    @OneToMany(mappedBy = "fashionPickupEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "fashionPickupEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PostImageEntity> postImageEntities = new ArrayList<>();
 
 }

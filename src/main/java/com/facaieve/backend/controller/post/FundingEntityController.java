@@ -47,35 +47,31 @@ public class FundingEntityController {
 
     static final FundingStubData fundingStubData = new FundingStubData();
 
-
+    private CategoryEntity getCategoryFromService(String categoryName){
+        return categoryService.getCategory(CategoryEntity
+                .builder().categoryName(categoryName).build());
+    }
     //todo 카테고리 정렬순서 그리고 페이지를 파라미터로 가지는 api  구현할 것
 
     //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
     //todo sortway mypick, update, duedate
-    @GetMapping("/mainFunding")
+    @GetMapping("/mainFunding")//test pass
     public ResponseEntity getFundingEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String categoryName,
                                                                     @RequestParam(required = false, defaultValue = "myPick") String sortWay,
-                                                                    @RequestParam(required = false, defaultValue = "1") int pageIndex) {
-        List<CategoryEntity> categoryEntities = new ArrayList<>();
-        categoryEntities.add(categoryService
-                .getCategory(CategoryEntity.builder()
-                        .categoryName(categoryName)
-                        .build()));
+                                                                    @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
 
-        switch (sortWay){
-            case "myPick" : fundingEntityService.setCondition(new FindFundingEntitiesByMyPicks());
-            case "update" : fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());
-            default : fundingEntityService.setCondition(new FindFundingEntitiesByDueDate());
-        }
+        CategoryEntity categoryEntity = getCategoryFromService(categoryName);
 
-        Page<FundingEntity> fundingEntityPage = fundingEntityService.findFundingEntitiesByCondition(categoryEntities, pageIndex,30);
+        fundingEntityService.setCondition(sortWay);
+
+        Page<FundingEntity> fundingEntityPage = fundingEntityService.findFundingEntitiesByCondition(categoryEntity, pageIndex,30);
 
         List<FundingDto.ResponseFundingIncludeURI> fundingEntities = fundingEntityPage.stream()
                 .map(fundingEntity -> fundingMapper.FundingEntityToResponseFundingIncludeURI(fundingEntity))
                 .collect(Collectors.toList());
 
         Multi_ResponseDTO<FundingDto.ResponseFundingIncludeURI> multi_responseDTO =
-                new Multi_ResponseDTO<FundingDto.ResponseFundingIncludeURI>(fundingEntities, (Page) null);
+                new Multi_ResponseDTO<FundingDto.ResponseFundingIncludeURI>(fundingEntities, fundingEntityPage);
 
         return new ResponseEntity(multi_responseDTO,HttpStatus.OK);
 
@@ -89,18 +85,21 @@ public class FundingEntityController {
 
         Multi_ResponseDTO<FundingMainPageStubData> responseDTO = new Multi_ResponseDTO<>();
         List<FundingMainPageStubData> fundingMainPageStubDataList = new ArrayList<>();
-        for (int i = 0; i < want; i++) {
+        for (Integer i = 0; i < want; i++) {
             fundingMainPageStubDataList.add(new FundingMainPageStubData());
         }
         responseDTO.setData(fundingMainPageStubDataList);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
+
     @PostMapping("/multipartPost")//test pass
     public ResponseEntity postFundingEntityWithMultiPart(@ModelAttribute FundingDto.RequestFundingIncludeMultiPartFileDto
                                                                  requestFundingIncludeMultiPartFileDto) {
 
-        List<MultipartFile> multipartFileList = requestFundingIncludeMultiPartFileDto.getMultiPartFiles();
+        List<MultipartFile> multipartFileList = requestFundingIncludeMultiPartFileDto.getMultipartFileList();
+        if(multipartFileList.size() ==0)
+        System.out.println("===================================================저장중");
         List<PostImageDto> postImageDtoList = s3FileService.uploadMultiFileList(multipartFileList);
 
         FundingDto.ResponseFundingIncludeURI responseFundingIncludeURI =
@@ -109,10 +108,21 @@ public class FundingEntityController {
                         .body(requestFundingIncludeMultiPartFileDto.getBody())
                         .targetPrice(requestFundingIncludeMultiPartFileDto.getTargetPrice())
                         .fundedPrice(requestFundingIncludeMultiPartFileDto.getFundedPrice())
-                        .multiPartFileList(postImageDtoList).build();
+                        .postImageDtoList(postImageDtoList)
+                        .views(requestFundingIncludeMultiPartFileDto.getViews())
+                        .myPicks(requestFundingIncludeMultiPartFileDto.getMyPicks())
+                        .build();
+
+
+        CategoryEntity categoryEntity = getCategoryFromService(requestFundingIncludeMultiPartFileDto
+                                                                    .getPostCategoryDto()
+                                                                    .getCategoryName());//todo null point exception
 
         FundingEntity fundingEntity = fundingMapper.ResponseFundingIncludeURIToFundingEntity(responseFundingIncludeURI);
         List<PostImageEntity> postImageEntities = fundingEntity.getPostImageEntities();
+
+        fundingEntity.setCategoryEntity(categoryEntity);
+        categoryEntity.getFundingEntities().add(fundingEntity);
 
         //cascade type all 하고 다른 entity 와 함께 저장되기 위해서 jpa context를 사용함.
         for (PostImageEntity postImageEntity : postImageEntities) {
@@ -121,7 +131,8 @@ public class FundingEntityController {
 
         return new ResponseEntity(fundingMapper
                 .FundingEntityToResponseFundingIncludeURI(
-                        fundingEntityService.createFundingEntity(fundingEntity)), HttpStatus.OK);
+                        fundingEntityService.createFundingEntity(fundingEntity))
+                , HttpStatus.OK);
     }
 
 

@@ -1,5 +1,6 @@
 package com.facaieve.backend.dto.post;
 
+import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.image.PostImageDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -19,7 +20,7 @@ public class PortfolioDto {
     public static class ResponsePortfolioIncludeURI{
 
         @Schema(description ="포트폴리오 식별자")
-        long portfolioEntityId;
+        Long portfolioEntityId;
 
         @Schema(description ="포트폴리오 제목")
         String title;
@@ -28,7 +29,10 @@ public class PortfolioDto {
         String body;
 
         @Schema(description ="포트폴리오 조회수")
-        int views;
+        Integer views;
+
+        @Schema(description = "카테고리")
+        CategoryDTO.ResponseCategoryDTO responseCategoryDTO;
 
         @Schema(description = "포트폴리오에 들어갈 이미지 uri")
         List<PostImageDto> postImageDtoList = new ArrayList<>();
@@ -43,7 +47,7 @@ public class PortfolioDto {
     public static class RequestPortfolioIncludeMultiPartFiles{
 
         @Schema(description ="포트폴리오 식별자")
-        long portfolioEntityId;
+        Long portfolioEntityId;
 
         @Schema(description ="포트폴리오 제목")
         String title;
@@ -52,7 +56,10 @@ public class PortfolioDto {
         String body;
 
         @Schema(description ="포트폴리오 조회수")
-        int views;
+        Integer views;
+
+        @Schema(description = "카테고리")
+        CategoryDTO.PostCategoryDto postCategoryDto;
 
         @Schema(description = "포트폴리오에 들어갈 이미지 uri")
         List<MultipartFile> multipartFileList = new ArrayList<>();
@@ -68,7 +75,7 @@ public class PortfolioDto {
     public static class ResponsePortfolioDto{
 
         @Schema(description ="포트폴리오 식별자")
-        long portfolioEntityId;
+        Long portfolioEntityId;
 
         @Schema(description ="포트폴리오 제목")
         String title;
@@ -77,7 +84,7 @@ public class PortfolioDto {
         String body;
 
         @Schema(description ="포트폴리오 조회수")
-        int views;
+        Integer views;
     }
 
 
@@ -96,7 +103,7 @@ public class PortfolioDto {
         String body;
 
         @Schema(description ="포트폴리오 조회수")
-        int views;
+        Integer views;
 
     }
 
@@ -108,7 +115,7 @@ public class PortfolioDto {
     public static class PatchPortfolioDtoDto{
 
         @Schema(description ="포트폴리오 식별자")
-        long portfolioEntityId;
+        Long portfolioEntityId;
 
         @Schema(description ="포트폴리오 제목")
         String title;
@@ -117,7 +124,7 @@ public class PortfolioDto {
         String body;
 
         @Schema(description ="포트폴리오 조회수")
-        int views;
+        Integer views;
     }
 
     @Getter
@@ -128,7 +135,7 @@ public class PortfolioDto {
     public static class GetPortfolioDtoDto{
 
         @Schema(description ="포트폴리오 식별자")
-        long portfolioEntityId;
+        Long portfolioEntityId;
     }
 
     @Getter
@@ -139,7 +146,7 @@ public class PortfolioDto {
     public static class DeletePortfolioDtoDto{
 
         @Schema(description ="포트폴리오 식별자")
-        long portfolioEntityId;
+        Long portfolioEntityId;
     }
 
 

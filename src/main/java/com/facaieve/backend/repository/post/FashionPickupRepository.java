@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FashionPickupRepository extends JpaRepository<FashionPickupEntity,Long> {
-    Page<FashionPickupEntity> findFashionPickupEntitiesByCategoryEntitiesIn(List<CategoryEntity> categoryEntities, Pageable views);
+public interface FashionPickupRepository extends JpaRepository<FashionPickupEntity,Long>{
+    Page<FashionPickupEntity> findFashionPickupEntitiesByCategoryEntity(CategoryEntity categoryEntity, Pageable views);
+
 }

@@ -78,7 +78,7 @@ public class UserService {
         return userRepository.save(patchingUserEntity);// 수정된 내용으로 유저 엔티티 저장
     }/*엔티티로 유저 정보 수정하기*/
 
-    public UserEntity findUserEntityById(long userEntityId) {
+    public UserEntity findUserEntityById(Long userEntityId) {
         return userRepository.findById(userEntityId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
     }/*엔티티 식별자(ID)로 유저 확인 */
 
@@ -146,7 +146,7 @@ public class UserService {
         withdrawalRepository.saveAll(withdrawalEntities);
     }
 
-    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowList ( long myUserEntityId, int pageIndex) {// id에 해당하는 유저가 팔로우하는 사용자 목록 반환 메서드
+    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowList ( Long myUserEntityId, int pageIndex) {// id에 해당하는 유저가 팔로우하는 사용자 목록 반환 메서드
         List<FollowEntity> followingList =
                 followRepository.findByFollowingUserEntity(
                         userRepository.findById(myUserEntityId).orElseThrow(),
@@ -163,7 +163,7 @@ public class UserService {
         return new PageImpl<>(followList);
     }
 
-    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowingList ( long myUserEntityId, int pageIndex)
+    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowingList ( Long myUserEntityId, int pageIndex)
     {// id에 해당하는 유저를 팔로우하는 사용자 목록 반환 메서드
         List<FollowEntity> followingList = followRepository.findByFollowedUserEntity(userRepository.findById(myUserEntityId).orElseThrow(), PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
 

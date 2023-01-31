@@ -2,6 +2,7 @@ package com.facaieve.backend.dto.post;
 
 import javax.persistence.*;
 
+import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.image.PostImageDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -24,19 +25,22 @@ public class FashionPickupDto {
     public static class RequestFashionPickupIncludeMultiPartFileDto{
 
         @Schema(description ="패션픽업 게시글 식별자")
-        long fashionPickupEntityId;
+        Long fashionPickupEntityId;
 
         @Schema(description ="패션픽업 제목")
         String title;
 
         @Schema(description ="패션픽업 본문")
-        String Body;
+        String body;
 
         @Schema(description ="조회수")
-        int views;
+        Integer views;
+
+        @Schema(description = "카테고리")
+        CategoryDTO.PostCategoryDto postCategoryDto;
 
         @Schema(description="URI for send to front end")
-        List<MultipartFile>  multiPartFileList = new ArrayList<>();
+        List<MultipartFile>  multipartFileList = new ArrayList<>();
     }
     @Getter
     @Setter
@@ -46,16 +50,16 @@ public class FashionPickupDto {
     @Builder
     public static class BuffFashionPickupIncludeURI{
         @Schema(description ="패션픽업 게시글 식별자")
-        long fashionPickupEntityId;
+        Long  fashionPickupEntityId;
 
         @Schema(description ="패션픽업 제목")
         String title;
 
         @Schema(description ="패션픽업 본문")
-        String Body;
+        String body;
 
         @Schema(description ="조회수")
-        int views;
+        Integer views;
 
         @Schema(description="URI for send to front end")
         List<PostImageDto>  postImageDtoList = new ArrayList<>();
@@ -70,22 +74,25 @@ public class FashionPickupDto {
     @Builder
     public static class ResponseFashionPickupIncludeURI{
         @Schema(description ="패션픽업 게시글 식별자")
-        long fashionPickupEntityId;
+        Long fashionPickupEntityId;
 
         @Schema(description ="패션픽업 제목")
         String title;
 
         @Schema(description ="패션픽업 본문")
-        String Body;
+        String body;
 
         @Schema(description ="조회수")
-        int views;
+        Integer views;
 
         @Schema(description ="추천수")
-        int myPicks;
+        Integer myPicks;
+
+        @Schema(description = "카테고리")
+        CategoryDTO.ResponseCategoryDTO responseCategoryDTO;
 
         @Schema(description="URI for send to front end")
-        List<PostImageDto>  multiPartFileList = new ArrayList<>();
+        List<PostImageDto>  postImageDtoList = new ArrayList<>();
     }
 
 
@@ -100,7 +107,7 @@ public class FashionPickupDto {
         String title;
 
         @Schema(description ="패션픽업 본문")
-        String Body;
+        String body;
     }
 
 
@@ -111,13 +118,13 @@ public class FashionPickupDto {
     @NoArgsConstructor
     public static class PatchFashionPickupDto{
         @Schema(description ="패션픽업 게시글 식별자")
-        long fashionPickupEntityId;
+        Long fashionPickupEntityId;
 
         @Schema(description ="패션픽업 제목")
         String title;
 
         @Schema(description ="패션픽업 본문")
-        String Body;
+        String body;
     }
 
     @Getter
@@ -126,7 +133,7 @@ public class FashionPickupDto {
     @NoArgsConstructor
     public static class GetFashionPickupDto{
         @Schema(description ="패션픽업 게시글 식별자")
-        long fashionPickupEntityId;
+        Long fashionPickupEntityId;
     }
     @Getter
     @Setter
@@ -134,7 +141,7 @@ public class FashionPickupDto {
     @NoArgsConstructor
     public static class DeleteFashionPickupDto{
         @Schema(description ="패션픽업 게시글 식별자")
-        long fashionPickupEntityId;
+        Long fashionPickupEntityId;
     }
 
     @Getter
@@ -143,16 +150,16 @@ public class FashionPickupDto {
     @NoArgsConstructor
     public static class ResponseFashionPickupDto{
         @Schema(description ="패션픽업 게시글 식별자")
-        long fashionPickupEntityId;
+        Long fashionPickupEntityId;
 
         @Schema(description ="패션픽업 제목")
         String title;
 
         @Schema(description ="패션픽업 본문")
-        String Body;
+        String body;
 
         @Schema(description ="조회수")
-        int views;
+        Integer views;
     }
 
 

@@ -123,7 +123,7 @@ public class UserEntityController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @GetMapping("/get/following")//내가 팔로우하는 사람의 목록 반환
-    public ResponseEntity getUserFollowList(@RequestParam int myUserEntityId, @RequestParam int pageIndex){
+    public ResponseEntity getUserFollowList(@RequestParam Long myUserEntityId, @RequestParam Integer pageIndex){
         Page<UserDto.FollowUserInfoResponseDto> foundUserFollowList = userService.getUserFollowList(myUserEntityId, pageIndex);
 
         return new ResponseEntity(
@@ -138,7 +138,7 @@ public class UserEntityController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @GetMapping("/get/follow")//나를 팔로우하는 사람의 목록 반환
-    public ResponseEntity getUserFollowerList(@RequestParam long myUserEntityId, @RequestParam int pageIndex){
+    public ResponseEntity getUserFollowerList(@RequestParam Long myUserEntityId, @RequestParam int pageIndex){
         Page<UserDto.FollowUserInfoResponseDto> foundUserFollowList = userService.getUserFollowingList(myUserEntityId, pageIndex);
 
         return new ResponseEntity(

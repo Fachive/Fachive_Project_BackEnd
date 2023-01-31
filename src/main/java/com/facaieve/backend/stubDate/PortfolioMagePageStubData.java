@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 public class PortfolioMagePageStubData {
 
     String displayName = "testName";
-    int pickup = 999;
-    int views = 9999;
+    Integer pickup = 999;
+    Integer views = 9999;
 
     PostImageDto postImageDto = PostImageDto.builder()
             .fileName("fileName")

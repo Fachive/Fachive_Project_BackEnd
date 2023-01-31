@@ -1,6 +1,7 @@
 package com.facaieve.backend.controller.post;
 
 
+import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.entity.etc.CategoryEntity;
@@ -14,6 +15,9 @@ import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.image.PostImageService;
 import com.facaieve.backend.service.post.FashionPickupEntityService;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByMyPicks;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByViews;
 import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
 import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import com.facaieve.backend.stubDate.FashionPuckupStubData;
@@ -97,7 +101,7 @@ public class FashionPickupEntityController {
         return new ResponseEntity(responseFashionPickupDtoList, HttpStatus.OK);
 //        Multi_ResponseDTO<FashionPickupMainPageStubData> responseDTO = new Multi_ResponseDTO<>();
 //        List<FashionPickupMainPageStubData> fashionPickupMainPageStubDataList = new ArrayList<>();
-//        for(int i = 0; i<want; i++){
+//        for(Integer i = 0; i<want; i++){
 //            fashionPickupMainPageStubDataList.add(new FashionPickupMainPageStubData());
 //        }
 //        responseDTO.setData(fashionPickupMainPageStubDataList);
@@ -119,7 +123,7 @@ public class FashionPickupEntityController {
                     response = FashionPickupDto.ResponseFashionPickupIncludeURI.class, message = "ok", code=200)
     )
     @GetMapping("/get/mypick/{page}")
-    public ResponseEntity getFashionPickupEntitiesForMainPageByMyPick(@PathVariable(required = false) int pageIndex, @RequestHeader(value="userId") long userId){//헤더에 값 넣기
+    public ResponseEntity getFashionPickupEntitiesForMainPageByMyPick(@PathVariable(required = false) int pageIndex, @RequestHeader(value="userId") Long userId){//헤더에 값 넣기
 
 
         List<FashionPickupEntity> foundFashionPickupEntities = fashionPickupEntityService.findFashionPickupEntitiesByMyPick(pageIndex, userId);
@@ -136,7 +140,7 @@ public class FashionPickupEntityController {
         return new ResponseEntity(responseFashionPickupDtoList, HttpStatus.OK);
 //        Multi_ResponseDTO<FashionPickupMainPageStubData> responseDTO = new Multi_ResponseDTO<>();
 //        List<FashionPickupMainPageStubData> fashionPickupMainPageStubDataList = new ArrayList<>();
-//        for(int i = 0; i<want; i++){
+//        for(Integer i = 0; i<want; i++){
 //            fashionPickupMainPageStubDataList.add(new FashionPickupMainPageStubData());
 //        }
 //        responseDTO.setData(fashionPickupMainPageStubDataList);
@@ -145,30 +149,33 @@ public class FashionPickupEntityController {
 
      */
 
+    private CategoryEntity getCategoryFromService(String categoryName){
+        return categoryService.getCategory(CategoryEntity
+                .builder().categoryName(categoryName).build());
+    }
     //todo 카테고리 정렬순서 그리고 페이지를 파라미터로 가지는 api  구현할 것
-
     //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
     //todo sortway mypick, update, duedate
-    @GetMapping("/mainfashionpickup")
-    public ResponseEntity getFundingEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String categoryName,
+
+    @GetMapping("/mainfasionpickup")//test pass
+    public ResponseEntity getFashionEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String categoryName,
+
                                                                     @RequestParam(required = false, defaultValue = "myPick") String sortWay,
-                                                                    @RequestParam(required = false, defaultValue = "1") int pageIndex) {
-        List<CategoryEntity> categoryEntities = new ArrayList<>();
-        categoryEntities.add(categoryService
-                .getCategory(CategoryEntity.builder()
-                        .categoryName(categoryName)
-                        .build()));
+                                                                    @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
+        //저장된 카테고리 객체 가져옴
+        CategoryEntity categoryEntity = getCategoryFromService(categoryName);
+        System.out.println("===================cate"+categoryEntity.getCategoryName());
 
-        switch (sortWay){
-            case "myPick" : fashionPickupEntityService.setCondition(new FindFundingEntitiesByMyPicks());
-            case "update" : fashionPickupEntityService.setCondition(new FindFundingEntitiesByDueDate());
-            default : fashionPickupEntityService.setCondition(new FindFundingEntitiesByDueDate());
-        }
+        fashionPickupEntityService.setCondition(sortWay);//condition 객체 만드는 부분 수정함
 
-        Page<FashionPickupEntity> fashionPickupEntityPage = fashionPickupEntityService.findFashionPickupEntitiesByCondition(categoryEntities, pageIndex,30);
-        List<FashionPickupDto.ResponseFashionPickupIncludeURI> fashionPickupIncludeURIList = fashionPickupEntityPage.stream()
-                .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity))
-                .collect(Collectors.toList());
+        Page<FashionPickupEntity> fashionPickupEntityPage =
+                fashionPickupEntityService.findFashionPickupEntitiesByCondition(categoryEntity, pageIndex,30);
+
+        List<FashionPickupDto.ResponseFashionPickupIncludeURI> fashionPickupIncludeURIList
+                = fashionPickupEntityPage.stream()
+                    .map(fashionPickupEntity -> fashionPickupMapper
+                            .fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity))
+                            .collect(Collectors.toList());
 
         Multi_ResponseDTO<FashionPickupDto.ResponseFashionPickupIncludeURI> multi_responseDTO =
                 new Multi_ResponseDTO<FashionPickupDto.ResponseFashionPickupIncludeURI>(fashionPickupIncludeURIList, fashionPickupEntityPage);
@@ -177,27 +184,31 @@ public class FashionPickupEntityController {
 
     }
 
-    //todo 추후에 서비스 로직을 전부다 fashionPickupService 레이어 하위에 생성해서 controller 단에서의 의존성을 줄일 예정
-    @PostMapping("/multipartPost")
+
+    @PostMapping(value = "/multipart/post")//test pass
     public ResponseEntity postFashionPickupEntityWithMultipart(
             @ModelAttribute FashionPickupDto.RequestFashionPickupIncludeMultiPartFileDto multiPartFileDto){
 
-        List<MultipartFile> multipartFileList = multiPartFileDto.getMultiPartFileList();
+        List<MultipartFile> multipartFileList = multiPartFileDto.getMultipartFileList();
         List<PostImageDto> postImageDtoList = s3FileService.uploadMultiFileList(multipartFileList);//저장될 파일 객체가 들어감.
         //S3에 저장후에 파일 이름과 URI 를 가지고 있음.
-
+        CategoryEntity categoryEntity = getCategoryFromService(multiPartFileDto.getPostCategoryDto().getCategoryName());
+        System.out.println(categoryEntity.getCategoryName()+"=========================================================");
 
         FashionPickupDto.ResponseFashionPickupIncludeURI responseFashionPickupIncludeURI
                  = FashionPickupDto.ResponseFashionPickupIncludeURI.builder()
                 .fashionPickupEntityId(multiPartFileDto.getFashionPickupEntityId())
                 .title(multiPartFileDto.getTitle())
                 .views(multiPartFileDto.getViews())
-                .Body(multiPartFileDto.getBody())
-                .multiPartFileList(postImageDtoList.stream().collect(Collectors.toList()))
+                .body(multiPartFileDto.getBody())
+                .postImageDtoList(postImageDtoList)
                 .build();//todo stream 사용할것
 
         FashionPickupEntity fashionPickupEntity =
                 fashionPickupMapper.fashionPickupIncludeURIToFashionPickupEntity(responseFashionPickupIncludeURI);
+
+        fashionPickupEntity.setCategoryEntity(categoryEntity);//category 도 함께 저장함.
+        categoryEntity.getFashionPickupEntityList().add(fashionPickupEntity);
 
         List<PostImageEntity> postImageEntities = fashionPickupEntity.getPostImageEntities();
         for(PostImageEntity postImage:postImageEntities){

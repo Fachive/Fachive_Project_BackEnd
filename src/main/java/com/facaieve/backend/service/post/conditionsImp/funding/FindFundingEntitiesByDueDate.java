@@ -16,18 +16,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-@RequiredArgsConstructor
-@Service
-@Primary
+@AllArgsConstructor
+
+
 public class FindFundingEntitiesByDueDate implements Condition<FundingEntity, CategoryEntity> {
-    @Autowired
     FundingRepository fundingRepository;
 
     @Override
-    public Page<FundingEntity> conditionSort(List<CategoryEntity> categoryEntities, int pageIndex, int elementNum) {
+    public Page<FundingEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
 
         return fundingRepository
-                .findFundingEntitiesByCategoryEntitiesIn(categoryEntities, PageRequest.of(pageIndex - 1, elementNum, Sort.by("dueDate").descending()));
+                .findFundingEntitiesByCategoryEntity(categoryEntity, PageRequest.of(pageIndex - 1, elementNum, Sort.by("dueDate").descending()));
     }
 
 }

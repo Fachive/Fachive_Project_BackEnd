@@ -14,6 +14,6 @@ public class PortfolioStubData {
 
     String body = "포트폴리오 게시글 내용";
 
-    int views = 100;
+    Integer views = 100;
 
 }
