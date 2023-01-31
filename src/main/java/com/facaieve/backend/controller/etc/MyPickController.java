@@ -1,6 +1,7 @@
 package com.facaieve.backend.controller.etc;
 
 import com.facaieve.backend.dto.etc.MyPickDTO;
+import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.mapper.etc.MyPickMapper;
 import com.facaieve.backend.service.etc.MyPickService;
 import lombok.AllArgsConstructor;
@@ -32,15 +33,10 @@ public class MyPickController {
     }
 
     @GetMapping("/get")//test pass
-    public ResponseEntity getMyPick(@RequestBody MyPickDTO.ResponseMyPickDTO responseMyPickDTO){//Response 와 동일한거 사용함.
+    public ResponseEntity getMyPick(@RequestParam Long myPickId, Long userId){//Response 와 동일한거 사용함.
 
-        responseMyPickDTO.setMyPickId(Long.valueOf(1));
-        responseMyPickDTO.setUserId(Long.valueOf(1));
-
-        return new ResponseEntity(myPickService
-                .getMyPick(myPickMapper.responseMyPickDtoToMyPickEntity(responseMyPickDTO)),
-                HttpStatus.OK);
-
+        MyPickEntity myPickEntity = MyPickEntity.builder().myPickId(Long.valueOf(1)).userId(Long.valueOf(1)).build();
+        return new ResponseEntity(myPickEntity,HttpStatus.OK);
     }
 
     //유저 아디로 삭제하는게 필요함

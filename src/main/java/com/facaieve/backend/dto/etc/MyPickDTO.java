@@ -35,6 +35,7 @@ public class MyPickDTO {
     @AllArgsConstructor
     @Getter
     @Setter
+    @Builder
     public static class ResponseMyPickDTO {//서버측에서 보내줄때
 
         Long myPickId;
