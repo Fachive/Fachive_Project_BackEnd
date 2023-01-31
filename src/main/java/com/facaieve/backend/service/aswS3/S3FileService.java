@@ -17,11 +17,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -38,15 +37,17 @@ public class S3FileService implements FileServiceCRUD{
     @Value("${custom.path.upload-images}")
     private String uploadImagePath;
 
+
+
     //multiPartFile to java file obj
     private File convertMultiPartFileToFile(final MultipartFile multipartFile) throws IOException {
 
-
-        final File file = new File(multipartFile.getOriginalFilename());//application context file name return
+        //todo jar 배포시 발생하는 오류에 대해서 블로그에 작성할것
+        final File file = new File(uploadImagePath,multipartFile.getOriginalFilename());//application context file name return
         file.setWritable(true); //쓰기가능설정
         file.setReadable(true);	//읽기가능설정
 
-        try (final FileOutputStream outputStream = new FileOutputStream(file,true)) {
+        try (final FileOutputStream outputStream = new FileOutputStream(file,true)) {//todo true 로 설정해서 해당 경로로 파일 생성되게 만듦
             outputStream.write(multipartFile.getBytes());
         } catch (IOException e) {
             LOG.error("Error {} occurred while converting the multipart file", e.getLocalizedMessage());
