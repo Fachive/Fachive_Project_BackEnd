@@ -30,7 +30,7 @@ public class ImageEntityProfile extends BaseEntity {
     @Column(name = "image_data", length = 1000)
     byte[] imageData;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "imgOwner")
     @Schema(name = "이미지를 올린 사람")
     UserEntity profileImgOwner;

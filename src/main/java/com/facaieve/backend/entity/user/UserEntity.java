@@ -6,6 +6,7 @@ import com.facaieve.backend.Constant.UserActive;
 import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
 import com.facaieve.backend.entity.comment.FundingCommentEntity;
 import com.facaieve.backend.entity.comment.PortfolioCommentEntity;
+import com.facaieve.backend.entity.image.ImageEntityProfile;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
@@ -104,7 +105,9 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "followedUserEntity", cascade = CascadeType.ALL)
     List<FollowEntity> followerList = new ArrayList<FollowEntity>(); // 팔로우 정보 저장을 위한 셀프 참조
 
-
+    @Schema(description = "프로필 이미지")
+    @OneToOne(mappedBy = "profileImgOwner", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    ImageEntityProfile imageEntityProfiles; // 프로필 이미지 매핑
 
 
 }
