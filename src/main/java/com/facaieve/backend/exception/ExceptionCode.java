@@ -24,6 +24,7 @@ public enum ExceptionCode {
     MEMBER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
     NOT_FOLLOW(NOT_FOUND, "팔로우 중이지 않습니다"),
+    FILE_IS_NOT_EXIST(NOT_FOUND, "해당 파일이 존재하지 않습니다" ),
     NO_SUCH_ELEMENT(NOT_FOUND, "해당 요소는 존재하지 않습니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
@@ -34,7 +35,8 @@ public enum ExceptionCode {
     PASSWORD_IS_WRONG(CONFLICT, "비밀번호가 잘못 입력되었습니다."),
     FILE_IS_NOT_EXIST_IN_BUCKET(CONFLICT, "해당 데이터가 존재하지 않습니다"),
     NONE_IMAGE_EXCEPTION(CONFLICT,"해당 이미지가 존재하지 않습니다"),
-    REQUESTING_FILE_ALREADY_EXIST(CONFLICT,"해당 데이터가 이미 존재합니다");
+    REQUESTING_FILE_ALREADY_EXIST(CONFLICT,"해당 데이터가 이미 존재합니다"),
+
 
 
 

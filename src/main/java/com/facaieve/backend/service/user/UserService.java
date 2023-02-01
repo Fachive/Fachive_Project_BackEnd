@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import com.facaieve.backend.dto.UserDto;
+import com.facaieve.backend.entity.image.ImageEntityProfile;
 import com.facaieve.backend.entity.user.FollowEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.entity.user.WithdrawalEntity;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
@@ -40,6 +42,8 @@ public class UserService {
     UserMapper userMapper;
     FollowRepository followRepository;
     BadWordFiltering badWordFiltering;
+
+
 
     //입력 값으로 들어온 userEntity 저장 그리고 반환 todo 보안 설정 아직 안함
     public UserEntity createUserEntity(@NotNull final UserEntity userEntity) throws BusinessLogicException {
@@ -203,5 +207,9 @@ public class UserService {
             throw new BusinessLogicException(ExceptionCode.FORBIDDEN_WORD_USED);
         }
     } // 닉네임 금지어 체크
+
+
+
+
 }
 

@@ -147,6 +147,27 @@ public class UserDto {
         }
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Schema(description = "회원 Response")
+    public static class ResponseUserDto2{
+
+        @Schema(description = "유저 닉네임")
+        String displayName;
+
+        @Email
+        @Schema(description = "유저 이메일")
+        String email;
+
+        @Schema(description = "유저 이메일")
+        String profileImg;
+
+        public static ResponseUserDto2 of(UserEntity userEntity, String ImageUri) {
+            return new ResponseUserDto2(userEntity.getDisplayName(), userEntity.getEmail(), ImageUri);
+        }
+    }
 
 
 

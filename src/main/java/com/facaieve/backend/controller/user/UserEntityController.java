@@ -64,32 +64,34 @@ public class UserEntityController {
     public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @ModelAttribute PostUserDto postUserDto) throws IOException {
        log.info("신규 유저를 등록합니다.");
 
+        if(postUserDto.getMultipartFileList().isEmpty()){
+            File defaultProfileImg = new File(new File("").getAbsolutePath()+"/src/main/resources/기본 프로필 이미지.jpg");
+            FileItem fileItem = new DiskFileItem("defaultProfileImg",
+                    Files.probeContentType(defaultProfileImg.toPath()),
+                    false, defaultProfileImg.getName(),
+                    (int) defaultProfileImg.length(),
+                    defaultProfileImg.getParentFile());
+
+            try {
+                InputStream is = new FileInputStream(defaultProfileImg);
+                OutputStream os = fileItem.getOutputStream();
+                IOUtils.copy(is, os);
+            } catch (IOException e) {
+                log.error("[convertFileToMultipartFile] error {}", e.getMessage());
+                throw new IOException(e);
+            }
+
+            MultipartFile img = new CommonsMultipartFile(fileItem);
+            postUserDto.getMultipartFileList().add(img);
+        }
+
        UserEntity postingUserEntity= userMapper.userPostDtoToUserEntity(postUserDto);
        UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
 
-       if(postUserDto.getMultipartFileList().isEmpty()){
-           File defaultProfileImg = new File(new File("").getAbsolutePath()+"/src/main/resources/기본 프로필 이미지.jpg");
-           FileItem fileItem = new DiskFileItem("defaultProfileImg",
-                   Files.probeContentType(defaultProfileImg.toPath()),
-                   false, defaultProfileImg.getName(),
-                   (int) defaultProfileImg.length(),
-                   defaultProfileImg.getParentFile());
-
-               try {
-                   InputStream is = new FileInputStream(defaultProfileImg);
-                   OutputStream os = fileItem.getOutputStream();
-                   IOUtils.copy(is, os);
-               } catch (IOException e) {
-                   log.error("[convertFileToMultipartFile] error {}", e.getMessage());
-                   throw new IOException(e);
-               }
-
-           MultipartFile img = new CommonsMultipartFile(fileItem);
-           postUserDto.getMultipartFileList().add(img);
-           }
-
         ImageEntityProfile uploadImage = imageService.uploadImage(postedUserEntity.getUserEntityId(), postUserDto.getMultipartFileList().get(0));
-        return new ResponseEntity(userMapper.userEntityToResponseDto(postedUserEntity), HttpStatus.CREATED);
+        postedUserEntity.setProfileImg(imageService.uriMaker(uploadImage));
+
+        return new ResponseEntity(userMapper.userEntityToResponseDto2(postedUserEntity), HttpStatus.CREATED);
 
     }
 

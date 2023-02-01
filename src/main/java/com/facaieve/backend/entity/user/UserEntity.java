@@ -65,9 +65,11 @@ public class UserEntity extends BaseEntity {
 
     @Schema(description = "유저 활동 상태")
     @Enumerated(value = EnumType.STRING)
-    UserActive userActive;
+    UserActive userActive = UserActive.Active;
 
-
+    @Schema(description = "재직회사")
+    @Column
+    String profileImg;
 
     //패션픽업 댓글, 펀딩 댓글, 포폴 댓글 엔티티 매핑
     @Schema(description = "패션 픽업 게시물에 단 댓글 목록")
