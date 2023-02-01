@@ -9,14 +9,20 @@ import javax.validation.constraints.Email;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter
 @Setter
 public class UserDto {
 
     @Getter
+    @Setter
     @Schema(description = "회원 등록 DTO")
     @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class PostUserDto{
 
     @Schema(description = "유저 닉네임")
@@ -40,6 +46,8 @@ public class UserDto {
     @Schema(description = "재직회사")
     String Company;
 
+    @Schema(description = "사진 URI")
+    List<MultipartFile> multipartFileList = new ArrayList<>();
     }
 
 

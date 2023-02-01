@@ -1,11 +1,14 @@
 package com.facaieve.backend.controller.user;
 
 
+import com.amazonaws.util.IOUtils;
 import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.UserDto.PostUserDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
+import com.facaieve.backend.entity.image.ImageEntityProfile;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.user.UserMapper;
+import com.facaieve.backend.service.image.ImageService;
 import com.facaieve.backend.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,12 +18,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
+import java.io.*;
+import java.nio.file.Files;
+
 
 @Slf4j
 @RestController
@@ -29,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 //@Tag(name = "UserEntity", description = "사용자와 관련된 api")
 public class UserEntityController {
 
+    ImageService imageService;
     UserService userService;
     UserMapper userMapper;
 
@@ -47,11 +61,34 @@ public class UserEntityController {
                     response = UserEntity.class, message = "created", code=201)
     )
     @PostMapping("/post")// 유저 등록
-    public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @RequestBody PostUserDto postUserDto){
+    public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @ModelAttribute PostUserDto postUserDto) throws IOException {
        log.info("신규 유저를 등록합니다.");
 
        UserEntity postingUserEntity= userMapper.userPostDtoToUserEntity(postUserDto);
        UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
+
+       if(postUserDto.getMultipartFileList().isEmpty()){
+           File defaultProfileImg = new File(new File("").getAbsolutePath()+"/src/main/resources/기본 프로필 이미지.jpg");
+           FileItem fileItem = new DiskFileItem("defaultProfileImg",
+                   Files.probeContentType(defaultProfileImg.toPath()),
+                   false, defaultProfileImg.getName(),
+                   (int) defaultProfileImg.length(),
+                   defaultProfileImg.getParentFile());
+
+               try {
+                   InputStream is = new FileInputStream(defaultProfileImg);
+                   OutputStream os = fileItem.getOutputStream();
+                   IOUtils.copy(is, os);
+               } catch (IOException e) {
+                   log.error("[convertFileToMultipartFile] error {}", e.getMessage());
+                   throw new IOException(e);
+               }
+
+           MultipartFile img = new CommonsMultipartFile(fileItem);
+           postUserDto.getMultipartFileList().add(img);
+           }
+
+        ImageEntityProfile uploadImage = imageService.uploadImage(postedUserEntity.getUserEntityId(), postUserDto.getMultipartFileList().get(0));
         return new ResponseEntity(userMapper.userEntityToResponseDto(postedUserEntity), HttpStatus.CREATED);
 
     }

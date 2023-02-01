@@ -46,6 +46,8 @@ dependencies {
     implementation("io.springfox:springfox-boot-starter:3.0.0")
     implementation("io.springfox:springfox-swagger-ui:3.0.0")
 
+    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.4'
 }
 //plain.jar 파일은 만들어 지지않도록 build gradle 설정함.
 jar {
