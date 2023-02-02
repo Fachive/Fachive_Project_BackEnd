@@ -154,7 +154,7 @@ public class UserService {
         List<FollowEntity> followingList =
                 followRepository.findByFollowingUserEntity(
                         userRepository.findById(myUserEntityId).orElseThrow(),
-                        PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()
+                        PageRequest.of(pageIndex-1, 20, Sort.by("modifiedBy").descending()
                         ));
 
         List<UserDto.FollowUserInfoResponseDto> followList = followingList.stream()
