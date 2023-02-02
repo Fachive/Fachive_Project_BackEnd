@@ -7,6 +7,7 @@ import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
+import com.facaieve.backend.entity.user.UserEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,22 +23,23 @@ public class MyPickEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long myPickId;
 
-    @Column
-    Long userId;
+    @ManyToOne(fetch =FetchType.EAGER )
+    @JoinColumn(name = "myPickEntityList")
+    UserEntity pickingUser;
 
-    @ManyToOne
+    @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "fashionPickupCommentEntity")
     private FashionPickUpCommentEntity fashionPickupCommentEntity;
-    @ManyToOne
+    @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "fundingCommentEntity")
     private FundingCommentEntity fundingCommentEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "portfolioCommentEntity")
     private PortfolioCommentEntity portfolioCommentEntity;
 
 
-    @ManyToOne
+    @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "portfolioEntity")
     private PortfolioEntity portfolioEntity;
 

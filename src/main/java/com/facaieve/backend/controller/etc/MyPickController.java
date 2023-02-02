@@ -4,12 +4,17 @@ import com.facaieve.backend.dto.etc.MyPickDTO;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.mapper.etc.MyPickMapper;
 import com.facaieve.backend.service.etc.MyPickService;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByMyPicks;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByViews;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.facaieve.backend.dto.etc.MyPickDTO.PostMyPickDTO.PickableEntity.*;
 
 @RestController
 @RequestMapping("/MyPick")
@@ -26,17 +31,19 @@ public class MyPickController {
     @PostMapping("/post")//test pass
     public ResponseEntity postMyPick(@RequestBody MyPickDTO.PostMyPickDTO postMyPickDTO){
 
-        postMyPickDTO.setUserId(Long.valueOf(1));//설정값
+        myPickService.createMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick().name(),postMyPickDTO.getEntityId());
 
-        return new ResponseEntity(myPickService.createMyPick(myPickMapper.postMyPickDtoToMyPickEntity(postMyPickDTO)),
+
+
+
+        return new ResponseEntity(
                 HttpStatus.CREATED);
     }
 
     @GetMapping("/get")//test pass
     public ResponseEntity getMyPick(@RequestParam Long myPickId, Long userId){//Response 와 동일한거 사용함.
 
-        MyPickEntity myPickEntity = MyPickEntity.builder().myPickId(Long.valueOf(1)).userId(Long.valueOf(1)).build();
-        return new ResponseEntity(myPickEntity,HttpStatus.OK);
+             return new ResponseEntity(HttpStatus.OK);
     }
 
     //유저 아디로 삭제하는게 필요함

@@ -22,6 +22,8 @@ import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntiti
 import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import com.facaieve.backend.stubDate.FashionPuckupStubData;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -157,11 +159,22 @@ public class FashionPickupEntityController {
     //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
     //todo sortway mypick, update, duedate
 
+    @Operation(summary = "30 개 반환하는 메소드",
+            description = "프론트 엔드 요구사항이었던 param을 이용해서 카테고리 정렬 방식, 페이지 인덱스를 지정해서 객체를 가져올 수 있는 api")//대상 api의 대한 설명을 작성하는 어노테이션
+    @ApiResponses({
+            @ApiResponse(responseCode = "201" ,description = "패션픽업 게시글이 정상 등록됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupIncludeURI.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
     @GetMapping("/mainfasionpickup")//test pass
-    public ResponseEntity getFashionEntitySortingCategoryConditions(@RequestParam(required = false, defaultValue = "total") String categoryName,
+    public ResponseEntity getFashionEntitySortingCategoryConditions(@Parameter(name="category" ,description="카테고리(피그마 참조) 문자열로 명시하면됨 기본값은 total 로 설정 되어있음 나머지 다른 유형의 post 동일함")
+                                                                        @RequestParam(required = false, defaultValue = "total") String categoryName,
+                                                                    @Parameter(name="sortWay" ,description="정렬 방식: myPick(좋아요 순서), views (조회수),dueDate(생성일) default: myPicks")
+                                                                        @RequestParam(required = false, defaultValue = "myPick") String sortWay,
+                                                                    @Parameter(name="pageIndex" ,description="페이지 인덱스 기본값 1")
+                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
 
-                                                                    @RequestParam(required = false, defaultValue = "myPick") String sortWay,
-                                                                    @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
         //저장된 카테고리 객체 가져옴
         CategoryEntity categoryEntity = getCategoryFromService(categoryName);
         System.out.println("===================cate"+categoryEntity.getCategoryName());
@@ -184,10 +197,18 @@ public class FashionPickupEntityController {
 
     }
 
-
+    @Operation(summary = "form-data 를 이용해서 post 객체를 등록하고 등록된 객체를 반환하는 api",
+            description = "@modelAttribute를 사용해서 MultipartFile 과 json을 한번에 객체를 이용해서 받는 것으로 구현함")//대상 api의 대한 설명을 작성하는 어노테이션
+    @ApiResponses({
+            @ApiResponse(responseCode = "201" ,description = "패션픽업 게시글이 정상 등록됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupIncludeURI.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
+    //todo category entity 를 반영한 로직 고려해서 작성할것 dto 에서 수정 필요함.
     @PostMapping(value = "/multipart/post")//test pass
     public ResponseEntity postFashionPickupEntityWithMultipart(
-            @ModelAttribute FashionPickupDto.RequestFashionPickupIncludeMultiPartFileDto multiPartFileDto){
+             @ModelAttribute FashionPickupDto.RequestFashionPickupIncludeMultiPartFileDto multiPartFileDto){
 
         List<MultipartFile> multipartFileList = multiPartFileDto.getMultipartFileList();
         List<PostImageDto> postImageDtoList = s3FileService.uploadMultiFileList(multipartFileList);//저장될 파일 객체가 들어감.
@@ -226,6 +247,13 @@ public class FashionPickupEntityController {
     }
 
     // 사진을 가지고 있는 객체면 그냥 사진 uri랑 같이 반환됨.
+    @Operation(summary = "패션픽업 게시글 반환", description = "게시글을 id를 이용해서 사진을 포함하는 패션픽업 객체를 반환하는 api")//대상 api의 대한 설명을 작성하는 어노테이션
+    @ApiResponses({
+            @ApiResponse(responseCode = "201" ,description = "패션픽업 게시글이 정상 등록됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupIncludeURI.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
     @GetMapping("/multiGet")
     public ResponseEntity getFashionPickupEntityMultipart(@RequestParam("postFashionEntityId") Long FashionEntityId){
 
@@ -239,8 +267,13 @@ public class FashionPickupEntityController {
                ,HttpStatus.OK);
     }
 
-
-
+    @Operation(summary = "패션픽업 게시글 수정", description = "패션 픽업의 이미지를 수정하는 메소드")//대상 api의 대한 설명을 작성하는 어노테이션
+    @ApiResponses({
+            @ApiResponse(responseCode = "201" ,description = "패션픽업 게시글이 정상 등록됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupIncludeURI.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
     @PatchMapping("/multiPatch")
     public ResponseEntity patchFashionPickupEntityMultipart(@RequestBody List<MultipartFile> multipartFiles,
                                                             Long fashionPickupEntityId){
@@ -271,7 +304,7 @@ public class FashionPickupEntityController {
         }
         fashionPickupEntityService.editFashionPickupEntity(fashionPickupEntity);
         //파라미터로 들어온 파일을 받아서 bucket에 새롭게 저장함
-        return new ResponseEntity(fashionPickupEntity,HttpStatus.OK);//수정된 entity 를 다시 반환함.
+        return new ResponseEntity(fashionPickupMapper.fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity),HttpStatus.OK);//수정된 entity 를 다시 반환함.
 
 
     }

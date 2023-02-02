@@ -3,49 +3,60 @@ package com.facaieve.backend.service.aswS3;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.waiters.AmazonS3Waiters;
 import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.exception.BusinessLogicException;
 import com.facaieve.backend.exception.ExceptionCode;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class S3FileService implements FileServiceCRUD{
 
     private static final Logger LOG = LoggerFactory.getLogger(S3FileService.class);
 
-    @Autowired
     private AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
     private String s3BucketName;
+//    @Value("${custom.path.upload-images}")
+//    private String uploadImagePath;
 
-    //multiPartFile to java file obj
-    private File convertMultiPartFileToFile(final MultipartFile multipartFile) {
 
-        final File file = new File(multipartFile.getOriginalFilename());//application context file name return
-        file.setWritable(true); //쓰기가능설정
-        file.setReadable(true);	//읽기가능설정
-        try (final FileOutputStream outputStream = new FileOutputStream(file)) {
-            outputStream.write(multipartFile.getBytes());
-        } catch (IOException e) {
-            LOG.error("Error {} occurred while converting the multipart file", e.getLocalizedMessage());
-        }
 
-        return file;
-    }
+//    //multiPartFile to java file obj
+//    private File convertMultiPartFileToFile(final MultipartFile multipartFile) throws IOException {
+//
+//        //todo jar 배포시 발생하는 오류에 대해서 블로그에 작성할것
+//        final File file = new File(uploadImagePath,multipartFile.getOriginalFilename());//application context file name return
+//        file.setWritable(true); //쓰기가능설정
+//        file.setReadable(true);	//읽기가능설정
+//
+//        try (final FileOutputStream outputStream = new FileOutputStream(file,true)) {//todo true 로 설정해서 해당 경로로 파일 생성되게 만듦
+//            outputStream.write(multipartFile.getBytes());
+//        } catch (IOException e) {
+//            LOG.error("Error {} occurred while converting the multipart file", e.getLocalizedMessage());
+//        }
+//
+//        return file;
+//    }
 
     // @Async annotation ensures that the method is executed in a different thread
     // and get the S3 obj with file's name
@@ -102,7 +113,7 @@ public class S3FileService implements FileServiceCRUD{
 
     @Override
     public void changeMultiFileListAtS3(List<String> multiParFilesURIes, List<MultipartFile> multipartFiles) {
-
+        //new..
 
     }
 
@@ -114,19 +125,20 @@ public class S3FileService implements FileServiceCRUD{
 //        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)                .withCannedAcl(CannedAccessControlList.PublicRead));
 
         try {
-
-            final File file = convertMultiPartFileToFile(multipartFile);
-            final String fileName = UUID.randomUUID() + "_" + file.getName();//change the file name
+//            final File file = convertMultiPartFileToFile(multipartFile);
+            final String fileName = UUID.randomUUID() + "_" + multipartFile.getName();//change the file name
             LOG.info("Uploading file with name {}", fileName);
 
-            final PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, fileName, file)
-                    .withCannedAcl(CannedAccessControlList.PublicRead);
-            amazonS3.putObject(putObjectRequest);//now send the data to S3
-
-            Files.delete(file.toPath()); // Remove the file locally created in the project folder
-
+            InputStream inputStream = new BufferedInputStream(multipartFile.getInputStream());
+            final PutObjectRequest putObjectRequest =
+                    new PutObjectRequest(s3BucketName, fileName, inputStream,null);
+            putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);//configure upload file permission
+            PutObjectResult putObjectResult = amazonS3.putObject(putObjectRequest);//now send the data to S3
+            System.out.println("File " + fileName + " was uploaded.");
+//            Files.delete(file.toPath()); // Remove the file locally created in the project folder
             String fileURI = findImgUrl(fileName);
-            return PostImageDto.builder().fileName(fileName).fileURI(fileURI).build();
+            inputStream.close();//저장한 스트림 닫음
+           return PostImageDto.builder().fileName(fileName).fileURI(fileURI).build();
 
 
 
