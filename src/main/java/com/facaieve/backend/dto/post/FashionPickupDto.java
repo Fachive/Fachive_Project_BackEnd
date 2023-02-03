@@ -3,7 +3,9 @@ package com.facaieve.backend.dto.post;
 import javax.persistence.*;
 
 import com.facaieve.backend.dto.etc.CategoryDTO;
+import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.image.PostImageDto;
+import com.facaieve.backend.entity.etc.TagEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,9 +25,9 @@ public class FashionPickupDto {
     @Schema(description = "image file 을 포함하는 패션픽업 response DTO")
     @Builder
     public static class RequestFashionPickupIncludeMultiPartFileDto{
-
-        @Schema(description ="패션픽업 게시글 식별자")
-        Long fashionPickupEntityId;
+//
+//        @Schema(description ="패션픽업 게시글 식별자")
+//        Long fashionPickupEntityId;
 
         @Schema(description ="패션픽업 제목")
         String title;
@@ -39,9 +41,13 @@ public class FashionPickupDto {
         @Schema(description = "카테고리")
         CategoryDTO.PostCategoryDto postCategoryDto;
 
+        @Schema(description = "게시글 태그")
+        List<TagDTO.PostTagDTO> postTagDTOList = new ArrayList<>();
+
         @Schema(description="URI for send to front end")
         List<MultipartFile>  multipartFileList = new ArrayList<>();
     }
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -87,6 +93,9 @@ public class FashionPickupDto {
 
         @Schema(description ="추천수")
         Integer myPicks;
+
+        @Schema(description="태그")
+        List<TagDTO.ResponseTagDTO> responseTagDTOList = new ArrayList<>();
 
         @Schema(description = "카테고리")
         CategoryDTO.ResponseCategoryDTO responseCategoryDTO;

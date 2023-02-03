@@ -1,21 +1,22 @@
 package com.facaieve.backend.controller.post;
 
 
+import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.dto.post.FundingDto;
 import com.facaieve.backend.entity.etc.CategoryEntity;
+import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.image.PostImageEntity;
-import com.facaieve.backend.entity.post.FundingEntity;
+import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.mapper.post.PortfolioMapper;
 import com.facaieve.backend.dto.post.PortfolioDto;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.etc.CategoryService;
+import com.facaieve.backend.service.etc.TagService;
 import com.facaieve.backend.service.post.PortfolioEntityService;
-import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
-import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import com.facaieve.backend.stubDate.PortfolioMagePageStubData;
 import com.facaieve.backend.stubDate.PortfolioStubData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,10 +42,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/portfolio")
 @AllArgsConstructor
 public class PortfolioEntityController {
+
     CategoryService categoryService;
     PortfolioEntityService portfolioEntityService;
     PortfolioMapper portfolioMapper;
     S3FileService s3FileService;
+    TagMapper tagMapper;
+    TagService tagService;
 
     static final PortfolioStubData portfolioStubData = new PortfolioStubData();
     //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
@@ -97,6 +101,19 @@ public class PortfolioEntityController {
         return new ResponseEntity(responseDTO,HttpStatus.OK);
     }
 
+    //todo 수정할것
+    private void configureTagEntityAtPost(List<TagDTO.PostTagDTO> postTagDTOList, PortfolioEntity portfolioEntity){
+
+        List<TagEntity> tagEntities = postTagDTOList.stream().map(tagMapper::postTagDtoToTagEntity)
+                .collect(Collectors.toList());
+
+        for(TagEntity tagEntity: tagEntities){
+            TagEntity savedTagEntity = tagService.createTagEntity(tagEntity);
+            savedTagEntity.setPortfolioEntity(portfolioEntity);
+        }
+
+        portfolioEntity.setTagEntities(tagEntities);
+    }
 
     private CategoryEntity getCategoryFromService(String categoryName){
         return categoryService.getCategory(CategoryEntity
@@ -116,7 +133,6 @@ public class PortfolioEntityController {
 
         PortfolioDto.ResponsePortfolioIncludeURI responsePortfolioIncludeURI =
                 PortfolioDto.ResponsePortfolioIncludeURI.builder()
-                        .portfolioEntityId(requestPortfolioIncludeMultiPartFiles.getPortfolioEntityId())
                         .title(requestPortfolioIncludeMultiPartFiles.getTitle())
                         .body(requestPortfolioIncludeMultiPartFiles.getBody())
                         .views(requestPortfolioIncludeMultiPartFiles.getViews())
@@ -134,6 +150,8 @@ public class PortfolioEntityController {
         for(PostImageEntity postImageEntity: postImageEntities){
             postImageEntity.setPortfolioEntity(portfolio);
         }
+
+        configureTagEntityAtPost(requestPortfolioIncludeMultiPartFiles.getPostTagDTOList(),portfolio);//tag 를 점검하고 설정하는 함수
 
         return new ResponseEntity(portfolioMapper
                 .portfolioEntityToResponsePortfolioIncludeURI(

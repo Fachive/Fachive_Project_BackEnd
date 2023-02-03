@@ -3,13 +3,15 @@ package com.facaieve.backend.mapper.post;
 import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.mapper.etc.CategoryMapper;
+import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.stubDate.FashionPuckupStubData;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses ={
         PostImageMapper.class,
-        CategoryMapper.class
+        CategoryMapper.class,
+        TagMapper.class
 })
 public interface FashionPickupMapper {
     // 패션픽업 스텁데이터 -> 엔티티로 변환
@@ -37,6 +39,7 @@ public interface FashionPickupMapper {
 
     @Mapping(source = "postImageEntities", target = "postImageDtoList")
     @Mapping(source = "categoryEntity", target = "responseCategoryDTO")
+    @Mapping(source = "tagEntities", target = "responseTagDTOList")
     FashionPickupDto.ResponseFashionPickupIncludeURI
     fashionPickupEntityToResponseFashionPickupIncludeURI(FashionPickupEntity fashionPickupEntity);
 

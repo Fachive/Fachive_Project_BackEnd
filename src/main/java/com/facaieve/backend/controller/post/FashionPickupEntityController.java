@@ -2,10 +2,14 @@ package com.facaieve.backend.controller.post;
 
 
 import com.facaieve.backend.dto.etc.CategoryDTO;
+import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.entity.etc.CategoryEntity;
+import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.image.PostImageEntity;
+import com.facaieve.backend.mapper.etc.TagMapper;
+import com.facaieve.backend.mapper.etc.TagMapperImpl;
 import com.facaieve.backend.mapper.post.FashionPickupMapper;
 
 import com.facaieve.backend.dto.post.FashionPickupDto;
@@ -13,6 +17,7 @@ import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.mapper.post.PostImageMapper;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.etc.CategoryService;
+import com.facaieve.backend.service.etc.TagService;
 import com.facaieve.backend.service.image.PostImageService;
 import com.facaieve.backend.service.post.FashionPickupEntityService;
 import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
@@ -52,6 +57,8 @@ public class FashionPickupEntityController {
     S3FileService s3FileService;
     PostImageMapper postImageMapper;
     CategoryService categoryService;
+    TagService tagService;
+    TagMapper tagMapper;
 
     static final FashionPuckupStubData fashionPuckupStubData = new FashionPuckupStubData();
 
@@ -195,6 +202,19 @@ public class FashionPickupEntityController {
 
     }
 
+    public void validateSaveTagAtPost(List<TagDTO.PostTagDTO> postTagDTOList, FashionPickupEntity fashionPickupEntity){
+
+        List<TagEntity> tagEntities = postTagDTOList
+                .stream().map(tagMapper::postTagDtoToTagEntity).collect(Collectors.toList());
+
+        for(TagEntity tagEntity: tagEntities){
+            TagEntity savedTagEntity = tagService.createTagEntity(tagEntity);//tag 의 중복 생성을 방지하기 위해서 사용함
+            savedTagEntity.setFashionPickupEntity(fashionPickupEntity);
+        }
+
+        fashionPickupEntity.setTagEntities(tagEntities);
+    }
+
     @Operation(summary = "form-data 를 이용해서 post 객체를 등록하고 등록된 객체를 반환하는 api",
             description = "@modelAttribute를 사용해서 MultipartFile 과 json을 한번에 객체를 이용해서 받는 것으로 구현함")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
@@ -216,7 +236,6 @@ public class FashionPickupEntityController {
 
         FashionPickupDto.ResponseFashionPickupIncludeURI responseFashionPickupIncludeURI
                  = FashionPickupDto.ResponseFashionPickupIncludeURI.builder()
-                .fashionPickupEntityId(multiPartFileDto.getFashionPickupEntityId())
                 .title(multiPartFileDto.getTitle())
                 .views(multiPartFileDto.getViews())
                 .body(multiPartFileDto.getBody())
@@ -233,6 +252,8 @@ public class FashionPickupEntityController {
         for(PostImageEntity postImage:postImageEntities){
             postImage.setFashionPickupEntity(fashionPickupEntity);
         }
+
+        validateSaveTagAtPost(multiPartFileDto.getPostTagDTOList(), fashionPickupEntity);
         //연관관계의 주인인 이미지에 야무지게 삽입함
 
     //todo dto 를 반환해야 수나환참조 문제를 해결이 가능하다.
