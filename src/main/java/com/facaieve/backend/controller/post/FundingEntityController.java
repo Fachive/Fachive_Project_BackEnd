@@ -1,16 +1,21 @@
 package com.facaieve.backend.controller.post;
 
 
+import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.entity.etc.CategoryEntity;
+import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.image.PostImageEntity;
+import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.mapper.post.FundingMapper;
 
 import com.facaieve.backend.dto.post.FundingDto;
 import com.facaieve.backend.entity.post.FundingEntity;
+import com.facaieve.backend.mapper.post.PostImageMapper;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.etc.CategoryService;
+import com.facaieve.backend.service.etc.TagService;
 import com.facaieve.backend.service.post.FundingEntityService;
 import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
 import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
@@ -42,9 +47,11 @@ public class FundingEntityController {
 
     CategoryService categoryService;
     FundingEntityService fundingEntityService;
-
     FundingMapper fundingMapper;
+    PostImageMapper postImageMapper;
     S3FileService s3FileService;
+    TagService tagService;
+    TagMapper tagMapper;
 
     static final FundingStubData fundingStubData = new FundingStubData();
 
@@ -97,6 +104,18 @@ public class FundingEntityController {
     }
 
 
+    //todo 수정할것
+    private void validateSaveTagAtPost(List<TagDTO.PostTagDTO> postTagDTOList, FundingEntity fundingEntity){
+        List<TagEntity> tagEntities = postTagDTOList.stream().map(tagMapper::postTagDtoToTagEntity)
+                .collect(Collectors.toList());
+        for(TagEntity tagEntity: tagEntities){
+            TagEntity savedTagEntity = tagService.createTagEntity(tagEntity);
+            savedTagEntity.setFundingEntity(fundingEntity);
+        }
+        fundingEntity.setTagEntities(tagEntities);
+    }
+
+
     @PostMapping("/multipartPost")//test pass
     public ResponseEntity postFundingEntityWithMultiPart(@ModelAttribute FundingDto.RequestFundingIncludeMultiPartFileDto
                                                                  requestFundingIncludeMultiPartFileDto) {
@@ -132,13 +151,13 @@ public class FundingEntityController {
         for (PostImageEntity postImageEntity : postImageEntities) {
             postImageEntity.setFundingEntity(fundingEntity);
         }
+        validateSaveTagAtPost(requestFundingIncludeMultiPartFileDto.getPostTagDTOList(),fundingEntity);
+        FundingDto.ResponseFundingIncludeURI response = fundingMapper
+                .FundingEntityToResponseFundingIncludeURI(fundingEntityService.createFundingEntity(fundingEntity));
 
-        return new ResponseEntity(fundingMapper
-                .FundingEntityToResponseFundingIncludeURI(
-                        fundingEntityService.createFundingEntity(fundingEntity))
-                , HttpStatus.OK);
+        return new ResponseEntity(fundingEntityService.calculatingPercentage(response)
+                , HttpStatus.OK);//percentage를 계산하고 설정한 후에 반환
     }
-
 
     // 서비스 레이어 구현이 안되어 Stub 데이터로 대체(추후 변경 예정)
 

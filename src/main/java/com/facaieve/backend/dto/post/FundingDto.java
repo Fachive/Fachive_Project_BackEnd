@@ -2,6 +2,7 @@ package com.facaieve.backend.dto.post;
 
 
 import com.facaieve.backend.dto.etc.CategoryDTO;
+import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.image.PostImageDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -21,6 +22,8 @@ public class FundingDto {
     @Builder
     @Schema(description = "image file 을 포함하는 포트폴리오 response DTO")
     public static class ResponseFundingIncludeURI{
+        @Schema(description ="펀딩 식별")
+        Long fundingEntityId;
 
         @Schema(description ="펀딩 제목")
         String title;
@@ -39,6 +42,12 @@ public class FundingDto {
 
         @Schema(description ="펀딩 모금액")
         Long fundedPrice;//펀딩된 현재 금액
+
+        @Schema(description = "펀딩 퍼센트")
+        Double percentage;
+
+        @Schema
+        List<TagDTO.ResponseTagDTO> responseTagDTOList = new ArrayList<>();
 
         @Schema(description = "카테고리")
         CategoryDTO.ResponseCategoryDTO responseCategoryDTO;
@@ -76,6 +85,9 @@ public class FundingDto {
 
         @Schema(description = "카테고리")
         CategoryDTO.PostCategoryDto postCategoryDto;
+
+        @Schema(description = "태그 리스트")
+        List<TagDTO.PostTagDTO> postTagDTOList = new ArrayList<>();
 
         @Schema(description = "사진 URI")
         List<MultipartFile> multipartFileList = new ArrayList<>();

@@ -15,16 +15,14 @@ public class TagService {
 
     TagRepository tagRepository;
 
+    //태그의 중복 생성을 방지하고 이미 가지고 있는 태그의 생성요청이 왔다면 기존에 존재하는 태그 객체를 반환하게 수정함
+    public TagEntity createTagEntity(TagEntity tagEntity){
 
-    public TagEntity createTagEntity(TagEntity tagEntity){//중복 생성 방지
-
-        if(tagRepository.existsByTagName(tagEntity.getTagName())){
-            throw new RuntimeException("same tag name already exist the tag please check!");
+        if(tagRepository.findByTagName(tagEntity.getTagName())!=null){
+            return tagRepository.findByTagName(tagEntity.getTagName());
         }else{
-
             TagEntity savedTagEntity = tagRepository.save(tagEntity);
             return savedTagEntity;
-
         }
     }
 
