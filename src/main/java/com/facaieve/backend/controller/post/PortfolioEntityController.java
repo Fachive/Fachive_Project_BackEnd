@@ -211,14 +211,14 @@ public class PortfolioEntityController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @GetMapping("/get")
-    public ResponseEntity getPortfolioEntity(@RequestBody PortfolioDto.GetPortfolioDtoDto getPortfolioDtoDto){
-//        PortfolioEntity foundPortfolioEntity = portfolioEntityService.findPortfolioEntity(getPortfolioDtoDto.getPortfolioEntityId());
-//        return new ResponseEntity( portfolioMapper.portfolioEntityToResponsePortfolioEntity(foundPortfolioEntity), HttpStatus.OK);
-//        log.info("기존 패션픽업 게시글을 가져옵니다.");
+    @GetMapping("/get/{portfolioId}")
+    public ResponseEntity getPortfolioEntity(@PathVariable("portfolioId") Long portfolioId){
+        log.info("기존 패션픽업 게시글을 가져옵니다.");
+        PortfolioEntity portfolio = portfolioEntityService.findPortfolioEntity(portfolioId);
+        return new ResponseEntity( portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolio), HttpStatus.OK);
 
-        PortfolioEntity stubdata =  portfolioMapper.portfolioDtoToFashionPickupStubData(portfolioStubData);
-        return new ResponseEntity( portfolioMapper.portfolioEntityToResponsePortfolioEntity(stubdata), HttpStatus.OK);
+//        PortfolioEntity stubdata =  portfolioMapper.portfolioDtoToFashionPickupStubData(portfolioStubData);
+//        return new ResponseEntity( portfolioMapper.portfolioEntityToResponsePortfolioEntity(stubdata), HttpStatus.OK);
     }
 
 
