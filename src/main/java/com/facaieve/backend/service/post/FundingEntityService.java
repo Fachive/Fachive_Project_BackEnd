@@ -97,5 +97,9 @@ public class FundingEntityService {
         return responseFundingDto;
     }
 
+    public FundingEntity getFundingEntityById(Long fundingEntityId){
+        return fundingRepository.findById(fundingEntityId).orElseThrow();
+    }
+
 
 }

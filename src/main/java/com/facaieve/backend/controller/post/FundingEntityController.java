@@ -210,14 +210,17 @@ public class FundingEntityController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @GetMapping("/get")
-    public ResponseEntity getFundingEntity(@RequestBody FundingDto.GetFundingDto getFundingDto) {
-//        FundingEntity foundFundingEntity = fundingEntityService.findFundingEntity(getFundingDto.getFundingEntityId());
-//        return new ResponseEntity( fundingMapper.fundingEntityToResponseFundingEntity(foundFundingEntity), HttpStatus.OK);
-        log.info("기존 펀딩 게시글을 가져옵니다.");
+    @GetMapping("/get/{fundingEntityId}")
+    public ResponseEntity getFundingEntity(@PathVariable("fundingEntityId") Long fundingEntityId) {
 
-        FundingEntity stubdata = fundingMapper.fundingDtoToFundingEntityStubData(fundingStubData);
-        return new ResponseEntity(fundingMapper.fundingEntityToResponseFundingEntity(stubdata), HttpStatus.OK);
+        log.info("기존 펀딩 게시글을 가져옵니다.");
+        FundingEntity foundFundingEntity = fundingEntityService.getFundingEntityById(fundingEntityId);
+        FundingDto.ResponseFundingIncludeURI responseFundingIncludeURI = fundingMapper.FundingEntityToResponseFundingIncludeURI(foundFundingEntity);
+        fundingEntityService.calculatingPercentage(responseFundingIncludeURI);
+        return new ResponseEntity( responseFundingIncludeURI, HttpStatus.OK);
+
+//        FundingEntity stubdata = fundingMapper.fundingDtoToFundingEntityStubData(fundingStubData);
+//        return new ResponseEntity(fundingMapper.fundingEntityToResponseFundingEntity(stubdata), HttpStatus.OK);
     }
 
     @Operation(summary = "펀딩 게시글 삭제 메서드 예제", description = "json 바디값을 통한 펀딩 게시글 DELETE 요청 메서드")
