@@ -36,6 +36,6 @@ spring:
       bucket: facaiev-img
 
     credentials:
-      access-key: AKIARZQOLJAW3MENWYQR
-      secret-key: 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
+      access-key: AKIARZQOLJAW45WSHTJJ
+      secret-key: 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
       instance-profile: true

@@ -31,10 +31,7 @@ public class MyPickController {
     @PostMapping("/post")//test pass
     public ResponseEntity postMyPick(@RequestBody MyPickDTO.PostMyPickDTO postMyPickDTO){
 
-        myPickService.createMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick().name(),postMyPickDTO.getEntityId());
-
-
-
+        myPickService.createMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick(),postMyPickDTO.getEntityId());
 
         return new ResponseEntity(
                 HttpStatus.CREATED);
@@ -48,12 +45,9 @@ public class MyPickController {
 
     //유저 아디로 삭제하는게 필요함
     @DeleteMapping("/delete")//test pass
-    public void deleteMyPick(@RequestBody MyPickDTO.ResponseMyPickDTO responseMyPickDTO){
+    public void deleteMyPick(@RequestBody MyPickDTO.PostMyPickDTO postMyPickDTO){
 
-        responseMyPickDTO.setMyPickId(Long.valueOf(1));//설정값
-        responseMyPickDTO.setUserId(Long.valueOf(1));//설정값
-
-        myPickService.deleteMyPick(myPickMapper.responseMyPickDtoToMyPickEntity(responseMyPickDTO));
+        myPickService.deleteMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick(),postMyPickDTO.getEntityId());
         log.info("delete complete");
     }
 

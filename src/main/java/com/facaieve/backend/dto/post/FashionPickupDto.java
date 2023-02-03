@@ -27,6 +27,9 @@ public class FashionPickupDto {
         @Schema(description ="패션픽업 게시글 식별자")
         Long fashionPickupEntityId;
 
+        @Schema(description ="작성자 식별자")
+        Long userId;
+
         @Schema(description ="패션픽업 제목")
         String title;
 

@@ -197,6 +197,7 @@ public class FashionPickupEntityController {
 
     }
 
+
     @Operation(summary = "form-data 를 이용해서 post 객체를 등록하고 등록된 객체를 반환하는 api",
             description = "@modelAttribute를 사용해서 MultipartFile 과 json을 한번에 객체를 이용해서 받는 것으로 구현함")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({

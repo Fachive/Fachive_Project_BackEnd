@@ -21,7 +21,7 @@ public class FundingCommentService implements CommentService<FundingCommentEntit
 
     @Override
     public FundingCommentEntity createComment(FundingCommentEntity fundingCommentEntity) {
-        if(fundingCommentRepository.existsById(fundingCommentEntity.getFundingCommentId())){
+        if(fundingCommentRepository.existsById(fundingCommentEntity.getFundingCommentEntityId())){
             throw new RuntimeException("there is already ex");
         }else{
             FundingCommentEntity fundingCommentSaved = fundingCommentRepository.save(fundingCommentEntity);
@@ -32,7 +32,7 @@ public class FundingCommentService implements CommentService<FundingCommentEntit
     @Override
     public void deleteComment(FundingCommentEntity fundingCommentEntity) {
 
-        if(fundingCommentRepository.existsById(fundingCommentEntity.getFundingCommentId())){
+        if(fundingCommentRepository.existsById(fundingCommentEntity.getFundingCommentEntityId())){
             fundingCommentRepository.delete(fundingCommentEntity);
         }else{
             throw new RuntimeException("there is no kind of funding comment");
@@ -45,10 +45,10 @@ public class FundingCommentService implements CommentService<FundingCommentEntit
 
     public FundingCommentEntity modifyComment(FundingCommentEntity fundingCommentEntity) {
 
-        if(fundingCommentRepository.existsById(fundingCommentEntity.getFundingCommentId())){
+        if(fundingCommentRepository.existsById(fundingCommentEntity.getFundingCommentEntityId())){
 
             FundingCommentEntity fundingCommentUpdated = fundingCommentRepository.
-                    findFundingCommentEntityByFundingCommentId(fundingCommentEntity.getFundingCommentId());
+                    findFundingCommentEntityByFundingCommentEntityId(fundingCommentEntity.getFundingCommentEntityId());
 
             fundingCommentUpdated.update(fundingCommentEntity.getCommentBody());
             //JPA 자동 context로 저장
@@ -62,10 +62,10 @@ public class FundingCommentService implements CommentService<FundingCommentEntit
     @Override
     public FundingCommentEntity getComment(FundingCommentEntity fundingCommentEntity) {
 
-        if(fundingCommentRepository.existsById(fundingCommentEntity.getFundingCommentId())){
+        if(fundingCommentRepository.existsById(fundingCommentEntity.getFundingCommentEntityId())){
 
             FundingCommentEntity fundingComment = fundingCommentRepository.
-                    findFundingCommentEntityByFundingCommentId(fundingCommentEntity.getFundingCommentId());
+                    findFundingCommentEntityByFundingCommentEntityId(fundingCommentEntity.getFundingCommentEntityId());
 
             return fundingComment;// 새로 저장된거 반환함.
         }else{

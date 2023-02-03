@@ -10,7 +10,7 @@ public class MyPickDTO {
     @Setter
     public static class PostMyPickDTO{//생성할땐 유저 아이디만 받음 다른 외래키 필요함.
         Long userId;
-        Enum whatToPick;
+        String whatToPick;
         Long entityId;
 
         public enum PickableEntity{

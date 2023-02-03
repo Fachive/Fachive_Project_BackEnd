@@ -24,7 +24,7 @@ public class MyPickEntity extends BaseEntity {
     Long myPickId;
 
     @ManyToOne(fetch =FetchType.EAGER )
-    @JoinColumn(name = "myPickEntityList")
+    @JoinColumn(name = "myPickMadeByWho")
     UserEntity pickingUser;
 
     @ManyToOne(fetch =FetchType.EAGER )

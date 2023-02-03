@@ -22,7 +22,7 @@ public class PortfolioCommentService implements CommentService<PortfolioCommentE
     @Override
     public PortfolioCommentEntity createComment(PortfolioCommentEntity portfolioCommentEntity) {
 
-        if(portfolioCommentRepository.existsById(portfolioCommentEntity.getPortfolioCommentId())){
+        if(portfolioCommentRepository.existsById(portfolioCommentEntity.getPortfolioCommentEntityId())){
             throw new RuntimeException("there is already ex");
         }else{
             return portfolioCommentRepository.save(portfolioCommentEntity);
@@ -32,7 +32,7 @@ public class PortfolioCommentService implements CommentService<PortfolioCommentE
     @Override
     public void deleteComment(PortfolioCommentEntity portfolioCommentEntity) {
 
-        if(portfolioCommentRepository.existsById(portfolioCommentEntity.getPortfolioCommentId())){
+        if(portfolioCommentRepository.existsById(portfolioCommentEntity.getPortfolioCommentEntityId())){
             portfolioCommentRepository.delete(portfolioCommentEntity);
         }else{
             throw new RuntimeException("there is no kind of comment");
@@ -45,11 +45,11 @@ public class PortfolioCommentService implements CommentService<PortfolioCommentE
     @Transactional
 
     public PortfolioCommentEntity modifyComment(PortfolioCommentEntity portfolioCommentEntity) {
-        if(portfolioCommentRepository.existsById(portfolioCommentEntity.getPortfolioCommentId())){
+        if(portfolioCommentRepository.existsById(portfolioCommentEntity.getPortfolioCommentEntityId())){
 
             PortfolioCommentEntity portfolioCommentUpdated =
                 portfolioCommentRepository
-                        .findPortfolioCommentEntityByPortfolioCommentId(portfolioCommentEntity.getPortfolioCommentId());
+                        .findPortfolioCommentEntityByPortfolioCommentEntityId(portfolioCommentEntity.getPortfolioCommentEntityId());
 
 
             portfolioCommentUpdated.update(portfolioCommentEntity.getCommentBody());
@@ -65,11 +65,11 @@ public class PortfolioCommentService implements CommentService<PortfolioCommentE
     @Override
     public PortfolioCommentEntity getComment(PortfolioCommentEntity portfolioCommentEntity) {
 
-        if(portfolioCommentRepository.existsById(portfolioCommentEntity.getPortfolioCommentId())){
+        if(portfolioCommentRepository.existsById(portfolioCommentEntity.getPortfolioCommentEntityId())){
 
             PortfolioCommentEntity portfolioComment =
                     portfolioCommentRepository
-                            .findPortfolioCommentEntityByPortfolioCommentId(portfolioCommentEntity.getPortfolioCommentId());
+                            .findPortfolioCommentEntityByPortfolioCommentEntityId(portfolioCommentEntity.getPortfolioCommentEntityId());
             return portfolioComment;
         }else{
             throw new RuntimeException("there is no kind of comment");

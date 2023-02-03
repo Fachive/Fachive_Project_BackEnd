@@ -1,6 +1,12 @@
 package com.facaieve.backend.service.etc;
 
+import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
+import com.facaieve.backend.entity.comment.FundingCommentEntity;
+import com.facaieve.backend.entity.comment.PortfolioCommentEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
+import com.facaieve.backend.entity.post.FashionPickupEntity;
+import com.facaieve.backend.entity.post.FundingEntity;
+import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.exception.BusinessLogicException;
 import com.facaieve.backend.exception.ExceptionCode;
@@ -16,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -51,27 +58,32 @@ public class MyPickService {
             case "Portfolio":
                 pickEntity.portfolioEntity(portfolioRepository.findById(entityId)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_ELEMENT))).build();
-                return pickEntity;
+                break;
 
             case "FashionPickUp":
                 pickEntity.fashionPickupEntity(fashionPickupRepository.findById(entityId)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_ELEMENT))).build();
+                break;
 
             case "Funding":
                 pickEntity.fundingEntity(fundingRepository.findById(entityId)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_ELEMENT))).build();
+                break;
 
             case "PortfolioComment":
                 pickEntity.portfolioCommentEntity(portfolioCommentRepository.findById(entityId)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_ELEMENT))).build();
+                break;
 
             case "FashionPickUpComment":
                 pickEntity.fashionPickupCommentEntity(fashionPickupCommentRepository.findById(entityId)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_ELEMENT))).build();
+                break;
 
             case "FundingComment":
                 pickEntity.fundingCommentEntity(fundingCommentRepository.findById(entityId)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_ELEMENT))).build();
+                break;
         }
         return pickEntity;
     }
@@ -91,12 +103,45 @@ public class MyPickService {
 
 
 
-    public void deleteMyPick(MyPickEntity myPickEntity){
+    @Transactional
+    public void deleteMyPick(Long userId, String whatToPick, Long entityId){
 
-        if(myPickRepository.existsByPickingUser(myPickEntity.getPickingUser())){
-            myPickRepository.delete(myPickEntity);
-        }else{
-            throw new RuntimeException("there is no mypick");
+        UserEntity pickingUser = userRepository.findById(userId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+
+        switch (whatToPick) {
+            case "Portfolio":
+                PortfolioEntity portfolioEntity = portfolioRepository.findById(entityId).orElseThrow();
+                myPickRepository.deleteByPortfolioEntityAndPickingUser(portfolioEntity, pickingUser);
+
+                break;
+
+            case "FashionPickUp":
+                FashionPickupEntity fashionPickupEntity = fashionPickupRepository.findById(entityId).orElseThrow();
+                myPickRepository.deleteByFashionPickupEntityAndPickingUser(fashionPickupEntity, pickingUser);
+                break;
+
+            case "Funding":
+                FundingEntity fundingEntity = fundingRepository.findById(entityId).orElseThrow();
+                myPickRepository.deleteByFundingEntityAndPickingUser(fundingEntity, pickingUser);
+
+                break;
+
+            case "PortfolioComment":
+                PortfolioCommentEntity portfolioCommentEntity = portfolioCommentRepository.findById(entityId).orElseThrow();
+                myPickRepository.deleteByPortfolioCommentEntityAndPickingUser(portfolioCommentEntity, pickingUser);
+
+                break;
+
+            case "FashionPickUpComment":
+                FashionPickUpCommentEntity fashionPickUpCommentEntity = fashionPickupCommentRepository.findById(entityId).orElseThrow();
+                myPickRepository.deleteByFashionPickupCommentEntityAndPickingUser(fashionPickUpCommentEntity, pickingUser);
+
+                break;
+
+            case "FundingComment":
+                FundingCommentEntity fundingCommentEntity = fundingCommentRepository.findById(entityId).orElseThrow();
+                myPickRepository.deleteByFundingCommentEntityAndPickingUser(fundingCommentEntity, pickingUser);
+                break;
         }
 
 

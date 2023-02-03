@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class FundingCommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long fundingCommentId;
+    Long fundingCommentEntityId;
     @Column
     String commentBody;
     @Column
