@@ -213,9 +213,16 @@ public class FashionPickupEntityController {
 
         List<MultipartFile> multipartFileList = multiPartFileDto.getMultipartFileList();
         List<PostImageDto> postImageDtoList = s3FileService.uploadMultiFileList(multipartFileList);//저장될 파일 객체가 들어감.
+
+
         //S3에 저장후에 파일 이름과 URI 를 가지고 있음.
+
+
         CategoryEntity categoryEntity = getCategoryFromService(multiPartFileDto.getPostCategoryDto().getCategoryName());
-        System.out.println(categoryEntity.getCategoryName()+"=========================================================");
+
+
+
+
 
         FashionPickupDto.ResponseFashionPickupIncludeURI responseFashionPickupIncludeURI
                  = FashionPickupDto.ResponseFashionPickupIncludeURI.builder()
@@ -237,6 +244,10 @@ public class FashionPickupEntityController {
             postImage.setFashionPickupEntity(fashionPickupEntity);
         }
         //연관관계의 주인인 이미지에 야무지게 삽입함
+
+
+
+
 
     //todo dto 를 반환해야 수나환참조 문제를 해결이 가능하다.
         return new ResponseEntity(fashionPickupMapper

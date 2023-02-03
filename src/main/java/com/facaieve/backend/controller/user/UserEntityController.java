@@ -46,9 +46,6 @@ public class UserEntityController {
     UserService userService;
     UserMapper userMapper;
 
-//    @ApiResponse(responseCode = "200",
-//            description = "Provides single property json with a boolean which is only true if the key was found and the entry was deleted",
-//            content = @Content(schema = @Schema(implementation = HttpModels.DeleteResponse.class))),
     @Operation(summary = "유저 등록 메서드 예제", description = "json 바디값을 통한 회원가입 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "201" ,description = "사용자가 정상 등록됨", content = @Content(schema = @Schema(implementation = UserDto.ResponseUserDto.class))),

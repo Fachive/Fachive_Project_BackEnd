@@ -46,16 +46,15 @@ public class FundingEntity extends BaseEntity {
     @Column
     @Schema(description = "펀딩 모금액")
     Long fundedPrice;//펀딩된 현재 금액
-//    @Column
-//    @Schema(description = "펀딩 이미지 목록(S3 버킷 uri)")
-//    List<String> imgUri;
+
+    @Column
+    @Schema(description = "펀딩 이미지 목록(S3 버킷 uri)")
+    List<String> imgUri;
 
     @Column
     @Schema(description = "펀딩 객체 조회수")
     Integer views;
 
-    @Schema(description ="추천수")
-    Integer myPicks;
 
     @OneToMany(mappedBy = "fundingEntity",fetch = FetchType.LAZY)
     @Schema(description = "펀딩에 달린 마이픽(좋아요) 객체 목록")

@@ -58,6 +58,7 @@ public class MyPickService {
             case "Portfolio":
                 pickEntity.portfolioEntity(portfolioRepository.findById(entityId)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_ELEMENT))).build();
+
                 break;
 
             case "FashionPickUp":
@@ -112,7 +113,6 @@ public class MyPickService {
             case "Portfolio":
                 PortfolioEntity portfolioEntity = portfolioRepository.findById(entityId).orElseThrow();
                 myPickRepository.deleteByPortfolioEntityAndPickingUser(portfolioEntity, pickingUser);
-
                 break;
 
             case "FashionPickUp":
@@ -123,19 +123,16 @@ public class MyPickService {
             case "Funding":
                 FundingEntity fundingEntity = fundingRepository.findById(entityId).orElseThrow();
                 myPickRepository.deleteByFundingEntityAndPickingUser(fundingEntity, pickingUser);
-
                 break;
 
             case "PortfolioComment":
                 PortfolioCommentEntity portfolioCommentEntity = portfolioCommentRepository.findById(entityId).orElseThrow();
                 myPickRepository.deleteByPortfolioCommentEntityAndPickingUser(portfolioCommentEntity, pickingUser);
-
                 break;
 
             case "FashionPickUpComment":
                 FashionPickUpCommentEntity fashionPickUpCommentEntity = fashionPickupCommentRepository.findById(entityId).orElseThrow();
                 myPickRepository.deleteByFashionPickupCommentEntityAndPickingUser(fashionPickUpCommentEntity, pickingUser);
-
                 break;
 
             case "FundingComment":

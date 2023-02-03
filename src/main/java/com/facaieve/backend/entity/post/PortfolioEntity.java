@@ -35,12 +35,9 @@ public class PortfolioEntity extends BaseEntity {
     @Schema(description = "포트폴리오 객체 조회수")
     Integer views;
 
-    @Schema(description ="추천수")
-    Integer myPicks;
-
-//    @Column
-//    @Schema(description = "포트폴리오 이미지 목록(S3 버킷 uri)")
-//    List<String> imgUri = new ArrayList<String>();;
+    @Column
+    @Schema(description = "포트폴리오 이미지 목록(S3 버킷 uri)")
+    List<String> imgUri = new ArrayList<String>();;
 
     @OneToMany(mappedBy = "portfolioEntity",fetch = FetchType.LAZY)
     @Schema(description = "포트폴리오에 달린 마이픽(좋아요) 객체 목록")

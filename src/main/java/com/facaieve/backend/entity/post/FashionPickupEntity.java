@@ -1,6 +1,7 @@
 package com.facaieve.backend.entity.post;
 
 
+import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.entity.basetime.BaseEntity;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
@@ -34,17 +35,13 @@ public class FashionPickupEntity extends BaseEntity {
     @Schema(description = "패션 픽업 본문 내용")
     String body;
 
-//    @Column
-//    @Schema(description = "패션 픽업 이미지 목록(S3 버킷 uri)")
-//    List<String> imgUri;
+    @Column
+    @Schema(description = "패션 픽업 이미지 목록(S3 버킷 uri)")
+    List<PostImageDto> imgUri;
 
     @Column
     @Schema(description = "조회수")
     Integer views;
-
-    @Column
-    @Schema(description = "추천수")
-    Integer myPicks;
 
     @OneToMany(mappedBy = "fashionPickupEntity",fetch = FetchType.LAZY)
     @Schema(description = "패션 픽업에 달린 마이픽(좋아요) 객체 목록")
