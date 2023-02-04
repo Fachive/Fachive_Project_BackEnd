@@ -25,7 +25,6 @@ import java.util.List;
 public class TagEntity extends BaseEntity {
 
     @Id
-
     String tagName;
 
 

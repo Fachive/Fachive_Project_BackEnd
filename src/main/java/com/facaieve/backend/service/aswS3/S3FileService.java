@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.*;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.exception.BusinessLogicException;
 import com.facaieve.backend.exception.ExceptionCode;
+import com.facaieve.backend.repository.image.S3ImageInfoRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -30,7 +31,8 @@ public class S3FileService implements FileServiceCRUD{
     @Autowired
     private final AmazonS3 amazonS3;
 
-
+    @Autowired
+    S3ImageInfoRepository s3ImageInfoRepository;
     @Value("${cloud.aws.s3.bucket}")
     private String s3BucketName;
 //    @Value("${custom.path.upload-images}")
@@ -123,7 +125,7 @@ public class S3FileService implements FileServiceCRUD{
 
         try {
 //            final File file = convertMultiPartFileToFile(multipartFile);
-            final String fileName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename(); //change the file name
+            final String fileName = UUID.randomUUID() + "_" + Objects.requireNonNull(multipartFile.getOriginalFilename()).substring(multipartFile.getOriginalFilename().indexOf(".")); //change the file name
             LOG.info("Uploading file with name {}", fileName);
 
             InputStream inputStream = new BufferedInputStream(multipartFile.getInputStream());
@@ -135,9 +137,8 @@ public class S3FileService implements FileServiceCRUD{
 //            Files.delete(file.toPath()); // Remove the file locally created in the project folder
             String fileURI = findImgUrl(fileName);
             inputStream.close();//저장한 스트림 닫음
-           return S3ImageInfo.builder().fileName(fileName).fileURI(fileURI).build();
 
-
+            return s3ImageInfoRepository.save(S3ImageInfo.builder().fileName(fileName).fileURI(fileURI).build());
 
         } catch (AmazonServiceException e) {
             LOG.error("Error {} occurred while uploading file", e.getLocalizedMessage());
@@ -154,6 +155,7 @@ public class S3FileService implements FileServiceCRUD{
 
         if(amazonS3.doesObjectExist(s3BucketName,fileName)){
             amazonS3.deleteObject(s3BucketName, fileName);
+            s3ImageInfoRepository.deleteByFileName(fileName);
             return fileName;
         }
         else{
