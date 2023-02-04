@@ -25,7 +25,7 @@ import java.util.*;
 public class FashionPickupEntity extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Schema(description = "패션 픽업 객체 식별자")
     Long fashionPickupEntityId;
 

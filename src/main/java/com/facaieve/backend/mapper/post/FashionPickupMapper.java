@@ -38,6 +38,7 @@ public interface FashionPickupMapper {
 
         return FashionPickupDto.ResponseFashionPickupDtoForEntity
                 .builder()
+                .fashionPickupEntityId(fashionPickupEntity.getFashionPickupEntityId())
                 .title(fashionPickupEntity.getTitle())
                 .body(fashionPickupEntity.getBody())
                 .views(fashionPickupEntity.getViews())

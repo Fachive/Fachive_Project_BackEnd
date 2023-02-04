@@ -25,7 +25,7 @@ import java.util.List;
 public class TagEntity extends BaseEntity {
 
     @Id
-    @UniqueElements
+
     String tagName;
 
 
