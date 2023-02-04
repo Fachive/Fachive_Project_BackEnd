@@ -27,7 +27,7 @@ public enum ExceptionCode {
     NOT_FOLLOW(NOT_FOUND, "팔로우 중이지 않습니다"),
     FILE_IS_NOT_EXIST(NOT_FOUND, "해당 파일이 존재하지 않습니다" ),
     NO_SUCH_ELEMENT(NOT_FOUND, "해당 요소는 존재하지 않습니다."),
-    NO_FOLLOW_ENTITY_EXIST(NOT_FOUND, "팔로우 정보가 존재하지 않습니다."),
+    NO_SUCH_POST_ENTITY(NOT_FOUND, "해당 게시글은 존재하지 않습니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),

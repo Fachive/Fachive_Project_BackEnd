@@ -1,9 +1,10 @@
 package com.facaieve.backend.entity.post;
 
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.basetime.BaseEntity;
+import com.facaieve.backend.entity.crossReference.PortfolioEntityToTagEntity;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
-import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.comment.PortfolioCommentEntity;
 import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.entity.user.UserEntity;
@@ -35,9 +36,9 @@ public class PortfolioEntity extends BaseEntity {
     @Schema(description = "포트폴리오 객체 조회수")
     Integer views;
 
-    @Column
+    @OneToMany(mappedBy = "portfolioEntityPost",fetch = FetchType.LAZY)
     @Schema(description = "포트폴리오 이미지 목록(S3 버킷 uri)")
-    List<String> imgUri = new ArrayList<String>();;
+    List<S3ImageInfo> s3ImgInfo = new ArrayList<S3ImageInfo>();
 
     @OneToMany(mappedBy = "portfolioEntity",fetch = FetchType.LAZY)
     @Schema(description = "포트폴리오에 달린 마이픽(좋아요) 객체 목록")
@@ -48,9 +49,9 @@ public class PortfolioEntity extends BaseEntity {
     private List<PortfolioCommentEntity> commentList = new ArrayList<PortfolioCommentEntity>();
 
 
-    @OneToMany(mappedBy = "portfolioEntity", fetch = FetchType.LAZY) //cascade = CascadeType.ALL
+    @OneToMany(mappedBy = "portfolioEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //cascade = CascadeType.ALL
     @Schema(description = "포트폴리오에 달린 태그 객체 목록")
-    private List<TagEntity> tagEntities = new ArrayList<TagEntity>();  // 포트폴리오 - 카테고리 매핑
+    private List<PortfolioEntityToTagEntity> tagEntities = new ArrayList<PortfolioEntityToTagEntity>();  // 포트폴리오 - 카테고리 매핑
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "categoryEntity")

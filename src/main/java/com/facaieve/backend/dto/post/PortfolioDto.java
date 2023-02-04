@@ -1,7 +1,8 @@
 package com.facaieve.backend.dto.post;
 
 import com.facaieve.backend.dto.etc.CategoryDTO;
-import com.facaieve.backend.dto.image.PostImageDto;
+import com.facaieve.backend.dto.etc.TagDTO;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,8 +35,11 @@ public class PortfolioDto {
         @Schema(description = "카테고리")
         CategoryDTO.ResponseCategoryDTO responseCategoryDTO;
 
+        @Schema(description = "태그 리스트")
+        List<TagDTO.ResponseTagDTO> responseTagDTOList = new ArrayList<>();
+
         @Schema(description = "포트폴리오에 들어갈 이미지 uri")
-        List<PostImageDto> postImageDtoList = new ArrayList<>();
+        List<S3ImageInfo> s3ImageInfoList = new ArrayList<>();
     }
 
     @Getter
@@ -45,9 +49,6 @@ public class PortfolioDto {
     @Builder
     @Schema(description = "MultipartFile 를 포함하는 포트폴리오 request DTO")
     public static class RequestPortfolioIncludeMultiPartFiles{
-
-        @Schema(description ="포트폴리오 식별자")
-        Long portfolioEntityId;
 
         @Schema(description ="포트폴리오 제목")
         String title;
@@ -60,6 +61,9 @@ public class PortfolioDto {
 
         @Schema(description = "카테고리")
         CategoryDTO.PostCategoryDto postCategoryDto;
+
+        @Schema
+        List<TagDTO.PostTagDTO> postTagDTOList = new ArrayList<>();
 
         @Schema(description = "포트폴리오에 들어갈 이미지 uri")
         List<MultipartFile> multipartFileList = new ArrayList<>();

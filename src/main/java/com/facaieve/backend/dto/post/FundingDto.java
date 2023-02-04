@@ -2,13 +2,14 @@ package com.facaieve.backend.dto.post;
 
 
 import com.facaieve.backend.dto.etc.CategoryDTO;
-import com.facaieve.backend.dto.image.PostImageDto;
+import com.facaieve.backend.dto.etc.TagDTO;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -21,6 +22,8 @@ public class FundingDto {
     @Builder
     @Schema(description = "image file 을 포함하는 포트폴리오 response DTO")
     public static class ResponseFundingIncludeURI{
+        @Schema(description ="펀딩 식별")
+        Long fundingEntityId;
 
         @Schema(description ="펀딩 제목")
         String title;
@@ -40,11 +43,17 @@ public class FundingDto {
         @Schema(description ="펀딩 모금액")
         Long fundedPrice;//펀딩된 현재 금액
 
+        @Schema(description = "펀딩 퍼센트")
+        Double percentage;
+
+        @Schema
+        List<TagDTO.ResponseTagDTO> responseTagDTOList = new ArrayList<>();
+
         @Schema(description = "카테고리")
         CategoryDTO.ResponseCategoryDTO responseCategoryDTO;
 
         @Schema(description="URI for send to front end")
-        List<PostImageDto>  postImageDtoList = new ArrayList<>();
+        List<S3ImageInfo> s3ImageInfoList = new ArrayList<>();
     }
 
 
@@ -54,19 +63,23 @@ public class FundingDto {
     @NoArgsConstructor
     @Builder
     @Schema(description = "image file 을 포함하는 포트폴리오 request DTO")
-    public static class RequestFundingIncludeMultiPartFileDto{
+    public static class PostDto {
 
+        @NotNull
+        @Schema(description ="작성자 식별자")
+        Long userId;
+
+        @NotNull
         @Schema(description ="펀딩 제목")
         String title;
 
+        @NotNull
         @Schema(description ="펀딩 본문")
         String body;
 
-        @Schema(description = "펀딩 객체 조회수")
-        Integer views;
-
-        @Schema(description ="추천수")
-        Integer myPicks;
+        @NotNull
+        @Schema(description = "카테고리")
+        String categoryName;
 
         @Schema(description ="펀딩 목표액")
         Long targetPrice;//펀딩 목표금액
@@ -74,8 +87,8 @@ public class FundingDto {
         @Schema(description ="펀딩 모금액")
         Long fundedPrice;//펀딩된 현재 금액
 
-        @Schema(description = "카테고리")
-        CategoryDTO.PostCategoryDto postCategoryDto;
+        @Schema(description = "게시글 태그")
+        List<TagDTO.PostTagDTO> tagList = new ArrayList<>();
 
         @Schema(description = "사진 URI")
         List<MultipartFile> multipartFileList = new ArrayList<>();

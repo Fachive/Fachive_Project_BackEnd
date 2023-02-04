@@ -1,30 +1,45 @@
 package com.facaieve.backend.entity.etc;
 
 import com.facaieve.backend.entity.basetime.BaseEntity;
+import com.facaieve.backend.entity.crossReference.FashionPickupEntityToTagEntity;
+import com.facaieve.backend.entity.crossReference.FundingEntityToTagEntity;
+import com.facaieve.backend.entity.crossReference.PortfolioEntityToTagEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
-import javax.persistence.*;import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.persistence.*;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TagEntity extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long tagId;
-    @Column
     String tagName;
-    @Column
-    String description;
 
-    @ManyToOne
-    @JoinColumn(name = "fashion_Pickup_Entity_Id")
-    FashionPickupEntity fashionPickupEntity;
+
+    @OneToMany(mappedBy = "tagEntity", cascade = CascadeType.ALL)
+    @Schema(description = "패션 픽업에 달린 태그 객체 목록")
+    List<FashionPickupEntityToTagEntity> fashionPickupEntityToTagEntities = new ArrayList<FashionPickupEntityToTagEntity>();
+
+    @OneToMany(mappedBy = "tagEntity", cascade = CascadeType.ALL)
+    @Schema(description = "펀딩에 달린 태그 객체 목록")
+    List<FundingEntityToTagEntity> fundingEntityToTagEntities = new ArrayList<FundingEntityToTagEntity>();
+
+    @OneToMany(mappedBy = "tagEntity", cascade = CascadeType.ALL)
+    @Schema(description = "포트폴리오에 달린 태그 객체 목록")
+    List<PortfolioEntityToTagEntity> portfolioEntityToTagEntities = new ArrayList<PortfolioEntityToTagEntity>();
+
+
 
     @ManyToOne
     @JoinColumn(name = "funding_Entity_Id")
@@ -35,9 +50,12 @@ public class TagEntity extends BaseEntity {
     PortfolioEntity portfolioEntity;
 
     //update method 를 entity 내부에다가 구현함.
-    public void update(String tagName, String description){
+    public void update(String tagName){
         this.tagName = tagName;
-        this.description = description;
+
     }
 
+    public TagEntity(String tagName) {
+        this.tagName = tagName;
+    }
 }

@@ -1,5 +1,6 @@
 package com.facaieve.backend.service.post;
 
+import com.facaieve.backend.dto.post.FundingDto;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
@@ -84,6 +85,20 @@ public class FundingEntityService {
     public void removeFundingEntity(Long deletingFundingEntityId) {// 펀딩 게시글 삭제
         log.info("펀딩 게시물이 삭제되었습니다.");
         fundingRepository.deleteById(deletingFundingEntityId);
+    }
+
+    public FundingDto.ResponseFundingIncludeURI calculatingPercentage(FundingDto.ResponseFundingIncludeURI responseFundingDto){
+        System.out.println(responseFundingDto.getFundedPrice()/ responseFundingDto.getTargetPrice());
+
+        responseFundingDto.setPercentage(
+                (double) Math.round( (Double.valueOf(responseFundingDto.getFundedPrice()) / responseFundingDto.getTargetPrice()) * 100000)/1000.00);
+
+        //소수점 둘째 자리까지 출력함.
+        return responseFundingDto;
+    }
+
+    public FundingEntity getFundingEntityById(Long fundingEntityId){
+        return fundingRepository.findById(fundingEntityId).orElseThrow();
     }
 
 
