@@ -27,7 +27,7 @@ public class SwaggerConfiguration {
         return new Docket(DocumentationType.OAS_30)  // open api spec 3.0, DocumentationType.SWAGGER_2    스웨거 2.x 버전 설정
                 .additionalModels(
                         typeResolver.resolve(UserDto.ResponseUserDto.class),
-                        typeResolver.resolve(FashionPickupDto.ResponseFashionPickupDto.class),
+                        typeResolver.resolve(FashionPickupDto.ResponseFashionPickupDtoForEntities.class),
                         typeResolver.resolve(PortfolioDto.ResponsePortfolioDto.class),
                         typeResolver.resolve(FundingDto.ResponseFundingDto.class),
                         typeResolver.resolve(CategoryDTO.ResponseCategoryDTO.class),

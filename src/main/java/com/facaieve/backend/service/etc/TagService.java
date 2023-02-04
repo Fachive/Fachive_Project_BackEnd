@@ -44,7 +44,7 @@ public class TagService {
     public TagEntity getTagEntityByTagName(String tagName){
 
         if(tagRepository.existsByTagName(tagName)){
-            TagEntity tagEntity = tagRepository.findByTagName(tagName).orElseThrow();
+            TagEntity tagEntity = tagRepository.findById(tagName).orElseThrow();
             return tagEntity;
         }else{
             //ex
@@ -71,7 +71,7 @@ public class TagService {
     }
 
     private Optional<TagEntity> findByTagName(String tagEntity) {
-        return tagRepository.findByTagName(tagEntity);
+        return tagRepository.findById(tagEntity);
     }
 
 }

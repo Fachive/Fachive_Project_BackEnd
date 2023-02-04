@@ -11,6 +11,7 @@ import javax.persistence.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 public class TagEntity extends BaseEntity {
 
     @Id
+    @UniqueElements
     String tagName;
 
 

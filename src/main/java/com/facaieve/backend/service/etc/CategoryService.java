@@ -1,6 +1,8 @@
 package com.facaieve.backend.service.etc;
 
 import com.facaieve.backend.entity.etc.CategoryEntity;
+import com.facaieve.backend.exception.BusinessLogicException;
+import com.facaieve.backend.exception.ExceptionCode;
 import com.facaieve.backend.repository.etc.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +44,7 @@ public class CategoryService {
 
     public CategoryEntity getCategory(CategoryEntity categoryEntity){
 //        if(categoryRepository.existsByCategoryName(categoryEntity.getCategoryName())){
-            return categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName());
+            return categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_CATEGORY));
 //        }else{
 //            throw new RuntimeException("there is no kind of category name");
 //        }
@@ -51,7 +53,7 @@ public class CategoryService {
     public void deleteCategoryEntity(CategoryEntity categoryEntity){
 
         if(categoryRepository.existsByCategoryName(categoryEntity.getCategoryName())){
-            CategoryEntity category = categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName());
+            CategoryEntity category = categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_CATEGORY));
              categoryRepository.deleteCategoryEntityByCategoryId(category.getCategoryId());
         }else{
             throw new RuntimeException("there is no kind of category");

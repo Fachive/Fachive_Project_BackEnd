@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface TagRepository extends JpaRepository<TagEntity,Long> {
+public interface TagRepository extends JpaRepository<TagEntity,String> {
 
     boolean existsByTagName(String tagName);//중복 방지를 위해서 생성함.
     Optional<TagEntity> findByTagName(String tagName);

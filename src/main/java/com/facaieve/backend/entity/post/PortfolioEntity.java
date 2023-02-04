@@ -42,16 +42,16 @@ public class PortfolioEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "portfolioEntity",fetch = FetchType.LAZY)
     @Schema(description = "포트폴리오에 달린 마이픽(좋아요) 객체 목록")
-    private List<MyPickEntity> myPick = new ArrayList<MyPickEntity>();
+    List<MyPickEntity> myPick = new ArrayList<MyPickEntity>();
 
     @OneToMany(mappedBy = "portfolioEntity",fetch = FetchType.LAZY)
     @Schema(description = "포트폴리오에 달린 댓글 객체 목록")
-    private List<PortfolioCommentEntity> commentList = new ArrayList<PortfolioCommentEntity>();
+    List<PortfolioCommentEntity> commentList = new ArrayList<PortfolioCommentEntity>();
 
 
     @OneToMany(mappedBy = "portfolioEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //cascade = CascadeType.ALL
     @Schema(description = "포트폴리오에 달린 태그 객체 목록")
-    private List<PortfolioEntityToTagEntity> tagEntities = new ArrayList<PortfolioEntityToTagEntity>();  // 포트폴리오 - 카테고리 매핑
+    List<PortfolioEntityToTagEntity> tagEntities = new ArrayList<PortfolioEntityToTagEntity>();  // 포트폴리오 - 카테고리 매핑
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "categoryEntity")

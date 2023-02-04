@@ -69,7 +69,7 @@ public class CategoryController {
 
     @Operation(summary = "카테고리 수정 메서드 예제", description = "json 바디값을 통한 카테고리 GET 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200" ,description = "카테고리가 수정됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "200" ,description = "카테고리가 수정됨"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
@@ -88,7 +88,7 @@ public class CategoryController {
 
     @Operation(summary = "카테고리 삭제 메서드 예제", description = "json 바디값을 통한 카테고리 DELETE 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200" ,description = "카테고리가 삭제됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "200" ,description = "카테고리가 삭제됨"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")

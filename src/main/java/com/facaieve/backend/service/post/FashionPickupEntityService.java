@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Getter
@@ -34,6 +35,7 @@ public class FashionPickupEntityService {
 
     Condition condition;//정렬 메소드 가지고 있는 객체
 
+    @Transactional
     public FashionPickupEntity createFashionPickupEntity(FashionPickupEntity fashionPickupEntity) {// 패션픽업 게시물 작성
 
         return fashionPickupRepository.save(fashionPickupEntity);

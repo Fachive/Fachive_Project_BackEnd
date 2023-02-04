@@ -111,14 +111,11 @@ public class FashionPickupEntityController {
                    @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
                    @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
                    @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")})
-    @Transactional
     @PostMapping(value = "/post")//POST API
     public ResponseEntity postFashionPickupEntity(@ModelAttribute FashionPickupDto.PostDto postDto){
 
         List<S3ImageInfo> s3ImageInfoList = s3FileService.uploadMultiFileList(postDto.getMultipartFileList());//저장될 파일 객체가 들어감.\
             log.info("패션픽업 이미지 파일 s3업로드 완료");
-
-        List<FashionPickupEntityToTagEntity> tagEntities  = new ArrayList<>();
 
         List<TagEntity> tagEntityList = new ArrayList<>();
         postDto.getTagList().stream()//dto로 받은 태그 리스트들을 저장하고 이를 게시글 객체에 넣기위해 list로 반환
@@ -133,7 +130,18 @@ public class FashionPickupEntityController {
 
         FashionPickupEntity fashionPickupEntity = FashionPickupEntity.builder().title(postDto.getTitle())//저장할 패션픽업 객체 생성
                 .body(postDto.getBody()).categoryEntity(categoryEntity).s3ImgInfo(s3ImageInfoList)
+                .userEntity(postingUser)
+                .myPick(new ArrayList<>())
+                .views(0)
+                .commentList(new ArrayList<>())
                 .build();
+
+        List<FashionPickupEntityToTagEntity> tagEntities =tagEntityList.stream().map(tagEntity -> FashionPickupEntityToTagEntity.builder()
+                .fashionPickupEntity(fashionPickupEntity)
+                .tagEntity(tagEntity).build()).collect(Collectors.toList());
+        fashionPickupEntity.setTagEntities(tagEntities);
+        log.info("패션픽업-태그 중간 엔티티 설정");
+
 
         FashionPickupEntity createdFashionPickupEntity = fashionPickupEntityService.createFashionPickupEntity(fashionPickupEntity);
               log.info("게시글 저장 완료");
@@ -175,8 +183,8 @@ public class FashionPickupEntityController {
             log.info("수정할 객체에 있는 이미지 데이터, s3에서 삭제하기 위해 호출 {} ", entityUrlList);
         s3FileService.deleteMultiFileList(entityUrlList);
             log.info("기존 이미지 데이터 s3에서 삭제 완료 {} ", entityUrlList);
-        List<S3ImageInfo> s3ImageInfoList = Optional.ofNullable(patchRequestDto.getChangedMultipartFileList())
-                .ifPresent(multipartFileList -> s3FileService.uploadMultiFileList(multipartFileList)));
+
+        List<S3ImageInfo> s3ImageInfoList = s3FileService.uploadMultiFileList(patchRequestDto.getChangedMultipartFileList());
             log.info("새로운 이미지 데이터 s3에서 삭제 완료 {} ", s3ImageInfoList);
 
         List<TagEntity> tagEntityList = new ArrayList<>();
@@ -211,7 +219,7 @@ public class FashionPickupEntityController {
 
     @Operation(summary = "패션픽업 게시글 삭제 예제", description = "json 바디값을 통한 패션픽업 DELETE 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200" ,description = "패션픽업 게시글이 정상적으로 호출됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "200" ,description = "패션픽업 게시글이 정상적으로 호출됨"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
@@ -223,9 +231,6 @@ public class FashionPickupEntityController {
 
         log.info("기존 패션픽업 게시글을 삭제합니다.");
         return new ResponseEntity(HttpStatus.OK);
-
-
-
     }
 
 

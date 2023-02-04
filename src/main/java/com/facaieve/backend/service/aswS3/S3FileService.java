@@ -2,13 +2,16 @@ package com.facaieve.backend.service.aswS3;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.exception.BusinessLogicException;
 import com.facaieve.backend.exception.ExceptionCode;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -19,11 +22,14 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+
 public class S3FileService implements FileServiceCRUD{
 
     private static final Logger LOG = LoggerFactory.getLogger(S3FileService.class);
 
-    private AmazonS3 amazonS3;
+    @Autowired
+    private final AmazonS3 amazonS3;
+
 
     @Value("${cloud.aws.s3.bucket}")
     private String s3BucketName;
@@ -117,7 +123,7 @@ public class S3FileService implements FileServiceCRUD{
 
         try {
 //            final File file = convertMultiPartFileToFile(multipartFile);
-            final String fileName = UUID.randomUUID() + "_" + multipartFile.getName();//change the file name
+            final String fileName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename(); //change the file name
             LOG.info("Uploading file with name {}", fileName);
 
             InputStream inputStream = new BufferedInputStream(multipartFile.getInputStream());

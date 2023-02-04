@@ -23,7 +23,7 @@ public class FashionPickupEntityToTagEntity {
     Long FashionPickupEntityToTagEntityId;
 
     @ManyToOne
-    @JoinColumn(name = "tag_Entity_Id")
+    @JoinColumn(name = "tag_Name")
     TagEntity tagEntity;
 
     @ManyToOne

@@ -5,13 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<CategoryEntity,Long> {
 
     boolean existsByCategoryName(String categoryName);
 
-    CategoryEntity findCategoryEntityByCategoryName(String categoryName);
+    Optional<CategoryEntity> findCategoryEntityByCategoryName(String categoryName);
 
     boolean existsByCategoryId(Long categoryId);
 

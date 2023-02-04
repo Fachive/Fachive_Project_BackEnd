@@ -43,7 +43,7 @@ public class FashionPickupEntity extends BaseEntity {
 
     @Column
     @Schema(description = "조회수")
-    Integer views;
+    Integer views = 0;
 
     @OneToMany(mappedBy = "fashionPickupEntity",fetch = FetchType.LAZY)
     @Schema(description = "패션 픽업에 달린 마이픽(좋아요) 객체 목록")
