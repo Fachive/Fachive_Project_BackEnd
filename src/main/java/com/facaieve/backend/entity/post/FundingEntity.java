@@ -11,6 +11,7 @@ import com.facaieve.backend.entity.user.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +39,7 @@ public class FundingEntity extends BaseEntity {
 
     @Column
     @Schema(description = "펀딩 마감일")
-    Date dueDate;
+    LocalDateTime dueDate;
 
     @Column
     @Schema(description = "펀딩 목표액")

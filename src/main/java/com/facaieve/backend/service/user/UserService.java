@@ -5,13 +5,12 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import com.facaieve.backend.dto.UserDto;
-import com.facaieve.backend.entity.image.ImageEntityProfile;
 import com.facaieve.backend.entity.user.FollowEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.entity.user.WithdrawalEntity;
-import com.facaieve.backend.exception.BusinessLogicException;
-import com.facaieve.backend.exception.ExceptionCode;
-import com.facaieve.backend.exception.swearingFilter.BadWordFiltering;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
+import com.facaieve.backend.mapper.exception.swearingFilter.BadWordFiltering;
 import com.facaieve.backend.mapper.user.UserMapper;
 import com.facaieve.backend.repository.user.FollowRepository;
 import com.facaieve.backend.repository.user.UserRepository;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
@@ -31,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static com.facaieve.backend.Constant.UserActive.DeActive;
 import static com.facaieve.backend.Constant.UserActive.Withdrawal;
-import static com.facaieve.backend.exception.ExceptionCode.*;
+import static com.facaieve.backend.mapper.exception.ExceptionCode.*;
 
 @Slf4j
 @Service

@@ -1,11 +1,10 @@
 package com.facaieve.backend.service.post;
 
 import com.facaieve.backend.dto.post.FashionPickupDto;
-import com.facaieve.backend.entity.crossReference.FashionPickupEntityToTagEntity;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
-import com.facaieve.backend.exception.BusinessLogicException;
-import com.facaieve.backend.exception.ExceptionCode;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.repository.post.FashionPickupRepository;
 import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
 import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByMyPicks;

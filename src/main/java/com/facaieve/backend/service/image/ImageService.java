@@ -1,10 +1,8 @@
 package com.facaieve.backend.service.image;
 
 import com.facaieve.backend.entity.image.ImageEntityProfile;
-import com.facaieve.backend.entity.image.ProfileImageUtils;
-import com.facaieve.backend.entity.user.UserEntity;
-import com.facaieve.backend.exception.BusinessLogicException;
-import com.facaieve.backend.exception.ExceptionCode;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.repository.image.ImageRepository;
 import com.facaieve.backend.repository.user.UserRepository;
 import lombok.AllArgsConstructor;

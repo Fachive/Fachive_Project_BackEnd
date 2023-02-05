@@ -1,12 +1,15 @@
 package com.facaieve.backend.mapper.post;
 
+import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.post.FundingDto;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.mapper.etc.CategoryMapper;
 import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.stubDate.FundingStubData;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses ={
         PostImageMapper.class,
@@ -27,18 +30,26 @@ public interface FundingMapper extends PostMapper{
     FundingEntity fundingGetDtoToFundingEntity(FundingDto.GetFundingDto getFundingDto);
 
     //deleteDto ->Entity
-    FundingEntity fundingDeleteDtoToFundingEntity(FundingDto.DeleteFundingDto deleteFundingDto);
+    FundingEntity fundingDeleteDtoToFundingEntity(FundingDto.DeleteDto deleteDto);
 
     FundingDto.ResponseFundingDto fundingEntityToResponseFundingEntity(FundingEntity fundingEntity);
 
-//    @Mapping(source = "postImageDtoList", target = "postImageEntities")
-//    FundingEntity ResponseFundingIncludeURIToFundingEntity(FundingDto.ResponseFundingIncludeURI responseFundingIncludeURI);
+    default FundingDto.ResponseFundingDtoForEntity fundingEntityToResponseFundingDto(FundingEntity fundingEntity){
 
-//    @Mapping(source = "postImageEntities", target = "postImageDtoList")
-//    @Mapping(source = "categoryEntity", target = "responseCategoryDTO")
-//    @Mapping(source = "tagEntities", target = "responseTagDTOList")
-//    FundingDto.ResponseFundingIncludeURI FundingEntityToResponseFundingIncludeURI(FundingEntity fundingEntity);
-//
+        return FundingDto.ResponseFundingDtoForEntity
+                .builder()
+                .fundingEntityId(fundingEntity.getFundingEntityId())
+                .title(fundingEntity.getTitle())
+                .body(fundingEntity.getBody())
+                .dueDate(fundingEntity.getDueDate())
+                .fundedPrice(fundingEntity.getFundedPrice())
+                .targetPrice(fundingEntity.getTargetPrice())
+                .views(fundingEntity.getViews())
+                .myPicks(fundingEntity.getMyPick().size())
+                .tagList(fundingEntity.getTagEntities().stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName())).collect(Collectors.toList()))
+                .s3ImageUriList(fundingEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI).collect(Collectors.toList()))
+                .build();
+    }
 
 
 

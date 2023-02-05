@@ -1,15 +1,14 @@
 package com.facaieve.backend.service.etc;
 
 import com.facaieve.backend.entity.etc.CategoryEntity;
-import com.facaieve.backend.exception.BusinessLogicException;
-import com.facaieve.backend.exception.ExceptionCode;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.repository.etc.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -41,6 +40,12 @@ public class CategoryService {
         }
 
     }
+
+    public CategoryEntity getCategoryFromService(String categoryName){
+        return getCategory(CategoryEntity
+                .builder().categoryName(categoryName).build());
+    }
+
 
     public CategoryEntity getCategory(CategoryEntity categoryEntity){
 //        if(categoryRepository.existsByCategoryName(categoryEntity.getCategoryName())){

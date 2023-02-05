@@ -2,8 +2,8 @@ package com.facaieve.backend.service.user;
 
 import com.facaieve.backend.entity.user.FollowEntity;
 import com.facaieve.backend.entity.user.UserEntity;
-import com.facaieve.backend.exception.BusinessLogicException;
-import com.facaieve.backend.exception.ExceptionCode;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.repository.user.FollowRepository;
 import com.facaieve.backend.repository.user.UserRepository;
 import lombok.AllArgsConstructor;

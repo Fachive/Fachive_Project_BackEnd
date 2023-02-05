@@ -34,7 +34,7 @@ public interface FashionPickupMapper {
     FashionPickupEntity fashionPickupDeleteDtoToFashionPickupEntity(FashionPickupDto.DeleteFashionPickupDto deleteFashionPickupDto);
 
     //개별 게시글 페이지를 위한 객체 반환
-    default FashionPickupDto.ResponseFashionPickupDtoForEntity fashionPickupEntityToResponseFashionPickupEntity2(FashionPickupEntity fashionPickupEntity){
+    default FashionPickupDto.ResponseFashionPickupDtoForEntity fashionPickupEntityToResponseFashionPickupDto(FashionPickupEntity fashionPickupEntity){
 
         return FashionPickupDto.ResponseFashionPickupDtoForEntity
                 .builder()

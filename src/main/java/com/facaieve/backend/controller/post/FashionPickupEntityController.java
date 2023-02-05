@@ -5,7 +5,6 @@ import com.facaieve.backend.entity.crossReference.FashionPickupEntityToTagEntity
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
-import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.mapper.post.FashionPickupMapper;
@@ -33,10 +32,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -55,16 +52,6 @@ public class FashionPickupEntityController {
     TagMapper tagMapper;
     UserService userService;
 
-    static final FashionPuckupStubData fashionPuckupStubData = new FashionPuckupStubData();
-
-
-    private CategoryEntity getCategoryFromService(String categoryName){
-        return categoryService.getCategory(CategoryEntity
-                .builder().categoryName(categoryName).build());
-    }
-    //todo 카테고리 정렬순서 그리고 페이지를 파라미터로 가지는 api  구현할 것
-    //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
-    //todo sortway mypick, update, duedate
 
     @Operation(summary = "30 개 반환하는 메소드",
             description = "프론트 엔드 요구사항이었던 param을 이용해서 카테고리 정렬 방식, 페이지 인덱스를 지정해서 객체를 가져올 수 있는 api")//대상 api의 대한 설명을 작성하는 어노테이션
@@ -83,22 +70,13 @@ public class FashionPickupEntityController {
                                                                         @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
 
         //저장된 카테고리 객체 가져옴
-        CategoryEntity categoryEntity = getCategoryFromService(categoryName);
+        CategoryEntity categoryEntity = categoryService.getCategoryFromService(categoryName);
         System.out.println("===================cate"+categoryEntity.getCategoryName());
 
         fashionPickupEntityService.setCondition(sortWay);//condition 객체 만드는 부분 수정함
 
         Page<FashionPickupEntity> fashionPickupEntityPage =
                 fashionPickupEntityService.findFashionPickupEntitiesByCondition(categoryEntity, pageIndex,30);
-
-//        List<FashionPickupDto.ResponseFashionPickupIncludeURI> fashionPickupIncludeURIList
-//                = fashionPickupEntityPage.stream()
-//                    .map(fashionPickupEntity -> fashionPickupMapper
-//                            .fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity))
-//                            .collect(Collectors.toList());
-
-//        Multi_ResponseDTO<FashionPickupDto.ResponseFashionPickupIncludeURI> multi_responseDTO =
-//                new Multi_ResponseDTO<FashionPickupDto.ResponseFashionPickupIncludeURI>(fashionPickupIncludeURIList, fashionPickupEntityPage);
 
         return new ResponseEntity(HttpStatus.OK);
 
@@ -122,7 +100,7 @@ public class FashionPickupEntityController {
                 .map(tag -> tagEntityList.add(tagService.createTagEntity(tag.getTagName()))).collect(Collectors.toList());
             log.info("태그 데이터 저장 완료");
 
-        CategoryEntity categoryEntity = getCategoryFromService(postDto.getCategoryName());
+        CategoryEntity categoryEntity = categoryService.getCategoryFromService(postDto.getCategoryName());
              log.info("카테고리 데이터 확인 완료");
 
         UserEntity postingUser = userService.findUserEntityById(postDto.getUserId());
@@ -147,11 +125,8 @@ public class FashionPickupEntityController {
               log.info("게시글 저장 완료");
 
     //  todo dto 를 반환해야 수나환참조 문제를 해결이 가능하다.
-        return new ResponseEntity(fashionPickupMapper.fashionPickupEntityToResponseFashionPickupEntity2(createdFashionPickupEntity), HttpStatus.OK);
+        return new ResponseEntity(fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(createdFashionPickupEntity), HttpStatus.OK);
     }
-
-
-
     @Operation(summary = "패션픽업 게시글 반환", description = "게시글을 id를 이용해서 사진을 포함하는 패션픽업 객체를 반환하는 api")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({@ApiResponse(responseCode = "201" ,description = "패션픽업 게시글이 정상 등록됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDtoForEntity.class))),
                    @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
@@ -160,14 +135,10 @@ public class FashionPickupEntityController {
     @GetMapping("/get/{fashionPickupId}")//GET API
     public ResponseEntity getFashionPickupEntityMultipart(@PathVariable("fashionPickupId") Long fashionPickupId ){
 
-        FashionPickupEntity fashionPickupEntity =
-                fashionPickupEntityService.findFashionPickupEntity(fashionPickupId);
+        FashionPickupEntity fashionPickupEntity = fashionPickupEntityService.findFashionPickupEntity(fashionPickupId);
 
-        //dto 로 변환해서 무한 참조 오류 피함
-       return new ResponseEntity(fashionPickupMapper.fashionPickupEntityToResponseFashionPickupEntity2(fashionPickupEntity), HttpStatus.OK);
+       return new ResponseEntity(fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(fashionPickupEntity), HttpStatus.OK);
     }
-
-
     @Operation(summary = "패션픽업 게시글 수정", description = "패션 픽업의 이미지를 수정하는 메소드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({ @ApiResponse(responseCode = "201" ,description = "패션픽업 게시글이 정상 수정됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupIncludeURI.class))),
                     @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
@@ -185,7 +156,7 @@ public class FashionPickupEntityController {
             log.info("기존 이미지 데이터 s3에서 삭제 완료 {} ", entityUrlList);
 
         List<S3ImageInfo> s3ImageInfoList = s3FileService.uploadMultiFileList(patchRequestDto.getChangedMultipartFileList());
-            log.info("새로운 이미지 데이터 s3에서 삭제 완료 {} ", s3ImageInfoList);
+            log.info("새로운 이미지 데이터 s3에 저장완료 {} ", s3ImageInfoList);
 
         List<TagEntity> tagEntityList = new ArrayList<>();
         patchRequestDto.getChangedTagList().stream()//dto로 받은 태그 리스트들을 저장하고 이를 게시글 객체에 넣기위해 list로 반환
@@ -198,7 +169,7 @@ public class FashionPickupEntityController {
         editingFashionPickupEntity.setTagEntities(tagEntities);
             log.info("패션픽업-태그 중간 엔티티 설정");
 
-        CategoryEntity categoryEntity = getCategoryFromService(patchRequestDto.getChangedCategoryName());
+        CategoryEntity categoryEntity = categoryService.getCategoryFromService(patchRequestDto.getChangedCategoryName());
             log.info("카테고리 데이터 확인 완료");
 
 
@@ -213,10 +184,8 @@ public class FashionPickupEntityController {
         FashionPickupEntity editedFashionPickupEntity = fashionPickupEntityService.editFashionPickupEntity(editingFashionPickupEntity, patchDto);
              log.info("수정된 엔티티 저장 {} ", editedFashionPickupEntity);
 
-        return new ResponseEntity(fashionPickupMapper.fashionPickupEntityToResponseFashionPickupEntity2(editedFashionPickupEntity),HttpStatus.OK);//수정된 entity 를 다시 반환함.
+        return new ResponseEntity(fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(editedFashionPickupEntity),HttpStatus.OK);//수정된 entity 를 다시 반환함.
     }
-
-
     @Operation(summary = "패션픽업 게시글 삭제 예제", description = "json 바디값을 통한 패션픽업 DELETE 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "200" ,description = "패션픽업 게시글이 정상적으로 호출됨"),
@@ -224,7 +193,7 @@ public class FashionPickupEntityController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete")//DELETE API
     public ResponseEntity deleteFashionPickupEntity(@RequestBody FashionPickupDto.DeleteFashionPickupDto deleteFashionPickupDto){
 
         fashionPickupEntityService.removeFashionPickupEntity(deleteFashionPickupDto.getFashionPickupEntityId());

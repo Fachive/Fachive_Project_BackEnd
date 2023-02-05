@@ -1,12 +1,15 @@
 package com.facaieve.backend.mapper.post;
 
+import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.post.PortfolioDto;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.mapper.etc.CategoryMapper;
 import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.stubDate.PortfolioStubData;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring",uses ={
         PostImageMapper.class,
@@ -17,11 +20,8 @@ public interface PortfolioMapper{
     // 포트폴리오 스텁데이터 -> 엔티티로 변환
     PortfolioEntity portfolioDtoToFashionPickupStubData(PortfolioStubData portfolioStubData);
 
-    //postDto -> Entity
-    PortfolioEntity portfolioPostDtoToPortfolioEntity(PortfolioDto.PostPortfolioDtoDto postPortfolioDtoDto);
-
     //patchDto -> Entity
-    PortfolioEntity portfolioPatchDtoToPortfolioEntity(PortfolioDto.PatchPortfolioDtoDto patchPortfolioDtoDto);
+    PortfolioEntity portfolioPatchDtoToPortfolioEntity(PortfolioDto.PatchRequestDto patchRequestDto);
 
     //getDto -> Entity
     PortfolioEntity portfolioGetDtoToPortfolioEntity(PortfolioDto.GetPortfolioDtoDto getPortfolioDtoDto);
@@ -31,17 +31,19 @@ public interface PortfolioMapper{
 
     PortfolioDto.ResponsePortfolioDto portfolioEntityToResponsePortfolioEntity(PortfolioEntity portfolioEntity);
 
-//    @Mapping(source = "postImageDtoList", target = "postImageEntities")
-//    PortfolioEntity responsePortfolioIncludeURIToPortfolioEntity(
-//            PortfolioDto.ResponsePortfolioIncludeURI responsePortfolioIncludeURI);
+    default PortfolioDto.ResponsePortfolioDtoForEntity fundingEntityToResponseFundingDto(PortfolioEntity portfolioEntity){
 
-//    @Mapping(source = "postImageEntities", target = "postImageDtoList")
-//    @Mapping(source = "categoryEntity", target = "responseCategoryDTO")
-//    @Mapping(source = "tagEntities", target = "responseTagDTOList")
-//
-//    PortfolioDto.ResponsePortfolioIncludeURI portfolioEntityToResponsePortfolioIncludeURI(PortfolioEntity portfolio);
-//
-
+        return PortfolioDto.ResponsePortfolioDtoForEntity
+                .builder()
+                .portfolioEntityId(portfolioEntity.getPortfolioEntityId())
+                .title(portfolioEntity.getTitle())
+                .body(portfolioEntity.getBody())
+                .views(portfolioEntity.getViews())
+                .myPicks(portfolioEntity.getMyPick().size())
+                .tagList(portfolioEntity.getTagEntities().stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName())).collect(Collectors.toList()))
+                .s3ImageUriList(portfolioEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI).collect(Collectors.toList()))
+                .build();
+    }
 
 
 }

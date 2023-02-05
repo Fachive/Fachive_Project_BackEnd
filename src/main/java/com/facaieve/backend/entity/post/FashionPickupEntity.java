@@ -37,13 +37,14 @@ public class FashionPickupEntity extends BaseEntity {
     @Schema(description = "패션 픽업 본문 내용")
     String body;
 
-    @OneToMany(mappedBy = "fashionPickupEntityPost",fetch = FetchType.LAZY)
-    @Schema(description = "패션 픽업 이미지 목록(S3 버킷 uri)")
-    List<S3ImageInfo> s3ImgInfo = new ArrayList<S3ImageInfo>();
-
     @Column
     @Schema(description = "조회수")
     Integer views = 0;
+
+
+    @OneToMany(mappedBy = "fashionPickupEntityPost",fetch = FetchType.LAZY)
+    @Schema(description = "패션 픽업 이미지 목록(S3 버킷 uri)")
+    List<S3ImageInfo> s3ImgInfo = new ArrayList<S3ImageInfo>();
 
     @OneToMany(mappedBy = "fashionPickupEntity",fetch = FetchType.LAZY)
     @Schema(description = "패션 픽업에 달린 마이픽(좋아요) 객체 목록")
