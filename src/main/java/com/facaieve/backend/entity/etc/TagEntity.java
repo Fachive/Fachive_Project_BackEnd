@@ -41,15 +41,6 @@ public class TagEntity extends BaseEntity {
     List<PortfolioEntityToTagEntity> portfolioEntityToTagEntities = new ArrayList<PortfolioEntityToTagEntity>();
 
 
-
-    @ManyToOne
-    @JoinColumn(name = "funding_Entity_Id")
-    FundingEntity fundingEntity;
-
-    @ManyToOne
-    @JoinColumn(name = "portfolio_Entity_Id")
-    PortfolioEntity portfolioEntity;
-
     //update method 를 entity 내부에다가 구현함.
     public void update(String tagName){
         this.tagName = tagName;

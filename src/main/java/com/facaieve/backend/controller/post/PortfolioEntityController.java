@@ -131,6 +131,8 @@ public class PortfolioEntityController {
                 .userEntity(postingUser)
                 .myPick(new ArrayList<>())
                 .views(0)
+                .myPick(new ArrayList<>())
+                .s3ImgInfo(s3ImageInfoList)
                 .commentList(new ArrayList<>())
                 .build();
 
@@ -139,6 +141,10 @@ public class PortfolioEntityController {
                 .tagEntity(tagEntity).build()).collect(Collectors.toList());
         portfolioEntity.setTagEntities(tagEntities);
         log.info("펀딩-태그 중간 엔티티 설정");
+
+        portfolioEntity.getS3ImgInfo().forEach(s3ImageInfo ->s3ImageInfo.setPortfolioEntityPost(portfolioEntity));
+        log.info("S3ImageInfo 매핑관계 설정");
+
 
         PortfolioEntity createdPortfolioEntity = portfolioEntityService.createPortfolioEntity(portfolioEntity);
         log.info("게시글 저장 완료");

@@ -36,8 +36,7 @@ public class FashionPickupEntityService {
 
     @Transactional
     public FashionPickupEntity createFashionPickupEntity(FashionPickupEntity fashionPickupEntity) {// 패션픽업 게시물 작성
-
-        return fashionPickupRepository.save(fashionPickupEntity);
+           return fashionPickupRepository.save(fashionPickupEntity);
     }
 
 

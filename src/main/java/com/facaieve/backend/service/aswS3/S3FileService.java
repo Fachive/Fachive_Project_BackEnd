@@ -3,10 +3,21 @@ package com.facaieve.backend.service.aswS3;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.image.S3ImageInfo;
+import com.facaieve.backend.entity.post.FashionPickupEntity;
+import com.facaieve.backend.entity.post.FundingEntity;
+import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.exception.BusinessLogicException;
 import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.repository.image.S3ImageInfoRepository;
+import com.facaieve.backend.service.post.Condition;
+import com.facaieve.backend.service.post.ConditionForS3;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByMyPicks;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByViews;
+import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioPickupEntitiesByViews;
+import com.facaieve.backend.service.post.conditionsImp.s3.SetMappingEntity;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +27,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.io.*;
 import java.util.*;
 
@@ -31,32 +44,15 @@ public class S3FileService implements FileServiceCRUD{
 
     @Autowired
     S3ImageInfoRepository s3ImageInfoRepository;
+
+
+
     @Value("${cloud.aws.s3.bucket}")
     private String s3BucketName;
 //    @Value("${custom.path.upload-images}")
 //    private String uploadImagePath;
 
 
-
-//    //multiPartFile to java file obj
-//    private File convertMultiPartFileToFile(final MultipartFile multipartFile) throws IOException {
-//
-//        //todo jar 배포시 발생하는 오류에 대해서 블로그에 작성할것
-//        final File file = new File(uploadImagePath,multipartFile.getOriginalFilename());//application context file name return
-//        file.setWritable(true); //쓰기가능설정
-//        file.setReadable(true);	//읽기가능설정
-//
-//        try (final FileOutputStream outputStream = new FileOutputStream(file,true)) {//todo true 로 설정해서 해당 경로로 파일 생성되게 만듦
-//            outputStream.write(multipartFile.getBytes());
-//        } catch (IOException e) {
-//            LOG.error("Error {} occurred while converting the multipart file", e.getLocalizedMessage());
-//        }
-//
-//        return file;
-//    }
-
-    // @Async annotation ensures that the method is executed in a different thread
-    // and get the S3 obj with file's name
     @Async
     public S3ObjectInputStream findByName(String fileName) {
 
@@ -86,10 +82,12 @@ public class S3FileService implements FileServiceCRUD{
             System.out.println("===================================================저장중");
             savedFileNamed.add(uploadMultiFile(multipartFile));
         }
+
         return savedFileNamed;
     }
 
     @Override
+    @Transactional
     public List<String> deleteMultiFileList(List<String> multipartFilesURIes) {
 
         List<String> deletedFileNames  = new ArrayList<>();
@@ -136,7 +134,7 @@ public class S3FileService implements FileServiceCRUD{
             String fileURI = findImgUrl(fileName);
             inputStream.close();//저장한 스트림 닫음
 
-            return s3ImageInfoRepository.save(S3ImageInfo.builder().fileName(fileName).fileURI(fileURI).build());
+            return S3ImageInfo.builder().fileName(fileName).fileURI(fileURI).build();
 
         } catch (AmazonServiceException e) {
             LOG.error("Error {} occurred while uploading file", e.getLocalizedMessage());
@@ -153,7 +151,6 @@ public class S3FileService implements FileServiceCRUD{
 
         if(amazonS3.doesObjectExist(s3BucketName,fileName)){
             amazonS3.deleteObject(s3BucketName, fileName);
-            s3ImageInfoRepository.deleteByFileName(fileName);
             return fileName;
         }
         else{

@@ -42,9 +42,9 @@ public class FashionPickupEntity extends BaseEntity {
     Integer views = 0;
 
 
-    @OneToMany(mappedBy = "fashionPickupEntityPost",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "fashionPickupEntityPost",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Schema(description = "패션 픽업 이미지 목록(S3 버킷 uri)")
-    List<S3ImageInfo> s3ImgInfo = new ArrayList<S3ImageInfo>();
+    private List<S3ImageInfo> s3ImgInfo = new ArrayList<S3ImageInfo>();
 
     @OneToMany(mappedBy = "fashionPickupEntity",fetch = FetchType.LAZY)
     @Schema(description = "패션 픽업에 달린 마이픽(좋아요) 객체 목록")

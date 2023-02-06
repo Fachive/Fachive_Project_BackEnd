@@ -140,6 +140,9 @@ public class FundingEntityController {
         fundingEntity.setTagEntities(tagEntities);
         log.info("펀딩-태그 중간 엔티티 설정");
 
+        fundingEntity.getS3ImgInfo().forEach(s3ImageInfo ->s3ImageInfo.setFundingEntityPost(fundingEntity));
+        log.info("S3ImageInfo 매핑관계 설정");
+
         FundingEntity createdFundingEntity = fundingEntityService.createFundingEntity(fundingEntity);
         log.info("게시글 저장 완료");
 

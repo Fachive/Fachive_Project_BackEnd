@@ -53,7 +53,7 @@ public class FundingEntity extends BaseEntity {
     @Schema(description = "펀딩 객체 조회수")
     Integer views = 0;
 
-    @OneToMany(mappedBy = "fundingEntityPost",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "fundingEntityPost",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Schema(description = "펀딩 이미지 목록(S3 버킷 uri)")
     List<S3ImageInfo> s3ImgInfo = new ArrayList<S3ImageInfo>();
 

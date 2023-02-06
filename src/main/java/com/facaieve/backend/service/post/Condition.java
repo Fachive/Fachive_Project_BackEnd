@@ -10,4 +10,5 @@ import java.util.List;
 @Component
 public interface Condition<T,E> {
     Page<T> conditionSort(E e, int pageIndex, int elementNum);
+
 }

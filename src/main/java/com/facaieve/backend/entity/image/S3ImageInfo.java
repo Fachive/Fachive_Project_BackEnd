@@ -1,6 +1,6 @@
 package com.facaieve.backend.entity.image;
 
-import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
+
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Entity
 public class S3ImageInfo {
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long S3ImageInfoId;
     @Column
     String fileName;
@@ -24,15 +24,30 @@ public class S3ImageInfo {
     String fileURI;
 
 
-    @ManyToOne(fetch = FetchType.EAGER )
-    @JoinColumn(name = "fashionPickupEntity")
-    private FashionPickupEntity fashionPickupEntityPost;
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "fashionPickup_Entity_Id")
+    FashionPickupEntity fashionPickupEntityPost;
 
-    @ManyToOne(fetch = FetchType.EAGER )
-    @JoinColumn(name = "portfolioEntity")
-    private PortfolioEntity portfolioEntityPost;
+    @ManyToOne
+    @JoinColumn(name = "portfolio_Entity_Id")
+    PortfolioEntity portfolioEntityPost;
 
-    @ManyToOne(fetch = FetchType.EAGER )
-    @JoinColumn(name = "fundingEntity")
-    private FundingEntity fundingEntityPost;
+    @ManyToOne
+    @JoinColumn(name = "funding_Entity_Id")
+    FundingEntity fundingEntityPost;
+
+    public FashionPickupEntity addFashionPickupEntityPost(FashionPickupEntity fashionPickupEntityPost) {
+        this.fashionPickupEntityPost = fashionPickupEntityPost;
+        return fashionPickupEntityPost;
+    }
+
+    public PortfolioEntity addPortfolioEntityPost(PortfolioEntity fashionPickupEntityPost) {
+        this.portfolioEntityPost = fashionPickupEntityPost;
+        return portfolioEntityPost;
+    }
+
+    public FundingEntity addFundingEntityPost(FundingEntity fashionPickupEntityPost) {
+        this.fundingEntityPost = fashionPickupEntityPost;
+        return fundingEntityPost;
+    }
 }

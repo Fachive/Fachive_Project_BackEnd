@@ -138,7 +138,7 @@ public class FashionPickupDto {
     @NoArgsConstructor
     @Schema(description = "image file 을 포함하는 패션픽업 request DTO")
     @Builder
-    public static class ResponseFashionPickupIncludeURI{
+    public static class FashionPickupDtoForEntity {
         @Schema(description ="패션픽업 게시글 식별자")
         Long fashionPickupEntityId;
 
@@ -162,6 +162,8 @@ public class FashionPickupDto {
 
         @Schema(description="URI for send to front end")
         List<S3ImageInfo> s3ImageInfoList = new ArrayList<>();
+
+
     }
 
 
