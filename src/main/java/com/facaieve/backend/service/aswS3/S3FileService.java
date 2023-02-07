@@ -52,7 +52,6 @@ public class S3FileService implements FileServiceCRUD{
 //    @Value("${custom.path.upload-images}")
 //    private String uploadImagePath;
 
-
     @Async
     public S3ObjectInputStream findByName(String fileName) {
 

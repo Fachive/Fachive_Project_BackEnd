@@ -8,6 +8,7 @@ import com.facaieve.backend.entity.comment.FundingCommentEntity;
 import com.facaieve.backend.entity.comment.PortfolioCommentEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.image.ImageEntityProfile;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
@@ -109,6 +110,8 @@ public class UserEntity extends BaseEntity {
     @Schema(description = "프로필 이미지")
     @OneToOne(mappedBy = "profileImgOwner", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     ImageEntityProfile imageEntityProfiles; // 프로필 이미지 매핑
+
+
 
     @Schema(description = "마이픽을 설정한 게시물 및 댓글")
     @OneToMany(mappedBy = "pickingUser", cascade = CascadeType.PERSIST)

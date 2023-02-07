@@ -4,6 +4,7 @@ package com.facaieve.backend.entity.image;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
+import com.facaieve.backend.entity.user.UserEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,6 +24,10 @@ public class S3ImageInfo {
     @Column
     String fileURI;
 
+
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_Entity_Id")
+    UserEntity userEntity;
 
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "fashionPickup_Entity_Id")
