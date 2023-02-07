@@ -23,16 +23,16 @@ public class FileController {
     @Autowired
     S3FileService s3FileService;
 
-    @GetMapping
-    public ResponseEntity<Resource> findByName(@RequestBody(required = false) Map<String, String> params) {
-        return ResponseEntity
-                .ok()
-                .cacheControl(CacheControl.noCache())
-                .header("Content-type", "application/octet-stream")
-                .header("Content-disposition", "attachment; filename=\"" + params.get(FILE_NAME) + "\"")
-                .body(new InputStreamResource(s3FileService.findByName(params.get(FILE_NAME))));
-
-    }
+//    @GetMapping
+//    public ResponseEntity<Resource> findByName(@RequestBody(required = false) Map<String, String> params) {
+//        return ResponseEntity
+//                .ok()
+//                .cacheControl(CacheControl.noCache())
+//                .header("Content-type", "application/octet-stream")
+//                .header("Content-disposition", "attachment; filename=\"" + params.get(FILE_NAME) + "\"");
+////                .body(new InputStreamResource(s3FileService.findByName(params.get(FILE_NAME))));
+//
+//    }
 
     @PostMapping
     public ResponseEntity<Object> save(@RequestParam("file") MultipartFile multipartFile) {
