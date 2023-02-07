@@ -1,12 +1,15 @@
 package com.facaieve.backend.controller.user;
 
 
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.UserDto.PostUserDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.entity.image.ImageEntityProfile;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.user.UserMapper;
+import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.image.ImageService;
 import com.facaieve.backend.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +37,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.List;
 
 
 @Slf4j
@@ -46,6 +50,10 @@ public class UserEntityController {
     ImageService imageService;
     UserService userService;
     UserMapper userMapper;
+
+    S3FileService s3FileService;
+
+
 
     @Operation(summary = "유저 등록 메서드 예제", description = "json 바디값을 통한 회원가입 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
@@ -62,40 +70,21 @@ public class UserEntityController {
     public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @ModelAttribute PostUserDto postUserDto) throws IOException {
        log.info("신규 유저를 등록합니다.");
 
+        UserEntity postingUserEntity= userMapper.userPostDtoToUserEntity(postUserDto);
+
         if(postUserDto.getMultipartFileList().isEmpty()){
-            ClassPathResource test = new ClassPathResource(new File("").getAbsolutePath());
-            log.info("클래스 패스 확인 {} ", test);
-            InputStream  defaultProfileImgInputStream = test.getInputStream();
-            log.info("인풋스트림 확인 {} ", defaultProfileImgInputStream);
-            File somethingFile = File.createTempFile("defaultProfileImg", ".txt");
 
-            FileItem fileItem = new DiskFileItem("defaultProfileImg",
-                    Files.probeContentType(somethingFile.toPath()),
-                    false, somethingFile.getName(),
-                    (int) somethingFile.length(),
-                    somethingFile.getParentFile());
-
-
-            try {
-//                InputStream is = defaultProfileImgInputStream;
-//                OutputStream os = fileItem.getOutputStream();
-//                IOUtils.copy(is, os);
-                FileUtils.copyInputStreamToFile(defaultProfileImgInputStream, somethingFile);
-
-            } catch (IOException e) {
-                log.error("[convertFileToMultipartFile] error {}", e.getMessage());
-                throw new IOException(e);
-            }
-
-            MultipartFile img = new CommonsMultipartFile(fileItem);
-            postUserDto.getMultipartFileList().add(img);
+            String defaultProfileImgUri = s3FileService.findByName("기본 프로필 이미지.jpg");
+            S3ImageInfo profileImg  = S3ImageInfo.builder().fileName("기본 프로필 이미지.jpg").fileURI(defaultProfileImgUri).build();
+            postingUserEntity.setProfileImg(profileImg);
+        }
+        else{
+            List<S3ImageInfo> newProfileImg = s3FileService.uploadMultiFileList(postUserDto.getMultipartFileList());
+            postingUserEntity.setProfileImg(newProfileImg.get(0));
         }
 
-       UserEntity postingUserEntity= userMapper.userPostDtoToUserEntity(postUserDto);
+        postingUserEntity.getProfileImg().addUserEntity(postingUserEntity);
        UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
-
-        ImageEntityProfile uploadImage = imageService.uploadImage(postedUserEntity.getUserEntityId(), postUserDto.getMultipartFileList().get(0));
-        postedUserEntity.setProfileImg(imageService.uriMaker(uploadImage));
 
         return new ResponseEntity(userMapper.userEntityToResponseDto2(postedUserEntity), HttpStatus.CREATED);
 

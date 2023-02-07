@@ -70,10 +70,6 @@ public class UserEntity extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     UserActive userActive = UserActive.Active;
 
-    @Schema(description = "재직회사")
-    @Column
-    String profileImg;
-
     //패션픽업 댓글, 펀딩 댓글, 포폴 댓글 엔티티 매핑
     @Schema(description = "패션 픽업 게시물에 단 댓글 목록")
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.PERSIST)
@@ -108,12 +104,17 @@ public class UserEntity extends BaseEntity {
     List<FollowEntity> followerList = new ArrayList<FollowEntity>(); // 팔로우 정보 저장을 위한 셀프 참조
 
     @Schema(description = "프로필 이미지")
-    @OneToOne(mappedBy = "profileImgOwner", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    ImageEntityProfile imageEntityProfiles; // 프로필 이미지 매핑
+    @OneToOne(mappedBy = "userEntity", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    S3ImageInfo profileImg; // 프로필 이미지 매핑
 
 
 
     @Schema(description = "마이픽을 설정한 게시물 및 댓글")
     @OneToMany(mappedBy = "pickingUser", cascade = CascadeType.PERSIST)
     List<MyPickEntity>  myPickEntityList = new ArrayList<MyPickEntity>();
+
+
+
+
+
 }

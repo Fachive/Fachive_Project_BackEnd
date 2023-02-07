@@ -6,6 +6,7 @@ import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import lombok.*;
+import org.apache.catalina.User;
 
 import javax.persistence.*;
 
@@ -55,4 +56,10 @@ public class S3ImageInfo {
         this.fundingEntityPost = fashionPickupEntityPost;
         return fundingEntityPost;
     }
+
+    public UserEntity addUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
+        return userEntity;
+    }
+
 }
