@@ -63,8 +63,10 @@ public class UserEntityController {
        log.info("신규 유저를 등록합니다.");
 
         if(postUserDto.getMultipartFileList().isEmpty()){
-            ClassPathResource test = new ClassPathResource("static/기본 프로필 이미지.jpg");
+            ClassPathResource test = new ClassPathResource(new File("").getAbsolutePath());
+            log.info("클래스 패스 확인 {} ", test);
             InputStream  defaultProfileImgInputStream = test.getInputStream();
+            log.info("인풋스트림 확인 {} ", defaultProfileImgInputStream);
             File somethingFile = File.createTempFile("defaultProfileImg", ".txt");
 
             FileItem fileItem = new DiskFileItem("defaultProfileImg",
