@@ -107,7 +107,7 @@ public class UserEntityController {
         UserEntity editedUserEntity = userService.updateUserEntity(editingUserEntity);
         editingUserEntity.setDisplayName(editingUserEntity.getDisplayName()+"TEST");
 
-        return new ResponseEntity( userMapper.userEntityToResponseDto(editedUserEntity), HttpStatus.OK);
+        return new ResponseEntity( userMapper.userEntityToResponseDto2(editedUserEntity), HttpStatus.OK);
 
     }
 
@@ -116,12 +116,12 @@ public class UserEntityController {
             @ApiResponse(responseCode = "200" ,description = "사용자 정보를 불러왔습니다 ", content = @Content(schema = @Schema(implementation = UserDto.ResponseUserDto.class))),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @GetMapping("/get")//유저 정보(1인) 요청
-    public ResponseEntity getUserEntity(@RequestBody UserDto.GetUserDto getUserDto){
+    @GetMapping("/get/{userid}")//유저 정보(1인) 요청
+    public ResponseEntity getUserEntity(@PathVariable(value = "userid") Long userId){
 
-        UserEntity foundUserEntity = userService.findUserEntityById(getUserDto.getUserEntityId());
+        UserEntity foundUserEntity = userService.findUserEntityById(userId);
 
-        return new ResponseEntity( userMapper.userEntityToResponseDto(foundUserEntity), HttpStatus.OK);
+        return new ResponseEntity( userMapper.userEntityToResponseDto2(foundUserEntity), HttpStatus.OK);
     }
 
 
