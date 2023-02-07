@@ -1,7 +1,6 @@
 package com.facaieve.backend.controller.user;
 
 
-import com.amazonaws.util.IOUtils;
 import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.UserDto.PostUserDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
@@ -22,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.io.FileUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,17 +63,23 @@ public class UserEntityController {
        log.info("신규 유저를 등록합니다.");
 
         if(postUserDto.getMultipartFileList().isEmpty()){
-            File defaultProfileImg = new File(new File("").getAbsolutePath()+"/src/main/resources/기본 프로필 이미지.jpg");
+            ClassPathResource test = new ClassPathResource("static/기본 프로필 이미지.jpg");
+            InputStream  defaultProfileImgInputStream = test.getInputStream();
+            File somethingFile = File.createTempFile("defaultProfileImg", ".txt");
+
             FileItem fileItem = new DiskFileItem("defaultProfileImg",
-                    Files.probeContentType(defaultProfileImg.toPath()),
-                    false, defaultProfileImg.getName(),
-                    (int) defaultProfileImg.length(),
-                    defaultProfileImg.getParentFile());
+                    Files.probeContentType(somethingFile.toPath()),
+                    false, somethingFile.getName(),
+                    (int) somethingFile.length(),
+                    somethingFile.getParentFile());
+
 
             try {
-                InputStream is = new FileInputStream(defaultProfileImg);
-                OutputStream os = fileItem.getOutputStream();
-                IOUtils.copy(is, os);
+//                InputStream is = defaultProfileImgInputStream;
+//                OutputStream os = fileItem.getOutputStream();
+//                IOUtils.copy(is, os);
+                FileUtils.copyInputStreamToFile(defaultProfileImgInputStream, somethingFile);
+
             } catch (IOException e) {
                 log.error("[convertFileToMultipartFile] error {}", e.getMessage());
                 throw new IOException(e);
