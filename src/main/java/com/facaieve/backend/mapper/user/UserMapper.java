@@ -1,6 +1,8 @@
 
 package com.facaieve.backend.mapper.user;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.facaieve.backend.dto.UserDto;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.entity.user.WithdrawalEntity;
 import com.facaieve.backend.stubDate.UserStubData;
@@ -28,10 +30,7 @@ public interface UserMapper {
             userEntity.setCareer( postUserDto.getCareer() );
             userEntity.setEducation( postUserDto.getEducation() );
             userEntity.setCompany( postUserDto.getCompany() );
-            userEntity.setProfileImg(ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/img/download/")
-                    .path(postUserDto.getMultipartFileList().get(0).getName() )
-                    .toUriString());
+
             return userEntity;
     };
 
@@ -45,7 +44,20 @@ public interface UserMapper {
 
     UserDto.ResponseUserDto userEntityToResponseDto(UserEntity userEntity);
 
-    UserDto.ResponseUserDto2 userEntityToResponseDto2(UserEntity userEntity);
+    default UserDto.ResponseUserDto2 userEntityToResponseDto2(UserEntity userEntity){
+
+        if ( userEntity == null ) {
+            return null;
+        }
+
+        UserDto.ResponseUserDto2 responseUserDto2 = new UserDto.ResponseUserDto2();
+
+        responseUserDto2.setDisplayName( userEntity.getDisplayName() );
+        responseUserDto2.setEmail( userEntity.getEmail() );
+        responseUserDto2.setProfileImg(userEntity.getProfileImg().getFileURI());
+
+        return responseUserDto2;
+    }
 
 
 }

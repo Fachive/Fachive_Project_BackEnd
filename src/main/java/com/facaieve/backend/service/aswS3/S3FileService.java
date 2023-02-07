@@ -53,11 +53,12 @@ public class S3FileService implements FileServiceCRUD{
 //    private String uploadImagePath;
 
     @Async
-    public S3ObjectInputStream findByName(String fileName) {
+    public String findByName(String fileName) {
 
         LOG.info("Downloading file with name {}", fileName);
-        return amazonS3.getObject(s3BucketName, fileName).getObjectContent();
+        S3ObjectInputStream image = amazonS3.getObject(s3BucketName, fileName).getObjectContent();
 
+        return findImgUrl(fileName);
     }
 
 
