@@ -1,7 +1,8 @@
 package com.facaieve.backend.service.image;
 
 import com.facaieve.backend.entity.image.ImageEntityProfile;
-import com.facaieve.backend.entity.image.ProfileImageUtils;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.repository.image.ImageRepository;
 import com.facaieve.backend.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -28,12 +30,9 @@ public class ImageService {
                 ImageEntityProfile.builder()
                         .fileName(imgFile.getOriginalFilename())//원본 파일명
                         .imageFileType(imgFile.getContentType())//이미지 파일 타입
-                        .imageData(ProfileImageUtils.compressImage(imgFile.getBytes()))//원본 이미지 파일
+                        .imageData(imgFile.getBytes())//원본 이미지 파일
+                        .profileImgOwner(userRepository.findById(userEntityId).orElseThrow())
                         .build());
-
-        if(userEntityId!=null){
-            imageEntityProfile.setProfileImgOwner(userRepository.findById(userEntityId).orElseThrow());
-        }
 
         return imageEntityProfile;
     }
@@ -41,7 +40,7 @@ public class ImageService {
     public ImageEntityProfile replaceImage(Long imageEntityId , @NotNull MultipartFile imgFile) throws IOException{
         ImageEntityProfile foundImageEntityProfile = imageRepository.findById(imageEntityId).orElseThrow();
 
-        foundImageEntityProfile.setImageData(ProfileImageUtils.compressImage(ProfileImageUtils.compressImage(imgFile.getBytes())));
+        foundImageEntityProfile.setImageData(imgFile.getBytes());
         foundImageEntityProfile.setImageFileType(imgFile.getContentType());
         foundImageEntityProfile.setFileName(imgFile.getOriginalFilename());
 
@@ -52,7 +51,16 @@ public class ImageService {
         return foundImageEntityProfile;
     }
 
-    public void removeImage(long imageEntityId) {
+
+    public ImageEntityProfile findImageByFileName(String filename) {
+        return imageRepository.findByFileName(filename).orElseThrow(() -> new BusinessLogicException(ExceptionCode.FILE_IS_NOT_EXIST));
+    }
+
+
+
+
+
+    public void removeImage(Long imageEntityId) {
 
         log.info("이미지 파일을 확인 후 삭제 : {}", imageEntityId);
 
@@ -61,4 +69,17 @@ public class ImageService {
 
 
     }
+
+
+    public String uriMaker(ImageEntityProfile image){
+
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/img/download/")
+                .path(String.valueOf(image.getFileName()))
+                .toUriString();
+    }
+
+
+
+
 }

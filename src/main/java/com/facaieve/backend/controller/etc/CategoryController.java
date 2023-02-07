@@ -27,6 +27,10 @@ public class CategoryController {
 
     CategoryService categoryService;
     CategoryMapper categoryMapper;
+    private CategoryEntity getCategoryFromService(String categoryName){
+        return categoryService.getCategory(CategoryEntity
+                .builder().categoryName(categoryName).build());
+    }
 
 
     @Operation(summary = "카테고리 호출 메서드 예제", description = "json 바디값을 통한 카테고리  GET 요청 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
@@ -37,12 +41,12 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @GetMapping("/get")//test pass
-    public ResponseEntity readCategory(@RequestBody CategoryDTO.GetCategoryDto getCategoryDto){
-//        CategoryEntity foundingCategoryEntity = categoryMapper.getCategoryDtoToCategoryEntity(getCategoryDto);
-//        CategoryEntity foundCategoryEntity = categoryService.getCategory(foundingCategoryEntity);
-//        return new ResponseEntity (categoryMapper.categoryEntityToResponseCategoryDto(foundCategoryEntity), HttpStatus.OK);
-        CategoryStubData categoryStubData = new CategoryStubData();
-        return new ResponseEntity(categoryMapper.categoryStubDataToCategoryEntity(categoryStubData), HttpStatus.OK);
+    public ResponseEntity readCategory(@RequestParam String categoryName){
+
+        CategoryEntity foundingCategoryEntity = getCategoryFromService(categoryName);
+        return new ResponseEntity (categoryMapper.categoryEntityToResponseCategoryDto(foundingCategoryEntity), HttpStatus.OK);
+//        CategoryStubData categoryStubData = new CategoryStubData();
+//        return new ResponseEntity(categoryMapper.categoryStubDataToCategoryEntity(categoryStubData), HttpStatus.OK);
     }
 
     @Operation(summary = "카테고리 작성 메서드 예제", description = "json 바디값을 통한 카테고리 POST 요청 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
@@ -54,18 +58,18 @@ public class CategoryController {
     })
     @PostMapping("/post")//test pass
     public ResponseEntity postCategory(@RequestBody CategoryDTO.PostCategoryDto postCategoryDto){
-//        CategoryEntity postingCategoryEntity = categoryMapper.postCategoryDtoToCategoryEntity(postCategoryDto);
-//        CategoryEntity postedCategoryEntity= categoryService.createCategoryEntity(postingCategoryEntity);
-//
-//        return new ResponseEntity(categoryMapper.categoryEntityToResponseCategoryDto(postedCategoryEntity), HttpStatus.CREATED);
-//
-        CategoryStubData categoryStubData = new CategoryStubData();
-        return new ResponseEntity(categoryMapper.categoryStubDataToCategoryEntity(categoryStubData), HttpStatus.OK);
+        CategoryEntity postingCategoryEntity = categoryMapper.postCategoryDtoToCategoryEntity(postCategoryDto);
+        CategoryEntity postedCategoryEntity= categoryService.createCategoryEntity(postingCategoryEntity);
+
+        return new ResponseEntity(categoryMapper.categoryEntityToResponseCategoryDto(postedCategoryEntity), HttpStatus.CREATED);
+
+//        CategoryStubData categoryStubData = new CategoryStubData();
+//        return new ResponseEntity(categoryMapper.categoryStubDataToCategoryEntity(categoryStubData), HttpStatus.OK);
     }
 
     @Operation(summary = "카테고리 수정 메서드 예제", description = "json 바디값을 통한 카테고리 GET 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200" ,description = "카테고리가 수정됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "200" ,description = "카테고리가 수정됨"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
@@ -84,7 +88,7 @@ public class CategoryController {
 
     @Operation(summary = "카테고리 삭제 메서드 예제", description = "json 바디값을 통한 카테고리 DELETE 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200" ,description = "카테고리가 삭제됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "200" ,description = "카테고리가 삭제됨"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")

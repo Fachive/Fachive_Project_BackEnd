@@ -1,7 +1,6 @@
-package com.facaieve.backend.exception;
+package com.facaieve.backend.mapper.exception;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

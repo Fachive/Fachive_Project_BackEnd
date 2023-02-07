@@ -1,8 +1,7 @@
 package com.facaieve.backend.service.image;
 
 import com.facaieve.backend.entity.image.PostImageEntity;
-import com.facaieve.backend.exception.BusinessLogicException;
-import com.facaieve.backend.exception.ExceptionCode;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
 import com.facaieve.backend.repository.image.PostImageRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-import static com.facaieve.backend.exception.ExceptionCode.FILE_IS_NOT_EXIST_IN_BUCKET;
-import static com.facaieve.backend.exception.ExceptionCode.REQUESTING_FILE_ALREADY_EXIST;
+import static com.facaieve.backend.mapper.exception.ExceptionCode.FILE_IS_NOT_EXIST_IN_BUCKET;
+import static com.facaieve.backend.mapper.exception.ExceptionCode.REQUESTING_FILE_ALREADY_EXIST;
 
 @Service
 @Slf4j

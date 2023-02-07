@@ -1,9 +1,8 @@
 package com.facaieve.backend.dto.image;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.facaieve.backend.dto.UserDto;
+import com.facaieve.backend.entity.user.UserEntity;
+import lombok.*;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -14,13 +13,20 @@ public class ImageEntityDto {
 
 
     @Getter
+    @Setter
     @Service
     @AllArgsConstructor
     @NoArgsConstructor//필수
     @Builder
     public static class ResponseDto{
-        long imageEntityId;
+        Long imageEntityId;
 
-        long userEntityId;
+        Long userEntityId;
+
+        String imgUri;
+
+        public static ImageEntityDto.ResponseDto of(Long imageEntityId,  Long userEntityId, String imgUri) {
+            return new ImageEntityDto.ResponseDto(imageEntityId, userEntityId, imgUri);
+        }
     }
 }

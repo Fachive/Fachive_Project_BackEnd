@@ -15,6 +15,7 @@ public interface TagMapper {
     TagEntity getTagDtoToTagEntity(TagDTO.GetTagDTO getTagDTO);
     TagDTO.GetTagDTO tagEntityToGetTagEntity(TagEntity tagEntity);
     TagDTO.ResponseTagDTO tagEntityToResponseTagDTO(TagEntity tagEntity);
+    TagDTO.ResponseTagDTO postTagDtoToResponseTagDto(TagDTO.PostTagDTO postTagDTO);
 
 
 }

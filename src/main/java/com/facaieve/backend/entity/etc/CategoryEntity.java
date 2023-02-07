@@ -4,10 +4,13 @@ import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 
 import com.facaieve.backend.entity.post.PortfolioEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-@Entity
+import java.util.ArrayList;
+import java.util.List;
 
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,18 +22,20 @@ public class CategoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     Long categoryId;
+
     @Column
     String categoryName;
 
-    @ManyToOne
-    @JoinColumn(name = "fashion_Pickup_Entity_Id")
-    FashionPickupEntity fashionPickupEntity;
+    @OneToMany(mappedBy = "categoryEntity",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Schema(description = "패션 픽업에 카테고리 객체 목록")
+    List<FashionPickupEntity> fashionPickupEntityList = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "funding_Entity_Id")
-    FundingEntity fundingEntity;
 
-    @ManyToOne
-    @JoinColumn(name = "portfolio_Entity_Id")
-    PortfolioEntity portfolioEntity;
+    @OneToMany(mappedBy = "categoryEntity",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Schema(description = "펀딩에 카테고리 객체 목록")
+    List<FundingEntity> fundingEntities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "categoryEntity",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Schema(description = "포트폴리오에 카테고리 객체 목록")
+    List<PortfolioEntity> portfolioEntities = new ArrayList<>();
 }

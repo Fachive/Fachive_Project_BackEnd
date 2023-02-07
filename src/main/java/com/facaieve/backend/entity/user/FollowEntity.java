@@ -19,9 +19,10 @@ public class FollowEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "팔로우 객체 식별자")
-    long followEntityId;
+    Long followEntityId;
 
 
+    
     @ManyToOne
     @JoinColumn(name="followingUserEntity_Id")
     @Schema(description = "팔로우 하는 사람")

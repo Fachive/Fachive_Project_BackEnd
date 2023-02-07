@@ -3,9 +3,22 @@ package com.facaieve.backend.service.aswS3;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
-import com.facaieve.backend.dto.image.PostImageDto;
-import com.facaieve.backend.exception.BusinessLogicException;
-import com.facaieve.backend.exception.ExceptionCode;
+import com.facaieve.backend.entity.etc.MyPickEntity;
+import com.facaieve.backend.entity.image.S3ImageInfo;
+import com.facaieve.backend.entity.post.FashionPickupEntity;
+import com.facaieve.backend.entity.post.FundingEntity;
+import com.facaieve.backend.entity.user.UserEntity;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
+import com.facaieve.backend.repository.image.S3ImageInfoRepository;
+import com.facaieve.backend.service.post.Condition;
+import com.facaieve.backend.service.post.ConditionForS3;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByMyPicks;
+import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByViews;
+import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioPickupEntitiesByViews;
+import com.facaieve.backend.service.post.conditionsImp.s3.SetMappingEntity;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,39 +27,31 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDateTime;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+import java.io.*;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
+
 public class S3FileService implements FileServiceCRUD{
 
     private static final Logger LOG = LoggerFactory.getLogger(S3FileService.class);
 
     @Autowired
-    private AmazonS3 amazonS3;
+    private final AmazonS3 amazonS3;
+
+    @Autowired
+    S3ImageInfoRepository s3ImageInfoRepository;
+
+
 
     @Value("${cloud.aws.s3.bucket}")
     private String s3BucketName;
+//    @Value("${custom.path.upload-images}")
+//    private String uploadImagePath;
 
-    //multiPartFile to java file obj
-    private File convertMultiPartFileToFile(final MultipartFile multipartFile) {
-
-        final File file = new File(multipartFile.getOriginalFilename());//application context file name return
-        try (final FileOutputStream outputStream = new FileOutputStream(file)) {
-            outputStream.write(multipartFile.getBytes());
-        } catch (IOException e) {
-            LOG.error("Error {} occurred while converting the multipart file", e.getLocalizedMessage());
-        }
-
-        return file;
-    }
-
-    // @Async annotation ensures that the method is executed in a different thread
-    // and get the S3 obj with file's name
     @Async
     public S3ObjectInputStream findByName(String fileName) {
 
@@ -68,17 +73,20 @@ public class S3FileService implements FileServiceCRUD{
     }
 
     @Override
-    public List<PostImageDto> uploadMultiFileList(List<MultipartFile> multipartFiles) {
+    public List<S3ImageInfo> uploadMultiFileList(List<MultipartFile> multipartFiles) {
 
-        List<PostImageDto> savedFileNamed = new ArrayList<>();
+        List<S3ImageInfo> savedFileNamed = new ArrayList<>();
 
         for(MultipartFile multipartFile: multipartFiles){
+            System.out.println("===================================================저장중");
             savedFileNamed.add(uploadMultiFile(multipartFile));
         }
+
         return savedFileNamed;
     }
 
     @Override
+    @Transactional
     public List<String> deleteMultiFileList(List<String> multipartFilesURIes) {
 
         List<String> deletedFileNames  = new ArrayList<>();
@@ -99,27 +107,33 @@ public class S3FileService implements FileServiceCRUD{
 
     @Override
     public void changeMultiFileListAtS3(List<String> multiParFilesURIes, List<MultipartFile> multipartFiles) {
-
+        //new..
 
     }
 
     @Override
     //save multiPartFile and get the log
     @Async
-    public PostImageDto uploadMultiFile(final MultipartFile multipartFile) {
+    public S3ImageInfo uploadMultiFile(final MultipartFile multipartFile) {
+
+//        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)                .withCannedAcl(CannedAccessControlList.PublicRead));
 
         try {
-
-            final File file = convertMultiPartFileToFile(multipartFile);
-            final String fileName = LocalDateTime.now() + "_" + file.getName();//change the file name
+//            final File file = convertMultiPartFileToFile(multipartFile);
+            final String fileName = UUID.randomUUID() + "_" + Objects.requireNonNull(multipartFile.getOriginalFilename()).substring(multipartFile.getOriginalFilename().indexOf(".")); //change the file name
             LOG.info("Uploading file with name {}", fileName);
-            final PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, fileName, file);
-            amazonS3.putObject(putObjectRequest);//now send the data to S3
-            Files.delete(file.toPath()); // Remove the file locally created in the project folder
+
+            InputStream inputStream = new BufferedInputStream(multipartFile.getInputStream());
+            final PutObjectRequest putObjectRequest =
+                    new PutObjectRequest(s3BucketName, fileName, inputStream,null);
+            putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);//configure upload file permission
+            PutObjectResult putObjectResult = amazonS3.putObject(putObjectRequest);//now send the data to S3
+            System.out.println("File " + fileName + " was uploaded.");
+//            Files.delete(file.toPath()); // Remove the file locally created in the project folder
             String fileURI = findImgUrl(fileName);
-            return PostImageDto.builder().fileName(fileName).fileURI(fileURI).build();
+            inputStream.close();//저장한 스트림 닫음
 
-
+            return S3ImageInfo.builder().fileName(fileName).fileURI(fileURI).build();
 
         } catch (AmazonServiceException e) {
             LOG.error("Error {} occurred while uploading file", e.getLocalizedMessage());

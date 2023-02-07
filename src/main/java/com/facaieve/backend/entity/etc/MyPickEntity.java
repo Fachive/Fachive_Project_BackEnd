@@ -7,36 +7,39 @@ import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.facaieve.backend.entity.user.UserEntity;
+import lombok.*;
+
 import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class MyPickEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long myPickId;
 
-    @Column
-    Long userId;
+    @ManyToOne(fetch =FetchType.EAGER )
+    @JoinColumn(name = "myPickMadeByWho")
+    UserEntity pickingUser;
 
-    @ManyToOne
+    @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "fashionPickupCommentEntity")
     private FashionPickUpCommentEntity fashionPickupCommentEntity;
-    @ManyToOne
+    @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "fundingCommentEntity")
     private FundingCommentEntity fundingCommentEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "portfolioCommentEntity")
     private PortfolioCommentEntity portfolioCommentEntity;
 
 
-    @ManyToOne
+    @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "portfolioEntity")
     private PortfolioEntity portfolioEntity;
 

@@ -8,18 +8,18 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @AllArgsConstructor
+
 public class FindPortfolioPickupEntitiesByViews implements Condition<PortfolioEntity, CategoryEntity> {
-
-
     PortfolioRepository portfolioRepository;
     @Override
-    public Page<PortfolioEntity> conditionSort(List<CategoryEntity> categoryEntities, int pageIndex, int elementNum) {
+    public Page<PortfolioEntity> conditionSort(CategoryEntity categoryEntities, int pageIndex, int elementNum) {
         return  portfolioRepository
-                .findPortfolioEntitiesByCategoryEntitiesIn(
+                .findPortfolioEntitiesByCategoryEntity(
                         categoryEntities
                         , PageRequest.of(pageIndex-1, elementNum, Sort.by("views").descending()));
     }

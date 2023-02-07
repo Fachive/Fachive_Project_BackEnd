@@ -20,4 +20,6 @@ public interface CategoryMapper {
     CategoryEntity requestCategoryToCategoryEntity(CategoryDTO.RequestCategoryDTO requestCategoryDTO);
 
     CategoryDTO.ResponseCategoryDTO categoryEntityToResponseCategoryDto(CategoryEntity categoryEntity);
+
+    CategoryDTO.ResponseCategoryDTO postCategoryDtoToResponseCategoryDto(CategoryDTO.PostCategoryDto postCategoryDto);
 }

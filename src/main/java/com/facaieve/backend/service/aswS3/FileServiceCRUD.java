@@ -1,6 +1,6 @@
 package com.facaieve.backend.service.aswS3;
 
-import com.facaieve.backend.dto.image.PostImageDto;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public interface FileServiceCRUD{
     String findImgUrl(String fileName);
 
     //각각 이미지 파일들이 저장된 경로를 반환함.C
-    List<PostImageDto> uploadMultiFileList(List<MultipartFile> multipartFiles);
+    List<S3ImageInfo> uploadMultiFileList(List<MultipartFile> multipartFiles);
 
     //각각 저장된 이미지의 경로를 통해서 한번에 리스트에 존재하는 모든 이미지를 삭제함.D
     List<String> deleteMultiFileList(List<String> multipartFilesURIes);
@@ -23,7 +23,7 @@ public interface FileServiceCRUD{
     void changeMultiFileListAtS3(List<String> multiParFilesURIes, List<MultipartFile> multipartFiles);
 
     //저장할 사진임.
-    PostImageDto uploadMultiFile(MultipartFile multipartFile);
+    S3ImageInfo uploadMultiFile(MultipartFile multipartFile);
     //삭제할 사진의 URI를 이용해서 사진을 삭제함.
     String deleteMultiFile(String multiPartFileURI);
     //

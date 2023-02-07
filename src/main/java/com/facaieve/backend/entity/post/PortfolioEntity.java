@@ -1,9 +1,10 @@
 package com.facaieve.backend.entity.post;
 
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.basetime.BaseEntity;
+import com.facaieve.backend.entity.crossReference.PortfolioEntityToTagEntity;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
-import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.comment.PortfolioCommentEntity;
 import com.facaieve.backend.entity.image.PostImageEntity;
 import com.facaieve.backend.entity.user.UserEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PortfolioEntity extends BaseEntity {
 
     @Id
@@ -33,32 +35,28 @@ public class PortfolioEntity extends BaseEntity {
     String body;
     @Column
     @Schema(description = "포트폴리오 객체 조회수")
-    int views;
+    Integer views;
 
-    @Schema(description ="추천수")
-    int myPicks;
-
-//    @Column
-//    @Schema(description = "포트폴리오 이미지 목록(S3 버킷 uri)")
-//    List<String> imgUri = new ArrayList<String>();;
+    @OneToMany(mappedBy = "portfolioEntityPost",fetch = FetchType.LAZY)
+    @Schema(description = "포트폴리오 이미지 목록(S3 버킷 uri)")
+    List<S3ImageInfo> s3ImgInfo = new ArrayList<S3ImageInfo>();
 
     @OneToMany(mappedBy = "portfolioEntity",fetch = FetchType.LAZY)
     @Schema(description = "포트폴리오에 달린 마이픽(좋아요) 객체 목록")
-    private List<MyPickEntity> myPick = new ArrayList<MyPickEntity>();
+    List<MyPickEntity> myPick = new ArrayList<MyPickEntity>();
 
     @OneToMany(mappedBy = "portfolioEntity",fetch = FetchType.LAZY)
     @Schema(description = "포트폴리오에 달린 댓글 객체 목록")
-    private List<PortfolioCommentEntity> commentList = new ArrayList<PortfolioCommentEntity>();
+    List<PortfolioCommentEntity> commentList = new ArrayList<PortfolioCommentEntity>();
 
 
-    @OneToMany(mappedBy = "portfolioEntity", fetch = FetchType.LAZY) //cascade = CascadeType.ALL
+    @OneToMany(mappedBy = "portfolioEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //cascade = CascadeType.ALL
     @Schema(description = "포트폴리오에 달린 태그 객체 목록")
-    private List<TagEntity> tagEntities = new ArrayList<TagEntity>();  // 포트폴리오 - 카테고리 매핑
+    List<PortfolioEntityToTagEntity> tagEntities = new ArrayList<PortfolioEntityToTagEntity>();  // 포트폴리오 - 카테고리 매핑
 
-    @OneToMany(mappedBy = "fundingEntity",fetch = FetchType.LAZY)
-    @Schema(description = "패션 픽업에 카테고리 객체 목록")
-    private List<CategoryEntity> categoryEntities = new ArrayList<CategoryEntity>();  // 펀딩 - 카테코리 매핑
-
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "categoryEntity")
+    CategoryEntity categoryEntity;
 
 
     @ManyToOne

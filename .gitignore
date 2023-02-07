@@ -6,14 +6,15 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 ###Intellj IDEA ###
+application-server.yml
 application.properties
 application-test.yml
 application.yml
-appspec.yml
+
 application-local.properties
+readme.md
 
-
-
+ß
 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -22,7 +23,7 @@ application-local.properties
 .idea/**/dictionaries
 .idea/**/shelf
 backend.test.iml
-
+.src/main/java/resources/application-server.yml
 # AWS User-specific
 .idea/**/aws.xml
 

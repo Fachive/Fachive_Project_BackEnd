@@ -4,8 +4,10 @@ package com.facaieve.backend.controller.user;
 import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.UserDto.PostUserDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
+import com.facaieve.backend.entity.image.ImageEntityProfile;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.user.UserMapper;
+import com.facaieve.backend.service.image.ImageService;
 import com.facaieve.backend.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,12 +17,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.io.FileUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
+import java.io.*;
+import java.nio.file.Files;
+
 
 @Slf4j
 @RestController
@@ -29,12 +43,10 @@ import org.springframework.web.bind.annotation.RestController;
 //@Tag(name = "UserEntity", description = "사용자와 관련된 api")
 public class UserEntityController {
 
+    ImageService imageService;
     UserService userService;
     UserMapper userMapper;
 
-//    @ApiResponse(responseCode = "200",
-//            description = "Provides single property json with a boolean which is only true if the key was found and the entry was deleted",
-//            content = @Content(schema = @Schema(implementation = HttpModels.DeleteResponse.class))),
     @Operation(summary = "유저 등록 메서드 예제", description = "json 바디값을 통한 회원가입 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "201" ,description = "사용자가 정상 등록됨", content = @Content(schema = @Schema(implementation = UserDto.ResponseUserDto.class))),
@@ -47,12 +59,45 @@ public class UserEntityController {
                     response = UserEntity.class, message = "created", code=201)
     )
     @PostMapping("/post")// 유저 등록
-    public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @RequestBody PostUserDto postUserDto){
+    public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @ModelAttribute PostUserDto postUserDto) throws IOException {
        log.info("신규 유저를 등록합니다.");
+
+        if(postUserDto.getMultipartFileList().isEmpty()){
+            ClassPathResource test = new ClassPathResource(new File("").getAbsolutePath());
+            log.info("클래스 패스 확인 {} ", test);
+            InputStream  defaultProfileImgInputStream = test.getInputStream();
+            log.info("인풋스트림 확인 {} ", defaultProfileImgInputStream);
+            File somethingFile = File.createTempFile("defaultProfileImg", ".txt");
+
+            FileItem fileItem = new DiskFileItem("defaultProfileImg",
+                    Files.probeContentType(somethingFile.toPath()),
+                    false, somethingFile.getName(),
+                    (int) somethingFile.length(),
+                    somethingFile.getParentFile());
+
+
+            try {
+//                InputStream is = defaultProfileImgInputStream;
+//                OutputStream os = fileItem.getOutputStream();
+//                IOUtils.copy(is, os);
+                FileUtils.copyInputStreamToFile(defaultProfileImgInputStream, somethingFile);
+
+            } catch (IOException e) {
+                log.error("[convertFileToMultipartFile] error {}", e.getMessage());
+                throw new IOException(e);
+            }
+
+            MultipartFile img = new CommonsMultipartFile(fileItem);
+            postUserDto.getMultipartFileList().add(img);
+        }
 
        UserEntity postingUserEntity= userMapper.userPostDtoToUserEntity(postUserDto);
        UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
-        return new ResponseEntity(userMapper.userEntityToResponseDto(postedUserEntity), HttpStatus.CREATED);
+
+        ImageEntityProfile uploadImage = imageService.uploadImage(postedUserEntity.getUserEntityId(), postUserDto.getMultipartFileList().get(0));
+        postedUserEntity.setProfileImg(imageService.uriMaker(uploadImage));
+
+        return new ResponseEntity(userMapper.userEntityToResponseDto2(postedUserEntity), HttpStatus.CREATED);
 
     }
 
@@ -123,7 +168,7 @@ public class UserEntityController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @GetMapping("/get/following")//내가 팔로우하는 사람의 목록 반환
-    public ResponseEntity getUserFollowList(@RequestParam int myUserEntityId, @RequestParam int pageIndex){
+    public ResponseEntity getUserFollowList(@RequestParam Long myUserEntityId, @RequestParam Integer pageIndex){
         Page<UserDto.FollowUserInfoResponseDto> foundUserFollowList = userService.getUserFollowList(myUserEntityId, pageIndex);
 
         return new ResponseEntity(
@@ -138,7 +183,7 @@ public class UserEntityController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @GetMapping("/get/follow")//나를 팔로우하는 사람의 목록 반환
-    public ResponseEntity getUserFollowerList(@RequestParam long myUserEntityId, @RequestParam int pageIndex){
+    public ResponseEntity getUserFollowerList(@RequestParam Long myUserEntityId, @RequestParam int pageIndex){
         Page<UserDto.FollowUserInfoResponseDto> foundUserFollowList = userService.getUserFollowingList(myUserEntityId, pageIndex);
 
         return new ResponseEntity(

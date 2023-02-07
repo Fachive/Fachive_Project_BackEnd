@@ -8,9 +8,9 @@ import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.entity.user.FollowEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.entity.user.WithdrawalEntity;
-import com.facaieve.backend.exception.BusinessLogicException;
-import com.facaieve.backend.exception.ExceptionCode;
-import com.facaieve.backend.exception.swearingFilter.BadWordFiltering;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
+import com.facaieve.backend.mapper.exception.swearingFilter.BadWordFiltering;
 import com.facaieve.backend.mapper.user.UserMapper;
 import com.facaieve.backend.repository.user.FollowRepository;
 import com.facaieve.backend.repository.user.UserRepository;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static com.facaieve.backend.Constant.UserActive.DeActive;
 import static com.facaieve.backend.Constant.UserActive.Withdrawal;
-import static com.facaieve.backend.exception.ExceptionCode.*;
+import static com.facaieve.backend.mapper.exception.ExceptionCode.*;
 
 @Slf4j
 @Service
@@ -40,6 +40,8 @@ public class UserService {
     UserMapper userMapper;
     FollowRepository followRepository;
     BadWordFiltering badWordFiltering;
+
+
 
     //입력 값으로 들어온 userEntity 저장 그리고 반환 todo 보안 설정 아직 안함
     public UserEntity createUserEntity(@NotNull final UserEntity userEntity) throws BusinessLogicException {
@@ -78,7 +80,7 @@ public class UserService {
         return userRepository.save(patchingUserEntity);// 수정된 내용으로 유저 엔티티 저장
     }/*엔티티로 유저 정보 수정하기*/
 
-    public UserEntity findUserEntityById(long userEntityId) {
+    public UserEntity findUserEntityById(Long userEntityId) {
         return userRepository.findById(userEntityId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
     }/*엔티티 식별자(ID)로 유저 확인 */
 
@@ -146,11 +148,11 @@ public class UserService {
         withdrawalRepository.saveAll(withdrawalEntities);
     }
 
-    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowList ( long myUserEntityId, int pageIndex) {// id에 해당하는 유저가 팔로우하는 사용자 목록 반환 메서드
+    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowList ( Long myUserEntityId, int pageIndex) {// id에 해당하는 유저가 팔로우하는 사용자 목록 반환 메서드
         List<FollowEntity> followingList =
                 followRepository.findByFollowingUserEntity(
                         userRepository.findById(myUserEntityId).orElseThrow(),
-                        PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()
+                        PageRequest.of(pageIndex-1, 20, Sort.by("modifiedBy").descending()
                         ));
 
         List<UserDto.FollowUserInfoResponseDto> followList = followingList.stream()
@@ -163,7 +165,7 @@ public class UserService {
         return new PageImpl<>(followList);
     }
 
-    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowingList ( long myUserEntityId, int pageIndex)
+    public Page<UserDto.FollowUserInfoResponseDto> getUserFollowingList ( Long myUserEntityId, int pageIndex)
     {// id에 해당하는 유저를 팔로우하는 사용자 목록 반환 메서드
         List<FollowEntity> followingList = followRepository.findByFollowedUserEntity(userRepository.findById(myUserEntityId).orElseThrow(), PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()));
 
@@ -203,5 +205,9 @@ public class UserService {
             throw new BusinessLogicException(ExceptionCode.FORBIDDEN_WORD_USED);
         }
     } // 닉네임 금지어 체크
+
+
+
+
 }
 
