@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,23 +49,31 @@ public class FundingEntityService {
         return condition.conditionSort(categoryEntity,pageIndex,elementNum);
     }
 
+    @Transactional
     public FundingEntity createFundingEntity(FundingEntity fundingEntity){// 펀딩 게시글 작성
        return fundingRepository.save(fundingEntity);
     };
 
-    public FundingEntity editFundingEntity(FundingEntity fundingEntity) {// 펀딩 게시글 수정
+    public FundingEntity editFundingEntity(FundingEntity editingFundingEntity, FundingDto.PatchDto patchDto) {// 펀딩 게시글 수정
 
-        FundingEntity newFundingEntity = new FundingEntity();
-        Optional.ofNullable(fundingEntity.getTitle())// 제목 체크
-                .ifPresent(newFundingEntity::setTitle);// 제목 수정
-        Optional.ofNullable(fundingEntity.getBody())// 본문 체크
-                .ifPresent(newFundingEntity::setBody);// 본문 수정
-        Optional.ofNullable(fundingEntity.getFundedPrice())// 모금액 체크
-                .ifPresent(newFundingEntity::setFundedPrice);// 모금액 수정
-        Optional.ofNullable(fundingEntity.getTargetPrice())// 목표액 체크
-                .ifPresent(newFundingEntity::setTargetPrice);// 목표액 수정
 
-        return fundingRepository.save(newFundingEntity);
+        Optional.ofNullable(patchDto.getChangedTitle())
+                .ifPresent(editingFundingEntity::setTitle);
+        Optional.ofNullable(patchDto.getChangedBody())
+                .ifPresent(editingFundingEntity::setBody);
+        Optional.ofNullable(patchDto.getChangedCategoryEntity())
+                .ifPresent(editingFundingEntity::setCategoryEntity);
+        Optional.ofNullable(patchDto.getChangedTagList())
+                .ifPresent(editingFundingEntity::setTagEntities);
+        Optional.ofNullable(patchDto.getS3ImgInfo())
+                .ifPresent(editingFundingEntity::setS3ImgInfo);
+        Optional.ofNullable(patchDto.getFundedPrice())
+                .ifPresent(editingFundingEntity::setFundedPrice);
+        Optional.ofNullable(patchDto.getTargetPrice())
+                .ifPresent(editingFundingEntity::setTargetPrice);
+
+
+        return fundingRepository.save(editingFundingEntity);
 
     }
 
@@ -77,17 +86,12 @@ public class FundingEntityService {
         return fundingRepository.findAll(PageRequest.of(pageIndex, 30, Sort.by("updateTime").descending()));
     }
 
-//    public Page<FundingEntity> findFundingEntitiesByMypick(int pageIndex) {// 펀딩 게시글 페이지 별로 호출(마이픽순)
-//        log.info("펀딩 게시물이 호출되었습니다.(마이픽 숫자 기준)");
-//        return fundingRepository.findAll(PageRequest.of(pageIndex, 30, Sort.by("myPick").descending()));// 마이픽 매핑 관련 에러 발생 가능능
-//   }
-
     public void removeFundingEntity(Long deletingFundingEntityId) {// 펀딩 게시글 삭제
         log.info("펀딩 게시물이 삭제되었습니다.");
         fundingRepository.deleteById(deletingFundingEntityId);
     }
 
-    public FundingDto.ResponseFundingIncludeURI calculatingPercentage(FundingDto.ResponseFundingIncludeURI responseFundingDto){
+    public FundingDto.ResponseFundingDtoForEntity calculatingPercentage(FundingDto.ResponseFundingDtoForEntity responseFundingDto){
         System.out.println(responseFundingDto.getFundedPrice()/ responseFundingDto.getTargetPrice());
 
         responseFundingDto.setPercentage(
@@ -96,10 +100,5 @@ public class FundingEntityService {
         //소수점 둘째 자리까지 출력함.
         return responseFundingDto;
     }
-
-    public FundingEntity getFundingEntityById(Long fundingEntityId){
-        return fundingRepository.findById(fundingEntityId).orElseThrow();
-    }
-
 
 }

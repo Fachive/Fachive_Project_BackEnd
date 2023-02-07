@@ -28,9 +28,9 @@ public class ImageEntityProfile extends BaseEntity {
     private String imageFileType;
     @Lob
     @Column(name = "image_data", length = 1000)
-    private byte[] imageData;
+    byte[] imageData;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "imgOwner")
     @Schema(name = "이미지를 올린 사람")
     UserEntity profileImgOwner;

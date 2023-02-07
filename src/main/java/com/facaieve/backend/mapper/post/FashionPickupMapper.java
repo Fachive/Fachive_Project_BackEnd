@@ -1,12 +1,15 @@
 package com.facaieve.backend.mapper.post;
 
+import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.post.FashionPickupDto;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.mapper.etc.CategoryMapper;
 import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.stubDate.FashionPuckupStubData;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses ={
         PostImageMapper.class,
@@ -30,19 +33,41 @@ public interface FashionPickupMapper {
     //deleteDto ->Entity
     FashionPickupEntity fashionPickupDeleteDtoToFashionPickupEntity(FashionPickupDto.DeleteFashionPickupDto deleteFashionPickupDto);
 
-    FashionPickupDto.ResponseFashionPickupDto fashionPickupEntityToResponseFashionPickupEntity(FashionPickupEntity fashionPickupEntity);
+    //개별 게시글 페이지를 위한 객체 반환
+    default FashionPickupDto.ResponseFashionPickupDtoForEntity fashionPickupEntityToResponseFashionPickupDto(FashionPickupEntity fashionPickupEntity){
 
+        return FashionPickupDto.ResponseFashionPickupDtoForEntity
+                .builder()
+                .fashionPickupEntityId(fashionPickupEntity.getFashionPickupEntityId())
+                .title(fashionPickupEntity.getTitle())
+                .body(fashionPickupEntity.getBody())
+                .views(fashionPickupEntity.getViews())
+                .myPicks(fashionPickupEntity.getMyPick().size())
+                .tagList(fashionPickupEntity.getTagEntities().stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName())).collect(Collectors.toList()))
+                .s3ImageUriList(fashionPickupEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI).collect(Collectors.toList()))
+                .build();
+    }
 
-    @Mapping(source = "postImageDtoList", target = "postImageEntities")
-    FashionPickupEntity fashionPickupIncludeURIToFashionPickupEntity(
-            FashionPickupDto.ResponseFashionPickupIncludeURI responseFashionPickupIncludeURI);
+    //메인페이지, 게시글 목록 페이지를 위한 게시글 객체 하나 반환
+    default FashionPickupDto.ResponseFashionPickupDtoForEntities fashionPickupEntityForMainList(FashionPickupEntity fashionPickupEntity){
 
-    @Mapping(source = "postImageEntities", target = "postImageDtoList")
-    @Mapping(source = "categoryEntity", target = "responseCategoryDTO")
-    @Mapping(source = "tagEntities", target = "responseTagDTOList")
-    FashionPickupDto.ResponseFashionPickupIncludeURI
-    fashionPickupEntityToResponseFashionPickupIncludeURI(FashionPickupEntity fashionPickupEntity);
+        return FashionPickupDto.ResponseFashionPickupDtoForEntities
+                .builder()
+                .title(fashionPickupEntity.getTitle())
+                .body(fashionPickupEntity.getBody())
+                .views(fashionPickupEntity.getViews())
+                .myPicks(fashionPickupEntity.getMyPick().size())
+                .tagList(fashionPickupEntity.getTagEntities().stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName())).collect(Collectors.toList()))
+                .thumpNailImageUri(fashionPickupEntity.getS3ImgInfo().get(0).getFileURI())
+                .build();
+    }
 
+//    @Mapping(source = "postImageEntities", target = "postImageDtoList")
+//    @Mapping(source = "categoryEntity", target = "responseCategoryDTO")
+//    @Mapping(source = "tagEntities", target = "responseTagDTOList")
+//    FashionPickupDto.ResponseFashionPickupIncludeURI
+//    fashionPickupEntityToResponseFashionPickupIncludeURI(FashionPickupEntity fashionPickupEntity);
+//
 
 
 

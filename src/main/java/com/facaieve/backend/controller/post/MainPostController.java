@@ -44,33 +44,33 @@ public class MainPostController {
 
     PostMapper postMapper;
 
-    @GetMapping("/get/ten")
-    public ResponseEntity get10Each(){
-
-        CategoryEntity categoryEntity = categoryService.getCategory(CategoryEntity.builder().categoryName("suit").build());
-
-        fashionPickupEntityService.setCondition("views");
-        fundingEntityService.setCondition("views");
-        portfolioEntityService.setCondition("views");
-
-        Page<FashionPickupEntity> fashionPickupEntityPage = fashionPickupEntityService
-                .findFashionPickupEntitiesByCondition(categoryEntity, 1,10);
-        Page<FundingEntity> fundingEntityPage = fundingEntityService
-                .findFundingEntitiesByCondition(categoryEntity, 1,10);
-        Page<PortfolioEntity> portfolioEntityPage = portfolioEntityService
-                .findPortfolioEntitiesByCondition(categoryEntity, 1,10);
-
-        List<Object> postEntities = new ArrayList<>();//Object -> 새로운 dto 인터페이스로 추상화 필요
-
-        postEntities.addAll(fundingEntityPage.stream()
-                .map(fundingEntity -> fundingMapper.FundingEntityToResponseFundingIncludeURI(fundingEntity)).toList());
-        postEntities.addAll(fashionPickupEntityPage.stream()
-                .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity)).toList());
-        postEntities.addAll(portfolioEntityPage.stream()
-                .map(portfolioEntity -> portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolioEntity)).toList());
-
-        return new ResponseEntity(postEntities,HttpStatus.OK);
-    }
+//    @GetMapping("/get/ten")
+//    public ResponseEntity get10Each(){
+//
+//        CategoryEntity categoryEntity = categoryService.getCategory(CategoryEntity.builder().categoryName("suit").build());
+//
+//        fashionPickupEntityService.setCondition("views");
+//        fundingEntityService.setCondition("views");
+//        portfolioEntityService.setCondition("views");
+//
+//        Page<FashionPickupEntity> fashionPickupEntityPage = fashionPickupEntityService
+//                .findFashionPickupEntitiesByCondition(categoryEntity, 1,10);
+//        Page<FundingEntity> fundingEntityPage = fundingEntityService
+//                .findFundingEntitiesByCondition(categoryEntity, 1,10);
+//        Page<PortfolioEntity> portfolioEntityPage = portfolioEntityService
+//                .findPortfolioEntitiesByCondition(categoryEntity, 1,10);
+//
+//        List<Object> postEntities = new ArrayList<>();//Object -> 새로운 dto 인터페이스로 추상화 필요
+//
+//        postEntities.addAll(fundingEntityPage.stream()
+//                 .map(fundingEntity -> fundingMapper.FundingEntityToResponseFundingIncludeURI(fundingEntity)).toList());
+//        postEntities.addAll(fashionPickupEntityPage.stream()
+//                .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupIncludeURI(fashionPickupEntity)).toList());
+//        postEntities.addAll(portfolioEntityPage.stream()
+//                .map(portfolioEntity -> portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolioEntity)).toList());
+//
+//        return new ResponseEntity(postEntities,HttpStatus.OK);
+//    }
 
 
 }

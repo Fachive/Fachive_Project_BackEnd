@@ -6,6 +6,9 @@ import com.facaieve.backend.Constant.UserActive;
 import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
 import com.facaieve.backend.entity.comment.FundingCommentEntity;
 import com.facaieve.backend.entity.comment.PortfolioCommentEntity;
+import com.facaieve.backend.entity.etc.MyPickEntity;
+import com.facaieve.backend.entity.image.ImageEntityProfile;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
@@ -65,9 +68,11 @@ public class UserEntity extends BaseEntity {
 
     @Schema(description = "유저 활동 상태")
     @Enumerated(value = EnumType.STRING)
-    UserActive userActive;
+    UserActive userActive = UserActive.Active;
 
-
+    @Schema(description = "재직회사")
+    @Column
+    String profileImg;
 
     //패션픽업 댓글, 펀딩 댓글, 포폴 댓글 엔티티 매핑
     @Schema(description = "패션 픽업 게시물에 단 댓글 목록")
@@ -102,7 +107,13 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "followedUserEntity", cascade = CascadeType.ALL)
     List<FollowEntity> followerList = new ArrayList<FollowEntity>(); // 팔로우 정보 저장을 위한 셀프 참조
 
+    @Schema(description = "프로필 이미지")
+    @OneToOne(mappedBy = "profileImgOwner", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    ImageEntityProfile imageEntityProfiles; // 프로필 이미지 매핑
 
 
 
+    @Schema(description = "마이픽을 설정한 게시물 및 댓글")
+    @OneToMany(mappedBy = "pickingUser", cascade = CascadeType.PERSIST)
+    List<MyPickEntity>  myPickEntityList = new ArrayList<MyPickEntity>();
 }

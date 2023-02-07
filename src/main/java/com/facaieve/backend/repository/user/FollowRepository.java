@@ -9,11 +9,11 @@ import java.util.*;
 @Repository
 public interface FollowRepository extends JpaRepository<FollowEntity, Long> {
 
-    void deleteByFollowingUserEntityAndFollowedUserEntity(UserEntity userEntity1, UserEntity userEntity2);
+    Integer deleteByFollowingUserEntityAndFollowedUserEntity(UserEntity followdUserEntity, UserEntity followingUserEntity);
 
     int countByFollowingUserEntityAndFollowedUserEntity(UserEntity userEntity1, UserEntity userEntity2); // 팔로우 되어있는지 count하는 메서드
 
-
+    Optional<FollowEntity> findByFollowingUserEntityAndFollowedUserEntity(UserEntity followdUserEntity, UserEntity followingUserEntity);
     List<FollowEntity> findByFollowingUserEntity(UserEntity userEntity,
                                                  Pageable pageable);
 

@@ -1,14 +1,15 @@
 package com.facaieve.backend.controller.post;
 
 
-import com.facaieve.backend.dto.etc.TagDTO;
-import com.facaieve.backend.dto.image.PostImageDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
-import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.dto.post.FundingDto;
+import com.facaieve.backend.entity.crossReference.FundingEntityToTagEntity;
+import com.facaieve.backend.entity.crossReference.PortfolioEntityToTagEntity;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
-import com.facaieve.backend.entity.image.PostImageEntity;
+import com.facaieve.backend.entity.image.S3ImageInfo;
+import com.facaieve.backend.entity.post.FundingEntity;
+import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.mapper.post.PortfolioMapper;
 import com.facaieve.backend.dto.post.PortfolioDto;
@@ -17,6 +18,7 @@ import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.etc.TagService;
 import com.facaieve.backend.service.post.PortfolioEntityService;
+import com.facaieve.backend.service.user.UserService;
 import com.facaieve.backend.stubDate.PortfolioMagePageStubData;
 import com.facaieve.backend.stubDate.PortfolioStubData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +33,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class PortfolioEntityController {
     S3FileService s3FileService;
     TagMapper tagMapper;
     TagService tagService;
+    UserService userService;
 
     static final PortfolioStubData portfolioStubData = new PortfolioStubData();
     //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
@@ -56,8 +58,7 @@ public class PortfolioEntityController {
 
     @Operation(summary = "포트폴리오를 카테골와 정렬 조건에 따라서 반환하는 api", description = "Get 을 이용해서 정렬 방법과 카테고리별로 get 기능")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200" ,description = "카테고리와 정렬 방볍에 따라서 정상적으로 가져옴"
-                    , content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "200" ,description = "카테고리와 정렬 방볍에 따라서 정상적으로 가져옴"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
@@ -77,14 +78,14 @@ public class PortfolioEntityController {
         Page<PortfolioEntity> portfolioEntityPage =
                 portfolioEntityService.findPortfolioEntitiesByCondition(categoryEntity, pageIndex,30);
 
-        List<PortfolioDto.ResponsePortfolioIncludeURI> portfolioEntities = portfolioEntityPage.stream()
-                .map(portfolioEntity -> portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolioEntity))
-                .collect(Collectors.toList());
+//        List<PortfolioDto.ResponsePortfolioIncludeURI> portfolioEntities = portfolioEntityPage.stream()
+//                .map(portfolioEntity -> portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolioEntity))
+//                .collect(Collectors.toList());
+//
+//        Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI> multi_responseDTO =
+//                                                        new Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI>(portfolioEntities, portfolioEntityPage);
 
-        Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI> multi_responseDTO =
-                                                        new Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI>(portfolioEntities, portfolioEntityPage);
-
-        return new ResponseEntity(multi_responseDTO,HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
 
     }
 
@@ -101,68 +102,6 @@ public class PortfolioEntityController {
         return new ResponseEntity(responseDTO,HttpStatus.OK);
     }
 
-    //todo 수정할것
-    private void configureTagEntityAtPost(List<TagDTO.PostTagDTO> postTagDTOList, PortfolioEntity portfolioEntity){
-
-        List<TagEntity> tagEntities = postTagDTOList.stream().map(tagMapper::postTagDtoToTagEntity)
-                .collect(Collectors.toList());
-
-        for(TagEntity tagEntity: tagEntities){
-            TagEntity savedTagEntity = tagService.createTagEntity(tagEntity);
-            savedTagEntity.setPortfolioEntity(portfolioEntity);
-        }
-
-        portfolioEntity.setTagEntities(tagEntities);
-    }
-
-    private CategoryEntity getCategoryFromService(String categoryName){
-        return categoryService.getCategory(CategoryEntity
-                .builder().categoryName(categoryName).build());
-    }
-
-    @PostMapping("/multipartPost")//test pass
-    public ResponseEntity postPortfolioEntity(@ModelAttribute PortfolioDto.RequestPortfolioIncludeMultiPartFiles
-                                                          requestPortfolioIncludeMultiPartFiles){
-
-        List<MultipartFile> multipartFileList = requestPortfolioIncludeMultiPartFiles.getMultipartFileList();
-        List<PostImageDto> postImageDtoList = s3FileService.uploadMultiFileList(multipartFileList);
-
-        CategoryEntity categoryEntity = getCategoryFromService(requestPortfolioIncludeMultiPartFiles
-                                                                                        .getPostCategoryDto()
-                                                                                        .getCategoryName());
-
-        PortfolioDto.ResponsePortfolioIncludeURI responsePortfolioIncludeURI =
-                PortfolioDto.ResponsePortfolioIncludeURI.builder()
-                        .title(requestPortfolioIncludeMultiPartFiles.getTitle())
-                        .body(requestPortfolioIncludeMultiPartFiles.getBody())
-                        .views(requestPortfolioIncludeMultiPartFiles.getViews())
-                        .postImageDtoList(postImageDtoList)
-                        .build();
-
-        PortfolioEntity portfolio = portfolioMapper
-                .responsePortfolioIncludeURIToPortfolioEntity(responsePortfolioIncludeURI);
-        List<PostImageEntity> postImageEntities = portfolio.getPostImageEntities();
-
-        portfolio.setCategoryEntity(categoryEntity);//category 도 함께 저장함.
-        categoryEntity.getPortfolioEntities().add(portfolio);
-
-        //context 로 foregin key 저장하기 위해서 사용함
-        for(PostImageEntity postImageEntity: postImageEntities){
-            postImageEntity.setPortfolioEntity(portfolio);
-        }
-
-        configureTagEntityAtPost(requestPortfolioIncludeMultiPartFiles.getPostTagDTOList(),portfolio);//tag 를 점검하고 설정하는 함수
-
-        return new ResponseEntity(portfolioMapper
-                .portfolioEntityToResponsePortfolioIncludeURI(
-                        portfolioEntityService.createPortfolioEntity(portfolio))
-                ,HttpStatus.OK);
-    }
-
-
-
-
-    // 서비스 레이어 구현이 안되어 Stub 데이터로 대체(추후 변경 예정)
 
     @Operation(summary = "포트폴리오 게시글 작성 메서드 예제", description = "json 바디값을 통한 포트폴리오 게시글 POST 요청 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
@@ -171,72 +110,126 @@ public class PortfolioEntityController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @PostMapping("/post")
-    public ResponseEntity postPortfolioEntity(@RequestBody PortfolioDto.PostPortfolioDtoDto postPortfolioDtoDto) {
-//        PortfolioEntity postingPortfolioEntity = portfolioMapper.portfolioPostDtoToPortfolioEntity(postPortfolioDtoDto);
-//        PortfolioEntity postedPortfolioEntity = portfolioEntityService.createPortfolioEntity(postingPortfolioEntity);
-//        return new ResponseEntity( portfolioMapper.portfolioEntityToResponsePortfolioEntity(postedPortfolioEntity), HttpStatus.OK);
+    @PostMapping("/post")//POST API
+    public ResponseEntity postPortfolioEntity(@RequestBody PortfolioDto.PostDto postDto) {
+        List<S3ImageInfo> s3ImageInfoList = s3FileService.uploadMultiFileList(postDto.getMultipartFileList());//저장될 파일 객체가 들어감.\
+        log.info("펀딩 이미지 파일 s3업로드 완료");
 
-        PortfolioEntity stubdata =  portfolioMapper.portfolioDtoToFashionPickupStubData(portfolioStubData);
-        log.info("새로운 포트폴리오 게시물을 등록합니다.");
-        return new ResponseEntity( portfolioMapper.portfolioEntityToResponsePortfolioEntity(stubdata), HttpStatus.OK);
+        List<TagEntity> tagEntityList = new ArrayList<>();
+        postDto.getTagList().stream()//dto로 받은 태그 리스트들을 저장하고 이를 게시글 객체에 넣기위해 list로 반환
+                .map(tag -> tagEntityList.add(tagService.createTagEntity(tag.getTagName()))).collect(Collectors.toList());
+        log.info("태그 데이터 저장 완료");
+
+        CategoryEntity categoryEntity = categoryService.getCategoryFromService(postDto.getCategoryName());
+        log.info("카테고리 데이터 확인 완료");
+
+        UserEntity postingUser = userService.findUserEntityById(postDto.getUserId());
+        log.info("게시글 작성 유저 정보 확인 완료");
+
+        PortfolioEntity portfolioEntity = PortfolioEntity.builder().title(postDto.getTitle())//저장할 패션픽업 객체 생성
+                .body(postDto.getBody()).categoryEntity(categoryEntity).s3ImgInfo(s3ImageInfoList)
+                .userEntity(postingUser)
+                .myPick(new ArrayList<>())
+                .views(0)
+                .myPick(new ArrayList<>())
+                .s3ImgInfo(s3ImageInfoList)
+                .commentList(new ArrayList<>())
+                .build();
+
+        List<PortfolioEntityToTagEntity> tagEntities =tagEntityList.stream().map(tagEntity -> PortfolioEntityToTagEntity.builder()
+                .portfolioEntity(portfolioEntity)
+                .tagEntity(tagEntity).build()).collect(Collectors.toList());
+        portfolioEntity.setTagEntities(tagEntities);
+        log.info("펀딩-태그 중간 엔티티 설정");
+
+        portfolioEntity.getS3ImgInfo().forEach(s3ImageInfo ->s3ImageInfo.setPortfolioEntityPost(portfolioEntity));
+        log.info("S3ImageInfo 매핑관계 설정");
+
+
+        PortfolioEntity createdPortfolioEntity = portfolioEntityService.createPortfolioEntity(portfolioEntity);
+        log.info("게시글 저장 완료");
+
+        PortfolioDto.ResponsePortfolioDtoForEntity responsePortfolioDto = portfolioMapper.fundingEntityToResponseFundingDto(createdPortfolioEntity);
+
+        return new ResponseEntity(responsePortfolioDto, HttpStatus.OK);
     }
-
     @Operation(summary = "포트폴리오 게시글 수정 메서드 예제", description = "json 바디값을 통한 포트폴리오 Post 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200" ,description = "포트폴리오 게시글이 수정됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "200" ,description = "포트폴리오 게시글이 수정됨"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @PatchMapping("/patch")
-    public ResponseEntity patchPortfolioEntity(@RequestBody PortfolioDto.PatchPortfolioDtoDto patchPortfolioDtoDto){
-//        PortfolioEntity patchingPortfolioEntity = portfolioMapper.portfolioPatchDtoToPortfolioEntity(patchPortfolioDtoDto);
-//        PortfolioEntity patchedPortfolioEntity = portfolioEntityService.editPortfolioEntity(patchingPortfolioEntity);
-//        return new ResponseEntity( portfolioMapper.portfolioEntityToResponsePortfolioEntity(patchedPortfolioEntity), HttpStatus.OK);
+    @PatchMapping("/patch")//PATCH API
+    public ResponseEntity patchPortfolioEntity(@ModelAttribute PortfolioDto.PatchRequestDto patchRequestDto){
+        PortfolioEntity editingPortfolioEntity = portfolioEntityService.findPortfolioEntity(patchRequestDto.getPortfolioEntityId());
+        log.info("수정할 객체 가져오기 {} ", editingPortfolioEntity);
 
-        PortfolioEntity stubdata =  portfolioMapper.portfolioDtoToFashionPickupStubData(portfolioStubData);
-        stubdata.setBody("포트폴리오 게시글 내용 수정완료");
-        stubdata.setTitle("포트폴리오 게시글 제목 수정완료");
+        List<String> entityUrlList = editingPortfolioEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI).collect(Collectors.toList());
+        log.info("수정할 객체에 있는 이미지 데이터, s3에서 삭제하기 위해 호출 {} ", entityUrlList);
+        s3FileService.deleteMultiFileList(entityUrlList);
+        log.info("기존 이미지 데이터 s3에서 삭제 완료 {} ", entityUrlList);
 
-        log.info("기존 포트폴리오 게시물을 수정합니다.");
-        return new ResponseEntity( portfolioMapper.portfolioEntityToResponsePortfolioEntity(stubdata), HttpStatus.OK);
+        List<S3ImageInfo> s3ImageInfoList = s3FileService.uploadMultiFileList(patchRequestDto.getMultipartFileList());
+        log.info("새로운 이미지 데이터 s3에 저장 완료 {} ", s3ImageInfoList);
+
+        List<TagEntity> tagEntityList = new ArrayList<>();
+        patchRequestDto.getTagList().stream()//dto로 받은 태그 리스트들을 저장하고 이를 게시글 객체에 넣기위해 list로 반환
+                .map(tag -> tagEntityList.add(tagService.createTagEntity(tag.getTagName()))).collect(Collectors.toList());
+        log.info("수정 DTO에서 새로운 태그 데이터 저장완료");
+
+        List<PortfolioEntityToTagEntity> tagEntities =tagEntityList.stream().map(tagEntity -> PortfolioEntityToTagEntity.builder()
+                .portfolioEntity(editingPortfolioEntity)
+                .tagEntity(tagEntity).build()).collect(Collectors.toList());
+        editingPortfolioEntity.setTagEntities(tagEntities);
+        log.info("패션픽업-태그 중간 엔티티 설정");
+
+        CategoryEntity categoryEntity = categoryService.getCategoryFromService(patchRequestDto.getChangedCategoryName());
+        log.info("카테고리 데이터 확인 완료");
+
+
+        PortfolioDto.PatchDto patchDto = PortfolioDto.PatchDto.builder()
+                .changedTitle(patchRequestDto.getChangedTitle())
+                .changedBody(patchRequestDto.getChangedBody())
+                .changedCategoryEntity(categoryEntity)
+                .changedTagList(tagEntities)
+                .s3ImgInfo(s3ImageInfoList)
+                .build();
+
+        PortfolioEntity editedPortfolioEntity = portfolioEntityService.editPortfolioEntity(editingPortfolioEntity, patchDto);
+        log.info("수정된 엔티티 저장 {} ", editedPortfolioEntity);
+
+        PortfolioDto.ResponsePortfolioDtoForEntity responsePortfolioDto = portfolioMapper.fundingEntityToResponseFundingDto(editedPortfolioEntity);
+
+        return new ResponseEntity(responsePortfolioDto,HttpStatus.OK);//수정된 entity 를 다시 반환함.
     }
-
-
     @Operation(summary = "포트폴리오 게시글 호출 예제", description = "json 바디값을 통한 포트폴리오 GET 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200" ,description = "포트폴리오 게시글이 정상적으로 호출됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "200" ,description = "포트폴리오 게시글이 정상적으로 호출됨"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @GetMapping("/get/{portfolioId}")
+    @GetMapping("/get/{portfolioId}")//GET API
     public ResponseEntity getPortfolioEntity(@PathVariable("portfolioId") Long portfolioId){
         log.info("기존 패션픽업 게시글을 가져옵니다.");
         PortfolioEntity portfolio = portfolioEntityService.findPortfolioEntity(portfolioId);
-        return new ResponseEntity( portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolio), HttpStatus.OK);
 
-//        PortfolioEntity stubdata =  portfolioMapper.portfolioDtoToFashionPickupStubData(portfolioStubData);
-//        return new ResponseEntity( portfolioMapper.portfolioEntityToResponsePortfolioEntity(stubdata), HttpStatus.OK);
+        return new ResponseEntity(portfolioMapper.fundingEntityToResponseFundingDto(portfolio), HttpStatus.OK);
     }
-
-
     @Operation(summary = "포트폴리오 게시글 삭제 예제", description = "json 바디값을 통한 포트폴리오 DELETE 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200" ,description = "포트폴리오 게시글이 정상적으로 호출됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDto.class))),
+            @ApiResponse(responseCode = "200" ,description = "포트폴리오 게시글이 정상적으로 호출됨"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete")//DELETE API
     public ResponseEntity deletePortfolioEntity(@RequestBody PortfolioDto.DeletePortfolioDtoDto deletePortfolioDtoDto){
 
         portfolioEntityService.removePortfolioEntity(deletePortfolioDtoDto.getPortfolioEntityId());
         log.info("기존 패션픽업 게시글을 삭제합니다.");
         return new ResponseEntity(HttpStatus.OK);
-
-
 
     }
 

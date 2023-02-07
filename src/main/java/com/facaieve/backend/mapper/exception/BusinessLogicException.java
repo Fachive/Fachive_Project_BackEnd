@@ -1,4 +1,4 @@
-package com.facaieve.backend.exception;
+package com.facaieve.backend.mapper.exception;
 
 import lombok.Getter;
 

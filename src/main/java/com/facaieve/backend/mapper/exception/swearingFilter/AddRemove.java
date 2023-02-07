@@ -1,4 +1,4 @@
-package com.facaieve.backend.exception.swearingFilter;
+package com.facaieve.backend.mapper.exception.swearingFilter;
 
 
 import java.util.*;

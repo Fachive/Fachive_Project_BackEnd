@@ -1,11 +1,10 @@
 package com.facaieve.backend.dto.post;
 
-import javax.persistence.*;
-
 import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
-import com.facaieve.backend.dto.image.PostImageDto;
-import com.facaieve.backend.entity.etc.TagEntity;
+import com.facaieve.backend.entity.crossReference.FashionPickupEntityToTagEntity;
+import com.facaieve.backend.entity.etc.CategoryEntity;
+import com.facaieve.backend.entity.image.S3ImageInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,12 +21,12 @@ public class FashionPickupDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    @Schema(description = "image file 을 포함하는 패션픽업 response DTO")
+    @Schema(description = "image file 을 포함하는 패션픽업 POST DTO")
     @Builder
-    public static class RequestFashionPickupIncludeMultiPartFileDto{
-//
-//        @Schema(description ="패션픽업 게시글 식별자")
-//        Long fashionPickupEntityId;
+    public static class PostDto {
+
+        @Schema(description ="작성자 식별자")
+        Long userId;
 
         @Schema(description ="패션픽업 제목")
         String title;
@@ -35,18 +34,79 @@ public class FashionPickupDto {
         @Schema(description ="패션픽업 본문")
         String body;
 
-        @Schema(description ="조회수")
-        Integer views;
-
         @Schema(description = "카테고리")
-        CategoryDTO.PostCategoryDto postCategoryDto;
+        String categoryName;
 
         @Schema(description = "게시글 태그")
-        List<TagDTO.PostTagDTO> postTagDTOList = new ArrayList<>();
+        List<TagDTO.PostTagDTO> tagList = new ArrayList<>();
 
         @Schema(description="URI for send to front end")
-        List<MultipartFile>  multipartFileList = new ArrayList<>();
+        List<MultipartFile> multipartFileList = new ArrayList<>();
     }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Schema(description = "기존 패션 픽업 게시물을 변경하기 위한 PATCH RequestDto")
+    @Builder
+    public static class PatchRequestDto {
+
+        @Schema(description ="작성자 식별자")
+        Long userId;
+
+        @Schema(description ="수정할 게시물 식별자")
+        Long fashionPickupEntityId;
+
+        @Schema(description ="패션픽업 제목")
+        String changedTitle;
+
+        @Schema(description ="패션픽업 본문")
+        String changedBody;
+
+        @Schema(description = "카테고리")
+        String changedCategoryName;
+
+        @Schema(description = "게시글 태그")
+        List<TagDTO.PostTagDTO> changedTagList = new ArrayList<>();
+
+        @Schema(description="URI for send to front end")
+        List<MultipartFile> changedMultipartFileList = new ArrayList<>();
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Schema(description = "기존 패션 픽업 게시물을 변경하기 위한 PATCH DTO")
+    @Builder
+    public static class PatchDto {
+
+
+        @Schema(description ="패션픽업 제목")
+        String changedTitle;
+
+        @Schema(description ="패션픽업 본문")
+        String changedBody;
+
+        @Schema(description = "카테고리")
+        CategoryEntity categoryEntity;
+
+        @Schema(description = "패션픽업-태그 중간 엔티티")
+        List<FashionPickupEntityToTagEntity> tagEntities;
+
+        @Schema(description="URI for send to front end")
+        List<S3ImageInfo> s3ImgInfo;
+    }
+
+
+
+
+
+
+
+
+
 
     @Getter
     @Setter
@@ -68,7 +128,7 @@ public class FashionPickupDto {
         Integer views;
 
         @Schema(description="URI for send to front end")
-        List<PostImageDto>  postImageDtoList = new ArrayList<>();
+        List<S3ImageInfo> s3ImageInfoList = new ArrayList<>();
     }
 
     //dto for send to frontend so there is URI List
@@ -78,7 +138,7 @@ public class FashionPickupDto {
     @NoArgsConstructor
     @Schema(description = "image file 을 포함하는 패션픽업 request DTO")
     @Builder
-    public static class ResponseFashionPickupIncludeURI{
+    public static class FashionPickupDtoForEntity {
         @Schema(description ="패션픽업 게시글 식별자")
         Long fashionPickupEntityId;
 
@@ -89,10 +149,10 @@ public class FashionPickupDto {
         String body;
 
         @Schema(description ="조회수")
-        Integer views;
+        Integer views = 0;
 
         @Schema(description ="추천수")
-        Integer myPicks;
+        Integer myPicks = 0;
 
         @Schema(description="태그")
         List<TagDTO.ResponseTagDTO> responseTagDTOList = new ArrayList<>();
@@ -101,7 +161,9 @@ public class FashionPickupDto {
         CategoryDTO.ResponseCategoryDTO responseCategoryDTO;
 
         @Schema(description="URI for send to front end")
-        List<PostImageDto>  postImageDtoList = new ArrayList<>();
+        List<S3ImageInfo> s3ImageInfoList = new ArrayList<>();
+
+
     }
 
 
@@ -157,7 +219,8 @@ public class FashionPickupDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ResponseFashionPickupDto{
+    @Builder
+    public static class ResponseFashionPickupDtoForEntities {
         @Schema(description ="패션픽업 게시글 식별자")
         Long fashionPickupEntityId;
 
@@ -169,7 +232,47 @@ public class FashionPickupDto {
 
         @Schema(description ="조회수")
         Integer views;
+
+        @Schema(description ="추천수")
+        Integer myPicks = 0;
+
+        @Schema(description = "게시글 태그")
+        List<TagDTO.ResponseTagDTO> tagList = new ArrayList<>();
+
+        @Schema(description ="이미지 데이터 uri")
+        String thumpNailImageUri;
+
+
     }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ResponseFashionPickupDtoForEntity {
+        @Schema(description ="패션픽업 게시글 식별자")
+        Long fashionPickupEntityId;
+
+        @Schema(description ="패션픽업 제목")
+        String title;
+
+        @Schema(description ="패션픽업 본문")
+        String body;
+
+        @Schema(description ="조회수")
+        Integer views;
+
+        @Schema(description ="추천수")
+        Integer myPicks = 0;
+
+        @Schema(description = "게시글 태그")
+        List<TagDTO.ResponseTagDTO> tagList = new ArrayList<>();
+
+        @Schema(description ="이미지 데이터")
+        List<String> s3ImageUriList = new ArrayList<>();
+    }
+
 
 
 

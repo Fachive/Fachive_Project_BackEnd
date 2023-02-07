@@ -7,7 +7,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +22,7 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("")
+@RequestMapping("img")
 public class ProfileImageController {
 
     ImageService imageService;
@@ -31,8 +35,9 @@ public class ProfileImageController {
 
        ImageEntityProfile uploadImage = imageService.uploadImage(userId, profileImg);
 
+        ImageEntityDto.ResponseDto test = ImageEntityDto.ResponseDto.of(uploadImage.getImageEntityId(), uploadImage.getProfileImgOwner().getUserEntityId(),imageService.uriMaker(uploadImage) );
        return new ResponseEntity<>(
-               ImageEntityDto.ResponseDto.builder().imageEntityId(uploadImage.getImageEntityId()).userEntityId(uploadImage.getProfileImgOwner().getUserEntityId()),//userEntity가 null일 경우 exception 발생하는지 확인 필요
+               test,//userEntity가 null일 경우 exception 발생하는지 확인 필요
                HttpStatus.CREATED);
     }
 
@@ -59,6 +64,20 @@ public class ProfileImageController {
         imageService.removeImage(imageEntityId);
         log.info("정삭적으로 이미지를 삭제헀습니다.");
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
+    @GetMapping("/download/{filename}")
+    public ResponseEntity<Resource> downloadPhoto(@PathVariable("filename") String filename) throws Exception {
+        ImageEntityProfile image = imageService.findImageByFileName(filename);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("image/png"))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "photo; filename=\"" + image.getFileName()
+                                + "\"")
+                .header(HttpHeaders.CONTENT_TYPE, "image/png")
+                .body(new ByteArrayResource(image.getImageData()));
     }
 
 }

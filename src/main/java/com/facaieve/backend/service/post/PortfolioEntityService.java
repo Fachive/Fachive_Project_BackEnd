@@ -1,5 +1,6 @@
 package com.facaieve.backend.service.post;
 
+import com.facaieve.backend.dto.post.PortfolioDto;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
@@ -42,12 +43,18 @@ public class PortfolioEntityService {
 
     ;
 
-    public PortfolioEntity editPortfolioEntity(PortfolioEntity PortfolioEntity) {// 포트폴리오 게시물 수정
-        PortfolioEntity editingPortfolioEntity = new PortfolioEntity();
-        Optional.ofNullable(PortfolioEntity.getTitle())
+    public PortfolioEntity editPortfolioEntity(PortfolioEntity editingPortfolioEntity, PortfolioDto.PatchDto patchDto) {// 포트폴리오 게시물 수정
+
+        Optional.ofNullable(patchDto.getChangedTitle())
                 .ifPresent(editingPortfolioEntity::setTitle);
-        Optional.ofNullable(PortfolioEntity.getBody())
+        Optional.ofNullable(patchDto.getChangedBody())
                 .ifPresent(editingPortfolioEntity::setBody);
+        Optional.ofNullable(patchDto.getChangedCategoryEntity())
+                .ifPresent(editingPortfolioEntity::setCategoryEntity);
+        Optional.ofNullable(patchDto.getChangedTagList())
+                .ifPresent(editingPortfolioEntity::setTagEntities);
+        Optional.ofNullable(patchDto.getS3ImgInfo())
+                .ifPresent(editingPortfolioEntity::setS3ImgInfo);
 
         return portfolioRepository.save(editingPortfolioEntity);
     }

@@ -8,9 +8,9 @@ import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.entity.user.FollowEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.entity.user.WithdrawalEntity;
-import com.facaieve.backend.exception.BusinessLogicException;
-import com.facaieve.backend.exception.ExceptionCode;
-import com.facaieve.backend.exception.swearingFilter.BadWordFiltering;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
+import com.facaieve.backend.mapper.exception.swearingFilter.BadWordFiltering;
 import com.facaieve.backend.mapper.user.UserMapper;
 import com.facaieve.backend.repository.user.FollowRepository;
 import com.facaieve.backend.repository.user.UserRepository;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static com.facaieve.backend.Constant.UserActive.DeActive;
 import static com.facaieve.backend.Constant.UserActive.Withdrawal;
-import static com.facaieve.backend.exception.ExceptionCode.*;
+import static com.facaieve.backend.mapper.exception.ExceptionCode.*;
 
 @Slf4j
 @Service
@@ -40,6 +40,8 @@ public class UserService {
     UserMapper userMapper;
     FollowRepository followRepository;
     BadWordFiltering badWordFiltering;
+
+
 
     //입력 값으로 들어온 userEntity 저장 그리고 반환 todo 보안 설정 아직 안함
     public UserEntity createUserEntity(@NotNull final UserEntity userEntity) throws BusinessLogicException {
@@ -150,7 +152,7 @@ public class UserService {
         List<FollowEntity> followingList =
                 followRepository.findByFollowingUserEntity(
                         userRepository.findById(myUserEntityId).orElseThrow(),
-                        PageRequest.of(pageIndex, 20, Sort.by("modifiedBy").descending()
+                        PageRequest.of(pageIndex-1, 20, Sort.by("modifiedBy").descending()
                         ));
 
         List<UserDto.FollowUserInfoResponseDto> followList = followingList.stream()
@@ -203,5 +205,9 @@ public class UserService {
             throw new BusinessLogicException(ExceptionCode.FORBIDDEN_WORD_USED);
         }
     } // 닉네임 금지어 체크
+
+
+
+
 }
 

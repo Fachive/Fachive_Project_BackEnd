@@ -1,6 +1,8 @@
 package com.facaieve.backend.controller.user;
 
+import com.facaieve.backend.dto.etc.FollowDTO;
 import com.facaieve.backend.service.user.FollowService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,17 +18,17 @@ public class FollowController {
     FollowService followService;
 
     @PostMapping("/post")
-    public ResponseEntity createFollow(@PathVariable("id") Long myUserId, Long followedUserId){
+    public ResponseEntity createFollow(@RequestBody FollowDTO.PostFollow postFollow){
 
-        followService.saveFollow(myUserId, followedUserId);
+        followService.saveFollow(postFollow.getUserId(), postFollow.getFollowedUserId());
         log.info("팔로우 저장");
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity deleteFollow(@PathVariable("id") Long myUserId, Long followedUserId){
+    public ResponseEntity deleteFollow(@RequestBody FollowDTO.PostFollow delete){
 
-        followService.unFollow(myUserId, followedUserId);
+        followService.unFollow(delete.getUserId(), delete.getFollowedUserId());
         log.info("언팔로우");
         return new ResponseEntity(HttpStatus.CREATED);
     }

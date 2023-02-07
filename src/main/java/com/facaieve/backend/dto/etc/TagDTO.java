@@ -5,22 +5,22 @@ import lombok.*;
 
 
 public class TagDTO {//수정
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ResponseTagDTO {
-
-        @Schema(description = "태그 식별자")
-        Long tagId;
-
-        @Schema(description ="태그 이름")
-        String tagName;
-
-        @Schema(description ="태그 설명")
-        String description;
-
-    }
+//    @Getter
+//    @Setter
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    public static class ResponseTagDTO {
+//
+//        @Schema(description = "태그 식별자")
+//        Long tagId;
+//
+//        @Schema(description ="태그 이름")
+//        String tagName;
+//
+//        @Schema(description ="태그 설명")
+//        String description;
+//
+//    }
 
 
     @Getter
@@ -31,9 +31,6 @@ public class TagDTO {//수정
     public static class PostTagDTO {//생성
         @Schema(description ="태그 이름")
         String tagName;
-
-        @Schema(description ="태그 설명")
-        String description;
     }
 
     @Getter
@@ -77,6 +74,14 @@ public class TagDTO {//수정
         String description;
     }
 
-
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ResponseTagDTO {//생성
+        @Schema(description ="태그 이름")
+        String tagName;
+    }
 
 }
