@@ -1,6 +1,7 @@
 package com.facaieve.backend.service.post.conditionsImp.portfolio;
 
 import com.facaieve.backend.entity.etc.CategoryEntity;
+import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.repository.post.PortfolioRepository;
 import com.facaieve.backend.service.post.Condition;
@@ -20,11 +21,14 @@ public class FindPortfolioEntitiesByDueDate implements Condition<PortfolioEntity
 
     @Override
     public Page<PortfolioEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex,  int elementNum) {
+        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("dueDate").descending());
+        Page<FashionPickupEntity> fashionPickupEntities;
 
-        return portfolioRepository
-                .findPortfolioEntitiesByCategoryEntity(
-                        categoryEntity
-                        , PageRequest.of(pageIndex - 1, elementNum, Sort.by("dueDate").descending()));
+        if(categoryEntity.getCategoryName().equals("total")){
+            return portfolioRepository.findAll(pageRequest);
+        }
+        else{
+            return portfolioRepository.findPortfolioEntitiesByCategoryEntity(categoryEntity ,pageRequest);
+        }
     }
-
 }

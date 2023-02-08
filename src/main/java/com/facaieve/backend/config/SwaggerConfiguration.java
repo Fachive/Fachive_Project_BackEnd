@@ -28,8 +28,8 @@ public class SwaggerConfiguration {
                 .additionalModels(
                         typeResolver.resolve(UserDto.ResponseUserDto.class),
                         typeResolver.resolve(FashionPickupDto.ResponseFashionPickupDtoForEntities.class),
-                        typeResolver.resolve(PortfolioDto.ResponsePortfolioDto.class),
-                        typeResolver.resolve(FundingDto.ResponseFundingDto.class),
+                        typeResolver.resolve(PortfolioDto.ResponsePortfolioDtoForEntity.class),
+                        typeResolver.resolve(FundingDto.ResponseFundingDtoForEntity.class),
                         typeResolver.resolve(CategoryDTO.ResponseCategoryDTO.class),
                         typeResolver.resolve(TagDTO.ResponseTagDTO.class)
                 )

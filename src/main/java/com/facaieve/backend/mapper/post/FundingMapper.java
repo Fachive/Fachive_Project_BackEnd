@@ -32,7 +32,7 @@ public interface FundingMapper extends PostMapper{
     //deleteDto ->Entity
     FundingEntity fundingDeleteDtoToFundingEntity(FundingDto.DeleteDto deleteDto);
 
-    FundingDto.ResponseFundingDto fundingEntityToResponseFundingEntity(FundingEntity fundingEntity);
+    FundingDto.ResponseFundingDto fundingEntityToResponseFundingEntity(FundingEntity fundingEntity);// 더이상 사용 안 함 fundingEntityToResponseFundingDto 대체
 
     default FundingDto.ResponseFundingDtoForEntity fundingEntityToResponseFundingDto(FundingEntity fundingEntity){
 

@@ -27,11 +27,15 @@ public class FindFashionPickupEntitiesByMyPicks implements Condition<FashionPick
 
     @Override
     public Page<FashionPickupEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
+        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("views").descending());
+        Page<FashionPickupEntity> fashionPickupEntities;
 
-        Page<FashionPickupEntity> fashionPickupEntities = fashionPickupRepository
-                .findFashionPickupEntitiesByCategoryEntity(
-                        categoryEntity
-                        , PageRequest.of(pageIndex - 1, elementNum, Sort.by("views").descending()));
+        if(categoryEntity.getCategoryName().equals("total")){
+            fashionPickupEntities =  fashionPickupRepository.findAll(pageRequest);
+        }
+        else {
+            fashionPickupEntities = fashionPickupRepository.findFashionPickupEntitiesByCategoryEntity(categoryEntity, pageRequest);
+        }
 
         fashionPickupEntities.stream().sorted(new Comparator<FashionPickupEntity>() {
             @Override

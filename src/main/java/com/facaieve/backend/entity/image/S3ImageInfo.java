@@ -1,6 +1,7 @@
 package com.facaieve.backend.entity.image;
 
 
+import com.facaieve.backend.entity.basetime.BaseEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
@@ -16,7 +17,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-public class S3ImageInfo {
+public class S3ImageInfo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long S3ImageInfoId;
