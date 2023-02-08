@@ -225,13 +225,16 @@ public class PortfolioDto {
     @NoArgsConstructor
     @Builder
     public static class ResponsePortfolioDtoForEntity {
-        @Schema(description ="패션픽업 게시글 식별자")
+        @Schema(description ="포트폴리오 게시글 식별자")
         Long portfolioEntityId;
 
-        @Schema(description ="패션픽업 제목")
+        @Schema(description ="포트폴리오 작성자의 식별자")
+        Long userEntityId;
+
+        @Schema(description ="포트폴리오 제목")
         String title;
 
-        @Schema(description ="패션픽업 본문")
+        @Schema(description ="포트폴리오 본문")
         String body;
 
         @Schema(description ="조회수")
@@ -241,10 +244,12 @@ public class PortfolioDto {
         Integer myPicks = 0;
 
         @Schema(description = "게시글 태그")
-        List<TagDTO.ResponseTagDTO> tagList = new ArrayList<>();
+        List<String> tagList = new ArrayList<>();
 
         @Schema(description ="이미지 데이터")
         List<String> s3ImageUriList = new ArrayList<>();
+
+
     }
 
 
