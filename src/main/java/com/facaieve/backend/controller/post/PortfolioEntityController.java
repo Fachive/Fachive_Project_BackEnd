@@ -111,7 +111,7 @@ public class PortfolioEntityController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @PostMapping("/post")//POST API
-    public ResponseEntity postPortfolioEntity(@RequestBody PortfolioDto.PostDto postDto) {
+    public ResponseEntity postPortfolioEntity(@ModelAttribute PortfolioDto.PostDto postDto) {
         List<S3ImageInfo> s3ImageInfoList = s3FileService.uploadMultiFileList(postDto.getMultipartFileList());//저장될 파일 객체가 들어감.\
         log.info("펀딩 이미지 파일 s3업로드 완료");
 
