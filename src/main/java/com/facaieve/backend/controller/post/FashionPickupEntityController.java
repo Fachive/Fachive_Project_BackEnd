@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -66,7 +67,9 @@ public class FashionPickupEntityController {
                                                                     @Parameter(name="sortWay" ,description="정렬 방식: myPick(좋아요 순서), views (조회수),dueDate(생성일) default: myPicks")
                                                                         @RequestParam(required = false, defaultValue = "myPick") String sortWay,
                                                                     @Parameter(name="pageIndex" ,description="페이지 인덱스 기본값 1")
-                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
+                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageIndex,
+                                                                    @Parameter(name="contentNumByPage" ,description="페이지당 게시글 개수")
+                                                                        @RequestParam(required = false, defaultValue = "20") Integer contentNumByPage) {
 
         //저장된 카테고리 객체 가져옴
         CategoryEntity categoryEntity = categoryService.getCategoryFromService(categoryName);
@@ -74,7 +77,7 @@ public class FashionPickupEntityController {
         fashionPickupEntityService.setCondition(sortWay);//condition 객체 만드는 부분 수정함
 
         Page<FashionPickupEntity> fashionPickupEntityPage =
-                fashionPickupEntityService.findFashionPickupEntitiesByCondition(categoryEntity, pageIndex,30);
+                fashionPickupEntityService.findFashionPickupEntitiesByCondition(categoryEntity, pageIndex,contentNumByPage);
 
         List<FashionPickupDto.ResponseFashionPickupDtoForEntity> list = fashionPickupEntityPage.stream().map(entity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(entity)).collect(Collectors.toList());
 

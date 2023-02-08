@@ -1,6 +1,7 @@
 package com.facaieve.backend.controller.post;
 
 
+import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.entity.crossReference.FundingEntityToTagEntity;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
@@ -67,7 +68,9 @@ public class FundingEntityController {
                                                                     @Parameter(name="sortWay" ,description="정렬 방식: myPick(좋아요 순서), views (조회수),dueDate(생성일) default: myPicks")
                                                                         @RequestParam(required = false, defaultValue = "myPick") String sortWay,
                                                                     @Parameter(name="pageIndex" ,description="페이지 인덱스 기본값 1")
-                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
+                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageIndex,
+                                                                    @Parameter(name="contentNumByPage" ,description="페이지당 게시글 개수")
+                                                                        @RequestParam(required = false, defaultValue = "20") Integer contentNumByPage) {
 
         CategoryEntity categoryEntity = categoryService.getCategoryFromService(categoryName);
 
@@ -75,13 +78,10 @@ public class FundingEntityController {
 
         Page<FundingEntity> fundingEntityPage = fundingEntityService.findFundingEntitiesByCondition(categoryEntity, pageIndex,30);
 
-//        List<FundingDto.ResponseFundingIncludeURI> fundingEntities = fundingEntityPage.stream()
-//                .map(fundingEntity -> fundingMapper.FundingEntityToResponseFundingIncludeURI(fundingEntity))
-//                .collect(Collectors.toList());
-//
+        List<FundingDto.ResponseFundingDtoForEntity> list = fundingEntityPage.stream().map(entity -> fundingMapper.fundingEntityToResponseFundingDto(entity)).collect(Collectors.toList());
 
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(list, HttpStatus.OK);
 
     }
 
@@ -228,7 +228,7 @@ public class FundingEntityController {
     @Operation(summary = "펀딩 게시글 삭제 메서드 예제", description = "json 바디값을 통한 펀딩 게시글 DELETE 요청 메서드")
 //대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "펀딩 게시글이 삭제 되었습니다", content = @Content(schema = @Schema(implementation = FundingDto.ResponseFundingDto.class))),
+            @ApiResponse(responseCode = "200", description = "펀딩 게시글이 삭제 되었습니다", content = @Content(schema = @Schema(implementation = FundingDto.ResponseFundingDtoForEntity.class))),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")

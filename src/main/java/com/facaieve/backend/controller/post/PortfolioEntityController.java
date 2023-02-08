@@ -2,13 +2,12 @@ package com.facaieve.backend.controller.post;
 
 
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
+import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.dto.post.FundingDto;
-import com.facaieve.backend.entity.crossReference.FundingEntityToTagEntity;
 import com.facaieve.backend.entity.crossReference.PortfolioEntityToTagEntity;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.image.S3ImageInfo;
-import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.mapper.post.PortfolioMapper;
@@ -70,22 +69,20 @@ public class PortfolioEntityController {
                                                                       @Parameter(name="sortWay" ,description="정렬 방식: myPick(좋아요 순서), views (조회수),dueDate(생성일) default: myPicks")
                                                                           @RequestParam(required = false, defaultValue = "myPick") String sortWay,
                                                                       @Parameter(name="pageIndex" ,description="페이지 인덱스 기본값 1")
-                                                                          @RequestParam(required = false, defaultValue = "1") Integer pageIndex){
+                                                                          @RequestParam(required = false, defaultValue = "1") Integer pageIndex,
+                                                                      @Parameter(name="contentNumByPage" ,description="페이지당 게시글 개수")
+                                                                          @RequestParam(required = false, defaultValue = "20") Integer contentNumByPage){
         CategoryEntity categoryEntity = categoryService
                 .getCategory(CategoryEntity.builder().categoryName(categoryName).build());
 
         portfolioEntityService.setCondition(sortWay);
         Page<PortfolioEntity> portfolioEntityPage =
-                portfolioEntityService.findPortfolioEntitiesByCondition(categoryEntity, pageIndex,30);
+                portfolioEntityService.findPortfolioEntitiesByCondition(categoryEntity, pageIndex,contentNumByPage);
 
-//        List<PortfolioDto.ResponsePortfolioIncludeURI> portfolioEntities = portfolioEntityPage.stream()
-//                .map(portfolioEntity -> portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolioEntity))
-//                .collect(Collectors.toList());
-//
-//        Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI> multi_responseDTO =
-//                                                        new Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI>(portfolioEntities, portfolioEntityPage);
+        List<PortfolioDto.ResponsePortfolioDtoForEntity> list = portfolioEntityPage.stream().map(entity -> portfolioMapper.fundingEntityToResponseFundingDto(entity)).collect(Collectors.toList());
 
-        return new ResponseEntity(HttpStatus.OK);
+
+        return new ResponseEntity(list, HttpStatus.OK);
 
     }
 

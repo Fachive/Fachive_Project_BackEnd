@@ -81,7 +81,7 @@ public class PortfolioDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    @Schema(description = "포트폴리오 response DTO")
+    @Schema(description = "포트폴리오 response DTO")//더는 사용 안 함 ResponsePortfolioDtoForEntity로 대체
     public static class ResponsePortfolioDto{
 
         @Schema(description ="포트폴리오 식별자")

@@ -234,7 +234,7 @@ public class FundingDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ResponseFundingDto{
+    public static class ResponseFundingDto{  //더이상 사용 x ResponseFundingDtoForEntity로 대체
 
         @Schema(description ="펀딩 제목")
         String title;
