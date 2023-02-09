@@ -9,7 +9,7 @@ import org.springframework.data.annotation.Id;
 public abstract class CommentEntity extends BaseEntity {
     @Setter
     @Getter
-            @Id
+    @Id
     Long commentId;
     @Getter
     Long userId;

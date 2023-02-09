@@ -40,7 +40,9 @@ public interface PortfolioMapper{
                 .body(portfolioEntity.getBody())
                 .views(portfolioEntity.getViews())
                 .myPicks(portfolioEntity.getMyPick().size())
-                .tagList(portfolioEntity.getTagEntities().stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName())).collect(Collectors.toList()))
+                .tagList(portfolioEntity.getTagEntities().stream()
+                        .map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName()))
+                        .collect(Collectors.toList()))
                 .s3ImageUriList(portfolioEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI).collect(Collectors.toList()))
                 .build();
     }

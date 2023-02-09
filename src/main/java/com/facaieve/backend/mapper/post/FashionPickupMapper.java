@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
         TagMapper.class
 })
 public interface FashionPickupMapper {
-    // 패션픽업 스텁데이터 -> 엔티티로 변환
 
+    // 패션픽업 스텁데이터 -> 엔티티로 변환
     FashionPickupEntity fashionPickupDtoToFashionPickupStubData(FashionPuckupStubData fashionPuckupStubData);
 
     //postDto -> Entity
@@ -43,8 +43,11 @@ public interface FashionPickupMapper {
                 .body(fashionPickupEntity.getBody())
                 .views(fashionPickupEntity.getViews())
                 .myPicks(fashionPickupEntity.getMyPick().size())
-                .tagList(fashionPickupEntity.getTagEntities().stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName())).collect(Collectors.toList()))
-                .s3ImageUriList(fashionPickupEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI).collect(Collectors.toList()))
+                .tagList(fashionPickupEntity.getTagEntities()
+                        .stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName()))
+                        .collect(Collectors.toList()))
+                .s3ImageUriList(fashionPickupEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI)
+                        .collect(Collectors.toList()))
                 .build();
     }
 
@@ -57,7 +60,9 @@ public interface FashionPickupMapper {
                 .body(fashionPickupEntity.getBody())
                 .views(fashionPickupEntity.getViews())
                 .myPicks(fashionPickupEntity.getMyPick().size())
-                .tagList(fashionPickupEntity.getTagEntities().stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName())).collect(Collectors.toList()))
+                .tagList(fashionPickupEntity.getTagEntities()
+                        .stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName()))
+                        .collect(Collectors.toList()))
                 .thumpNailImageUri(fashionPickupEntity.getS3ImgInfo().get(0).getFileURI())
                 .build();
     }
@@ -67,7 +72,7 @@ public interface FashionPickupMapper {
 //    @Mapping(source = "tagEntities", target = "responseTagDTOList")
 //    FashionPickupDto.ResponseFashionPickupIncludeURI
 //    fashionPickupEntityToResponseFashionPickupIncludeURI(FashionPickupEntity fashionPickupEntity);
-//
+
 
 
 

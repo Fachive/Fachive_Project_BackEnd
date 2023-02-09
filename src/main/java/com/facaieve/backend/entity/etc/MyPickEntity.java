@@ -30,6 +30,7 @@ public class MyPickEntity extends BaseEntity {
     @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "fashionPickupCommentEntity")
     private FashionPickUpCommentEntity fashionPickupCommentEntity;
+
     @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "fundingCommentEntity")
     private FundingCommentEntity fundingCommentEntity;
@@ -37,7 +38,6 @@ public class MyPickEntity extends BaseEntity {
     @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "portfolioCommentEntity")
     private PortfolioCommentEntity portfolioCommentEntity;
-
 
     @ManyToOne(fetch =FetchType.EAGER )
     @JoinColumn(name = "portfolioEntity")

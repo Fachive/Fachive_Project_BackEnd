@@ -1,10 +1,13 @@
 package com.facaieve.backend.service.comment;
 
-public interface CommentService<T,E> {
+import com.facaieve.backend.dto.comment.CommentDTO;
+import com.facaieve.backend.dto.comment.TotalCommentDTO;
 
-    T createComment(E e);
-    void deleteComment(E e);
-    T modifyComment(E e);
-    T getComment(E e);
+public interface CommentService {
+
+    TotalCommentDTO.ResponseCommentDTO createComment(TotalCommentDTO.PostCommentDTO postCommentDTO);
+    void deleteComment(Long id);
+    TotalCommentDTO.ResponseCommentDTO modifyComment(TotalCommentDTO.FetchCommentDTO fetchCommentDTO);
+    TotalCommentDTO.ResponseCommentDTO getComment(Long commentId);
 
 }
