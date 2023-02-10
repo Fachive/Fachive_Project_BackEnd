@@ -25,8 +25,12 @@ public class FindFashionPickupEntitiesByDueDate implements Condition<FashionPick
 
     @Override
     public Page<FashionPickupEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
+        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("dueDate").descending());
 
-        return fashionPickupRepository.findFashionPickupEntitiesByCategoryEntity(categoryEntity
+        if(categoryEntity.getCategoryName().equals("total")){
+            return fashionPickupRepository.findAll(pageRequest);
+        }
+        else return fashionPickupRepository.findFashionPickupEntitiesByCategoryEntity(categoryEntity
                         , PageRequest.of(pageIndex - 1, elementNum, Sort.by("dueDate").descending()));
     }
 

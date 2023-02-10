@@ -2,13 +2,12 @@ package com.facaieve.backend.controller.post;
 
 
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
+import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.dto.post.FundingDto;
-import com.facaieve.backend.entity.crossReference.FundingEntityToTagEntity;
 import com.facaieve.backend.entity.crossReference.PortfolioEntityToTagEntity;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.image.S3ImageInfo;
-import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.mapper.post.PortfolioMapper;
@@ -56,36 +55,34 @@ public class PortfolioEntityController {
     //todo parameter 로 category total, top, outer, one piece, skirt, accessory, suit, dress
     //todo sortway mypick, update, duedate
 
-    @Operation(summary = "포트폴리오를 카테골와 정렬 조건에 따라서 반환하는 api", description = "Get 을 이용해서 정렬 방법과 카테고리별로 get 기능")//대상 api의 대한 설명을 작성하는 어노테이션
+    @Operation(summary = "포트폴리오를 카테고리와 정렬 조건에 따라서 반환하는 api", description = "프론트 엔드 요구사항이었던 param을 이용해서 카테고리 정렬 방식, 페이지 인덱스, 페이지당 객체 갯수를 지정해서 객체를 가져올 수 있는 api")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "200" ,description = "카테고리와 정렬 방볍에 따라서 정상적으로 가져옴"),
+            @ApiResponse(responseCode = "200" ,description = "포트폴리오 게시글이 정상 호출되었습니다."),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
 
     @GetMapping("/mainportfolio")//test pass
-    public ResponseEntity getPortfolioEntitySortingCategoryConditions(@Parameter(name="category" ,description="카테고리(피그마 참조) 문자열로 명시하면됨 기본값은 total 로 설정 되어있음 나머지 다른 유형의 post 동일함")
+    public ResponseEntity getPortfolioEntitySortingCategoryConditions(@Parameter(name="categoryName" ,description="카테고리(total, 상의, 아우터, 바지,원피스, 스커트, 액세서리, 정장, 드레스) 문자열로 명시하면됨 기본값은 total 로 설정 되어있음 나머지 다른 유형의 post 동일함")
                                                                           @RequestParam(required = false, defaultValue = "total") String categoryName,
                                                                       @Parameter(name="sortWay" ,description="정렬 방식: myPick(좋아요 순서), views (조회수),dueDate(생성일) default: myPicks")
                                                                           @RequestParam(required = false, defaultValue = "myPick") String sortWay,
                                                                       @Parameter(name="pageIndex" ,description="페이지 인덱스 기본값 1")
-                                                                          @RequestParam(required = false, defaultValue = "1") Integer pageIndex){
+                                                                          @RequestParam(required = false, defaultValue = "1") Integer pageIndex,
+                                                                      @Parameter(name="contentNumByPage" ,description="페이지당 게시글 개수")
+                                                                          @RequestParam(required = false, defaultValue = "20") Integer contentNumByPage){
         CategoryEntity categoryEntity = categoryService
                 .getCategory(CategoryEntity.builder().categoryName(categoryName).build());
 
         portfolioEntityService.setCondition(sortWay);
         Page<PortfolioEntity> portfolioEntityPage =
-                portfolioEntityService.findPortfolioEntitiesByCondition(categoryEntity, pageIndex,30);
+                portfolioEntityService.findPortfolioEntitiesByCondition(categoryEntity, pageIndex,contentNumByPage);
 
-//        List<PortfolioDto.ResponsePortfolioIncludeURI> portfolioEntities = portfolioEntityPage.stream()
-//                .map(portfolioEntity -> portfolioMapper.portfolioEntityToResponsePortfolioIncludeURI(portfolioEntity))
-//                .collect(Collectors.toList());
-//
-//        Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI> multi_responseDTO =
-//                                                        new Multi_ResponseDTO<PortfolioDto.ResponsePortfolioIncludeURI>(portfolioEntities, portfolioEntityPage);
+        List<PortfolioDto.ResponsePortfolioDtoForEntity> list = portfolioEntityPage.stream().map(entity -> portfolioMapper.fundingEntityToResponseFundingDto(entity)).collect(Collectors.toList());
 
-        return new ResponseEntity(HttpStatus.OK);
+
+        return new ResponseEntity(list, HttpStatus.OK);
 
     }
 
@@ -111,7 +108,7 @@ public class PortfolioEntityController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @PostMapping("/post")//POST API
-    public ResponseEntity postPortfolioEntity(@RequestBody PortfolioDto.PostDto postDto) {
+    public ResponseEntity postPortfolioEntity(@ModelAttribute PortfolioDto.PostDto postDto) {
         List<S3ImageInfo> s3ImageInfoList = s3FileService.uploadMultiFileList(postDto.getMultipartFileList());//저장될 파일 객체가 들어감.\
         log.info("펀딩 이미지 파일 s3업로드 완료");
 

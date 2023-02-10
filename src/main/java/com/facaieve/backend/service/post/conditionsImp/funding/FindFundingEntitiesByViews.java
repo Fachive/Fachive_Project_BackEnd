@@ -21,8 +21,13 @@ public class FindFundingEntitiesByViews implements Condition<FundingEntity, Cate
     FundingRepository fundingRepository;
     @Override
     public Page<FundingEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
-        return  fundingRepository
-                .findFundingEntitiesByCategoryEntity( categoryEntity,
-                        PageRequest.of(pageIndex-1, elementNum, Sort.by("views").descending()));
+        PageRequest pageRequest = PageRequest.of(pageIndex-1, elementNum, Sort.by("views").descending());
+
+        if(categoryEntity.getCategoryName().equals("total")){
+            return fundingRepository.findAll(pageRequest);
+        }
+        else {
+            return fundingRepository.findFundingEntitiesByCategoryEntity(categoryEntity, pageRequest);
+        }
     }
 }

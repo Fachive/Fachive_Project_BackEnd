@@ -37,7 +37,7 @@ public class PortfolioEntity extends BaseEntity {
     @Schema(description = "포트폴리오 객체 조회수")
     Integer views;
 
-    @OneToMany(mappedBy = "portfolioEntityPost",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "portfolioEntityPost",fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @Schema(description = "포트폴리오 이미지 목록(S3 버킷 uri)")
     List<S3ImageInfo> s3ImgInfo = new ArrayList<S3ImageInfo>();
 
