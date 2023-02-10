@@ -1,10 +1,15 @@
 package com.facaieve.backend.entity.comment;
 
 
+import com.facaieve.backend.Constant.PostType;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import javax.persistence.*;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,14 +19,20 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Data
+@AllArgsConstructor
+@Builder
 public class FundingCommentEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long fundingCommentEntityId;
     @Column
     String commentBody;
-    @Column
-    String postType;
+
+    @Schema(description = "포스트 타입 선택")
+    @Enumerated(value = EnumType.STRING)
+    PostType postType = PostType.FUNDING;
+
     @Column
     Long postId;
 

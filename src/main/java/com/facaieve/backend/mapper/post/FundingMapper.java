@@ -1,7 +1,10 @@
 package com.facaieve.backend.mapper.post;
 
+import com.facaieve.backend.dto.comment.TotalCommentDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.post.FundingDto;
+import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
+import com.facaieve.backend.entity.comment.FundingCommentEntity;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.mapper.etc.CategoryMapper;
@@ -32,7 +35,19 @@ public interface FundingMapper extends PostMapper{
     //deleteDto ->Entity
     FundingEntity fundingDeleteDtoToFundingEntity(FundingDto.DeleteDto deleteDto);
 
-    FundingDto.ResponseFundingDto fundingEntityToResponseFundingEntity(FundingEntity fundingEntity);// 더이상 사용 안 함 fundingEntityToResponseFundingDto 대체
+    FundingDto.ResponseFundingDto fundingEntityToResponseFundingEntity(FundingEntity fundingEntity);
+
+    default TotalCommentDTO.ResponseCommentDTO fundingCommentEntityToResponseCommentDto(FundingCommentEntity fundingCommentEntity){
+        return TotalCommentDTO.ResponseCommentDTO.builder()
+                .commentId(fundingCommentEntity.getFundingCommentEntityId())
+                .commentBody(fundingCommentEntity.getCommentBody())
+                .postId(fundingCommentEntity.getPostId())
+                .myPick(fundingCommentEntity.getMyPickEntity().size())
+                .userId(fundingCommentEntity.getUserEntity().getUserEntityId())
+                .commentProfileImageURI(fundingCommentEntity.getUserEntity().getProfileImg().getFileURI())
+                .postType(fundingCommentEntity.getPostType())
+                .build();
+    }
 
     default FundingDto.ResponseFundingDtoForEntity fundingEntityToResponseFundingDto(FundingEntity fundingEntity){
 
@@ -46,10 +61,12 @@ public interface FundingMapper extends PostMapper{
                 .targetPrice(fundingEntity.getTargetPrice())
                 .views(fundingEntity.getViews())
                 .myPicks(fundingEntity.getMyPick().size())
-                .tagList(fundingEntity.getTagEntities().stream().map(tagEntity ->tagEntity.getTagEntity().getTagName()).collect(Collectors.toList()))
-                .s3ImageUriList(fundingEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI).collect(Collectors.toList()))
-                .commentEntities(fundingEntity.getCommentList())
-                .userEntityId(fundingEntity.getUserEntity().getUserEntityId())
+                .tagList(fundingEntity.getTagEntities()
+                        .stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName())).collect(Collectors.toList()))
+                .s3ImageUriList(fundingEntity.getS3ImgInfo()
+                        .stream().map(S3ImageInfo::getFileURI).collect(Collectors.toList()))
+                .responseCommentDTOList(fundingEntity.getCommentList().
+                        stream().map(this::fundingCommentEntityToResponseCommentDto).collect(Collectors.toList()))
                 .build();
     }
 
