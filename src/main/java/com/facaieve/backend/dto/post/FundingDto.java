@@ -3,6 +3,7 @@ package com.facaieve.backend.dto.post;
 
 import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
+import com.facaieve.backend.entity.comment.FundingCommentEntity;
 import com.facaieve.backend.entity.crossReference.FundingEntityToTagEntity;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.image.S3ImageInfo;
@@ -233,7 +234,7 @@ public class FundingDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ResponseFundingDto{
+    public static class ResponseFundingDto{  //더이상 사용 x ResponseFundingDtoForEntity로 대체
 
         @Schema(description ="펀딩 제목")
         String title;
@@ -270,6 +271,9 @@ public class FundingDto {
         @Schema(description ="패션픽업 게시글 식별자")
         Long fundingEntityId;
 
+        @Schema(description ="패션픽업 작성자의 식별자")
+        Long userEntityId;
+
         @Schema(description ="패션픽업 제목")
         String title;
 
@@ -299,9 +303,12 @@ public class FundingDto {
         Double percentage;
 
         @Schema(description = "게시글 태그")
-        List<TagDTO.ResponseTagDTO> tagList = new ArrayList<>();
+        List<String> tagList = new ArrayList<>();
 
         @Schema(description ="이미지 데이터")
         List<String> s3ImageUriList = new ArrayList<>();
+
+        @Schema(description ="댓글 데이터")
+        List<FundingCommentEntity> commentEntities = new ArrayList<>();
     }
 }

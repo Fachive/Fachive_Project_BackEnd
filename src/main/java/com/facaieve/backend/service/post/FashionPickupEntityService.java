@@ -81,7 +81,9 @@ public class FashionPickupEntityService {
     }
 
     public Page<FashionPickupEntity> findFashionPickupEntitiesByCondition(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
-        return condition.conditionSort(categoryEntity, pageIndex, elementNum);
+
+            return condition.conditionSort(categoryEntity, pageIndex, elementNum);
+
     }
 
     public void removeFashionPickupEntity(Long deletingFashionPickupEntityId) {// 패션픽업 게시물 삭제

@@ -2,13 +2,16 @@ package com.facaieve.backend.mapper.post;
 
 import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.post.FashionPickupDto;
+import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.mapper.etc.CategoryMapper;
 import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.stubDate.FashionPuckupStubData;
+import java.util.*;
 import org.mapstruct.Mapper;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses ={
@@ -17,8 +20,8 @@ import java.util.stream.Collectors;
         TagMapper.class
 })
 public interface FashionPickupMapper {
-
     // 패션픽업 스텁데이터 -> 엔티티로 변환
+
     FashionPickupEntity fashionPickupDtoToFashionPickupStubData(FashionPuckupStubData fashionPuckupStubData);
 
     //postDto -> Entity
@@ -43,11 +46,10 @@ public interface FashionPickupMapper {
                 .body(fashionPickupEntity.getBody())
                 .views(fashionPickupEntity.getViews())
                 .myPicks(fashionPickupEntity.getMyPick().size())
-                .tagList(fashionPickupEntity.getTagEntities()
-                        .stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName()))
-                        .collect(Collectors.toList()))
-                .s3ImageUriList(fashionPickupEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI)
-                        .collect(Collectors.toList()))
+                .tagList(fashionPickupEntity.getTagEntities().stream().map(tagEntity -> tagEntity.getTagEntity().getTagName()).collect(Collectors.toList()))
+                .s3ImageUriList(fashionPickupEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI).collect(Collectors.toList()))
+                .commentEntities(fashionPickupEntity.getCommentList())
+                .userEntityId(fashionPickupEntity.getUserEntity().getUserEntityId())
                 .build();
     }
 
@@ -60,10 +62,10 @@ public interface FashionPickupMapper {
                 .body(fashionPickupEntity.getBody())
                 .views(fashionPickupEntity.getViews())
                 .myPicks(fashionPickupEntity.getMyPick().size())
-                .tagList(fashionPickupEntity.getTagEntities()
-                        .stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName()))
-                        .collect(Collectors.toList()))
+                .tagList(fashionPickupEntity.getTagEntities().stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName())).collect(Collectors.toList()))
                 .thumpNailImageUri(fashionPickupEntity.getS3ImgInfo().get(0).getFileURI())
+                .commentEntities(fashionPickupEntity.getCommentList())
+                .userEntityId(fashionPickupEntity.getUserEntity().getUserEntityId())
                 .build();
     }
 
@@ -72,7 +74,7 @@ public interface FashionPickupMapper {
 //    @Mapping(source = "tagEntities", target = "responseTagDTOList")
 //    FashionPickupDto.ResponseFashionPickupIncludeURI
 //    fashionPickupEntityToResponseFashionPickupIncludeURI(FashionPickupEntity fashionPickupEntity);
-
+//
 
 
 

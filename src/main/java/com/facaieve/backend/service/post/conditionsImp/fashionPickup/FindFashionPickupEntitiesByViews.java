@@ -20,9 +20,12 @@ public class FindFashionPickupEntitiesByViews implements Condition<FashionPickup
     FashionPickupRepository fashionPickupRepository;
     @Override
     public Page<FashionPickupEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
-        return  fashionPickupRepository
-                .findFashionPickupEntitiesByCategoryEntity(
-                        categoryEntity
-                        , PageRequest.of(pageIndex-1, elementNum, Sort.by("views").descending()));
+        PageRequest pageRequest = PageRequest.of(pageIndex-1, elementNum, Sort.by("views").descending());
+
+        if(categoryEntity.getCategoryName().equals("total")){
+            return fashionPickupRepository.findAll(pageRequest);
+        }else {
+            return fashionPickupRepository.findFashionPickupEntitiesByCategoryEntity(categoryEntity, pageRequest);
+        }
     }
 }

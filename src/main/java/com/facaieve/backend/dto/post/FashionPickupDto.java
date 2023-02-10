@@ -2,6 +2,7 @@ package com.facaieve.backend.dto.post;
 
 import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
+import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
 import com.facaieve.backend.entity.crossReference.FashionPickupEntityToTagEntity;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.image.S3ImageInfo;
@@ -224,6 +225,9 @@ public class FashionPickupDto {
         @Schema(description ="패션픽업 게시글 식별자")
         Long fashionPickupEntityId;
 
+        @Schema(description ="패션픽업 작성자의 식별자")
+        Long userEntityId;
+
         @Schema(description ="패션픽업 제목")
         String title;
 
@@ -242,6 +246,8 @@ public class FashionPickupDto {
         @Schema(description ="이미지 데이터 uri")
         String thumpNailImageUri;
 
+        @Schema(description = "댓글 정보")
+        List<FashionPickUpCommentEntity> commentEntities= new ArrayList<>();
 
     }
 
@@ -253,6 +259,9 @@ public class FashionPickupDto {
     public static class ResponseFashionPickupDtoForEntity {
         @Schema(description ="패션픽업 게시글 식별자")
         Long fashionPickupEntityId;
+
+        @Schema(description ="패션픽업 작성자의 식별자")
+        Long userEntityId;
 
         @Schema(description ="패션픽업 제목")
         String title;
@@ -267,10 +276,13 @@ public class FashionPickupDto {
         Integer myPicks = 0;
 
         @Schema(description = "게시글 태그")
-        List<TagDTO.ResponseTagDTO> tagList = new ArrayList<>();
+        List<String> tagList = new ArrayList<>();
 
         @Schema(description ="이미지 데이터")
         List<String> s3ImageUriList = new ArrayList<>();
+
+        @Schema(description = "댓글 정보")
+        List<FashionPickUpCommentEntity> commentEntities= new ArrayList<>();
     }
 
 

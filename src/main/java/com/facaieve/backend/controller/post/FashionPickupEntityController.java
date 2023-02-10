@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -52,21 +53,23 @@ public class FashionPickupEntityController {
     UserService userService;
 
 
-    @Operation(summary = "30 개 반환하는 메소드",
-            description = "프론트 엔드 요구사항이었던 param을 이용해서 카테고리 정렬 방식, 페이지 인덱스를 지정해서 객체를 가져올 수 있는 api")//대상 api의 대한 설명을 작성하는 어노테이션
+    @Operation(summary = "N 개 반환하는 메소드",
+            description = "프론트 엔드 요구사항이었던 param을 이용해서 카테고리 정렬 방식, 페이지 인덱스, 페이지당 객체 갯수를 지정해서 객체를 가져올 수 있는 api")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
-            @ApiResponse(responseCode = "201" ,description = "패션픽업 게시글이 정상 등록됨"),
+            @ApiResponse(responseCode = "201" ,description = "패션픽업 게시글이 정상 호출되었습니다."),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @GetMapping("/mainfasionpickup")//test pass
-    public ResponseEntity getFashionEntitySortingCategoryConditions(@Parameter(name="categoryName" ,description="카테고리(피그마 참조) 문자열로 명시하면됨 기본값은 total 로 설정 되어있음 나머지 다른 유형의 post 동일함")
+    public ResponseEntity getFashionEntitySortingCategoryConditions(@Parameter(name="categoryName" ,description="카테고리(total, 상의, 아우터, 바지,원피스, 스커트, 액세서리, 정장, 드레스) 문자열로 명시하면됨 기본값은 total 로 설정 되어있음 나머지 다른 유형의 post 동일함")
                                                                         @RequestParam(required = false, defaultValue = "total") String categoryName,
                                                                     @Parameter(name="sortWay" ,description="정렬 방식: myPick(좋아요 순서), views (조회수),dueDate(생성일) default: myPicks")
                                                                         @RequestParam(required = false, defaultValue = "myPick") String sortWay,
                                                                     @Parameter(name="pageIndex" ,description="페이지 인덱스 기본값 1")
-                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageIndex) {
+                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageIndex,
+                                                                    @Parameter(name="contentNumByPage" ,description="페이지당 게시글 개수")
+                                                                        @RequestParam(required = false, defaultValue = "20") Integer contentNumByPage) {
 
         //저장된 카테고리 객체 가져옴
         CategoryEntity categoryEntity = categoryService.getCategoryFromService(categoryName);
@@ -74,7 +77,7 @@ public class FashionPickupEntityController {
         fashionPickupEntityService.setCondition(sortWay);//condition 객체 만드는 부분 수정함
 
         Page<FashionPickupEntity> fashionPickupEntityPage =
-                fashionPickupEntityService.findFashionPickupEntitiesByCondition(categoryEntity, pageIndex,30);
+                fashionPickupEntityService.findFashionPickupEntitiesByCondition(categoryEntity, pageIndex,contentNumByPage);
 
         List<FashionPickupDto.ResponseFashionPickupDtoForEntity> list = fashionPickupEntityPage
                 .stream().map(entity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(entity))

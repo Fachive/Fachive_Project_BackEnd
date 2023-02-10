@@ -17,10 +17,12 @@ import java.util.List;
 public class FindPortfolioPickupEntitiesByViews implements Condition<PortfolioEntity, CategoryEntity> {
     PortfolioRepository portfolioRepository;
     @Override
-    public Page<PortfolioEntity> conditionSort(CategoryEntity categoryEntities, int pageIndex, int elementNum) {
-        return  portfolioRepository
-                .findPortfolioEntitiesByCategoryEntity(
-                        categoryEntities
-                        , PageRequest.of(pageIndex-1, elementNum, Sort.by("views").descending()));
+    public Page<PortfolioEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
+       PageRequest pageRequest =  PageRequest.of(pageIndex-1, elementNum, Sort.by("views").descending());
+
+       if(categoryEntity.getCategoryName().equals("total")){
+           return portfolioRepository.findAll(pageRequest);
+       }
+        return  portfolioRepository.findPortfolioEntitiesByCategoryEntity(categoryEntity,pageRequest);
     }
 }

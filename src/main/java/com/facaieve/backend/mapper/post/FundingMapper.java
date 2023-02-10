@@ -32,7 +32,7 @@ public interface FundingMapper extends PostMapper{
     //deleteDto ->Entity
     FundingEntity fundingDeleteDtoToFundingEntity(FundingDto.DeleteDto deleteDto);
 
-    FundingDto.ResponseFundingDto fundingEntityToResponseFundingEntity(FundingEntity fundingEntity);
+    FundingDto.ResponseFundingDto fundingEntityToResponseFundingEntity(FundingEntity fundingEntity);// 더이상 사용 안 함 fundingEntityToResponseFundingDto 대체
 
     default FundingDto.ResponseFundingDtoForEntity fundingEntityToResponseFundingDto(FundingEntity fundingEntity){
 
@@ -46,8 +46,10 @@ public interface FundingMapper extends PostMapper{
                 .targetPrice(fundingEntity.getTargetPrice())
                 .views(fundingEntity.getViews())
                 .myPicks(fundingEntity.getMyPick().size())
-                .tagList(fundingEntity.getTagEntities().stream().map(tagEntity -> new TagDTO.ResponseTagDTO(tagEntity.getTagEntity().getTagName())).collect(Collectors.toList()))
+                .tagList(fundingEntity.getTagEntities().stream().map(tagEntity ->tagEntity.getTagEntity().getTagName()).collect(Collectors.toList()))
                 .s3ImageUriList(fundingEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileURI).collect(Collectors.toList()))
+                .commentEntities(fundingEntity.getCommentList())
+                .userEntityId(fundingEntity.getUserEntity().getUserEntityId())
                 .build();
     }
 
