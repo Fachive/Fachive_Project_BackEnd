@@ -42,6 +42,7 @@ public enum ExceptionCode {
     FILE_IS_NOT_EXIST_IN_BUCKET(CONFLICT, "해당 데이터가 존재하지 않습니다"),
     NONE_IMAGE_EXCEPTION(CONFLICT,"해당 이미지가 존재하지 않습니다"),
     REQUESTING_FILE_ALREADY_EXIST(CONFLICT,"해당 데이터가 이미 존재합니다"),
+    ALREADY_EXSIT_MYPICK_USER(CONFLICT,"게시글의 좋아요는 한번만 가능합니다")
 
 
     ;

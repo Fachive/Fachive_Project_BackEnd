@@ -65,6 +65,11 @@ public class TotalCommentService {
         return commentService.modifyComment(fetchCommentDTO);
     }
 
+    public TotalCommentDTO.ResponseCommentDTO pushingMyPickToComment(TotalCommentDTO.PushingMyPickAtCommentDTO pushingMyPickAtCommentDTO){
+        setCommentService(pushingMyPickAtCommentDTO.getPostType());
+        return commentService.pushMyPick(pushingMyPickAtCommentDTO);
+    }
+
 
 
 }

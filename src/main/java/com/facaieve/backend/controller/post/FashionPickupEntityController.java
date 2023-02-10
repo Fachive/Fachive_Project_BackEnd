@@ -6,6 +6,7 @@ import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
 import com.facaieve.backend.entity.user.UserEntity;
+import com.facaieve.backend.mapper.comment.TotalCommentMapper;
 import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.mapper.post.FashionPickupMapper;
 
@@ -50,6 +51,8 @@ public class FashionPickupEntityController {
     TagService tagService;
     TagMapper tagMapper;
     UserService userService;
+    TotalCommentMapper totalCommentMapper;
+
 
 
     @Operation(summary = "30 개 반환하는 메소드",
@@ -134,8 +137,6 @@ public class FashionPickupEntityController {
         FashionPickupEntity createdFashionPickupEntity = fashionPickupEntityService.createFashionPickupEntity(fashionPickupEntity);
               log.info("게시글 저장 완료");
 
-
-
     //  todo dto 를 반환해야 수나환참조 문제를 해결이 가능하다.
         return new ResponseEntity(fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(createdFashionPickupEntity), HttpStatus.CREATED);
     }
@@ -151,6 +152,8 @@ public class FashionPickupEntityController {
 
        return new ResponseEntity(fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(fashionPickupEntity), HttpStatus.OK);
     }
+
+
     @Operation(summary = "패션픽업 게시글 수정", description = "패션 픽업의 이미지를 수정하는 메소드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({ @ApiResponse(responseCode = "201" ,description = "패션픽업 게시글이 정상 수정됨", content = @Content(schema = @Schema(implementation = FashionPickupDto.ResponseFashionPickupDtoForEntity.class))),
                     @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 public class TotalCommentController {
+
     @Autowired
     TotalCommentService totalCommentService;
 
@@ -33,18 +34,30 @@ public class TotalCommentController {
         return new ResponseEntity(totalCommentService.readComment(getCommentDTO), HttpStatus.OK);
     }
 
-    @PatchMapping("/patch")//
+    @PatchMapping("/patch")//test pass
     public ResponseEntity changeComment(@RequestBody TotalCommentDTO.FetchCommentDTO fetchCommentDTO){
          TotalCommentDTO.ResponseCommentDTO responseCommentDTO
                   = totalCommentService.changeComment(fetchCommentDTO);
          return new ResponseEntity(responseCommentDTO,HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete")//test pass
     public void deleteComment(@RequestParam Long commentId, Long postId, PostType postType){
         TotalCommentDTO.DeleteCommentDTO deleteCommentDTO = TotalCommentDTO.DeleteCommentDTO.builder()
                 .commentId(commentId).postId(postId).postType(postType).build();
         totalCommentService.deleteCommentDTO(deleteCommentDTO);
         log.info("comment deleted");
+    }
+
+    @GetMapping("/mypick")//마지막 파라미터는 좋아요를 누른 사람의 userId   test pass
+    public ResponseEntity pushMyPickAtComment(@RequestParam Long commentId, PostType postType, Long pushingUserId){
+        TotalCommentDTO.PushingMyPickAtCommentDTO pushingMyPickAtCommentDTO
+                = TotalCommentDTO.PushingMyPickAtCommentDTO.builder()
+                .commentId(commentId)
+                .postType(postType)
+                .pushingUserId(pushingUserId)
+                .build();
+
+         return new ResponseEntity( totalCommentService.pushingMyPickToComment(pushingMyPickAtCommentDTO), HttpStatus.OK);
     }
 }

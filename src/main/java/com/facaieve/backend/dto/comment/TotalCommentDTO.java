@@ -11,7 +11,6 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
-//todo 1. 유저 프로파일 이미지 같이 반환하는 DTO 생성하기, 2. 1번 과정에서 필요한 로직 작성, 3. post 게시글을 get으로 확인할 때 댓글이 같이 넘어 가는지 확인하 4. mapper 먼저 수정하
 public class TotalCommentDTO {
     @AllArgsConstructor
     @Data
@@ -68,5 +67,14 @@ public class TotalCommentDTO {
         PostType postType;
         String postBody;
 
+    }
+
+    @AllArgsConstructor
+    @Data
+    @Builder
+    public static class PushingMyPickAtCommentDTO{
+        Long commentId;
+        Long pushingUserId;
+        PostType postType;
     }
 }

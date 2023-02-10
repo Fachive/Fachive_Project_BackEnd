@@ -1,5 +1,6 @@
 package com.facaieve.backend.dto.post;
 
+import com.facaieve.backend.dto.comment.TotalCommentDTO;
 import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.entity.crossReference.FundingEntityToTagEntity;
@@ -46,6 +47,7 @@ public class PortfolioDto {
 
         @Schema(description = "포트폴리오에 들어갈 이미지 uri")
         List<S3ImageInfo> s3ImageInfoList = new ArrayList<>();
+
     }
 
     @Getter
@@ -225,6 +227,7 @@ public class PortfolioDto {
     @NoArgsConstructor
     @Builder
     public static class ResponsePortfolioDtoForEntity {
+
         @Schema(description ="패션픽업 게시글 식별자")
         Long portfolioEntityId;
 
@@ -245,6 +248,9 @@ public class PortfolioDto {
 
         @Schema(description ="이미지 데이터")
         List<String> s3ImageUriList = new ArrayList<>();
+
+        @Schema(description = "댓글 객체")
+        List<TotalCommentDTO.ResponseCommentDTO> responseCommentDTOList = new ArrayList<>();
     }
 
 

@@ -1,6 +1,7 @@
 package com.facaieve.backend.dto.post;
 
 
+import com.facaieve.backend.dto.comment.TotalCommentDTO;
 import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.entity.crossReference.FundingEntityToTagEntity;
@@ -129,24 +130,6 @@ public class FundingDto {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Getter
     @Setter
     @AllArgsConstructor
@@ -188,6 +171,7 @@ public class FundingDto {
         Long fundedPrice;//펀딩된 현재 금액
 
     }
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -252,15 +236,6 @@ public class FundingDto {
 
 
 
-
-
-
-
-
-
-
-
-
     @Getter
     @Setter
     @AllArgsConstructor
@@ -303,5 +278,8 @@ public class FundingDto {
 
         @Schema(description ="이미지 데이터")
         List<String> s3ImageUriList = new ArrayList<>();
+
+        @Schema(description = "댓글 객체")
+        List<TotalCommentDTO.ResponseCommentDTO> responseCommentDTOList = new ArrayList<>();
     }
 }

@@ -1,5 +1,6 @@
 package com.facaieve.backend.dto.post;
 
+import com.facaieve.backend.dto.comment.TotalCommentDTO;
 import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.entity.crossReference.FashionPickupEntityToTagEntity;
@@ -271,6 +272,9 @@ public class FashionPickupDto {
 
         @Schema(description ="이미지 데이터")
         List<String> s3ImageUriList = new ArrayList<>();
+
+        @Schema(description = "댓글 객체")
+        List<TotalCommentDTO.ResponseCommentDTO> responseCommentDTOList = new ArrayList<>();
     }
 
 
