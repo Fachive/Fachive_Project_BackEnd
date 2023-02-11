@@ -26,16 +26,16 @@ public class CategoryEntity {
     @Column
     String categoryName;
 
-    @OneToMany(mappedBy = "categoryEntity",fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "categoryEntity",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Schema(description = "패션 픽업에 카테고리 객체 목록")
     List<FashionPickupEntity> fashionPickupEntityList = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "categoryEntity",fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "categoryEntity",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Schema(description = "펀딩에 카테고리 객체 목록")
     List<FundingEntity> fundingEntities = new ArrayList<>();
 
-    @OneToMany(mappedBy = "categoryEntity",fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "categoryEntity",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Schema(description = "포트폴리오에 카테고리 객체 목록")
     List<PortfolioEntity> portfolioEntities = new ArrayList<>();
 }
