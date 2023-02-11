@@ -86,7 +86,7 @@ public class S3FileService implements FileServiceCRUD{
     }
 
     @Override
-    public List<String> getMultiFileList(List<String> fileNames) {
+    public List<String> getMultiFileList(List<String> fileNames) {//todo 파일 이름
         List<String> multiPartFileURIList = new ArrayList<>();
         for(String fileName: fileNames){
             multiPartFileURIList.add(findImgUrl(fileName));

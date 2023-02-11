@@ -47,7 +47,7 @@ public class MainPostController {
     @GetMapping("/get/ten")
     public ResponseEntity get10Each(){
 
-        CategoryEntity categoryEntity = categoryService.getCategory(CategoryEntity.builder().categoryName("suit").build());
+        CategoryEntity categoryEntity = categoryService.getCategory(CategoryEntity.builder().categoryName("total").build());
 
         fashionPickupEntityService.setCondition("views");
         fundingEntityService.setCondition("views");

@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+//todo 삭제 api 개선
+//todo get 10 api 개선
 
 @Service
 @Slf4j
@@ -53,7 +55,8 @@ public class CategoryService {
             return CategoryEntity.builder().categoryName("total").build();
         }
         else if(categoryRepository.existsByCategoryName(categoryEntity.getCategoryName())){
-            return categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_CATEGORY));
+            return categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName()).orElseThrow(()
+                    -> new BusinessLogicException(ExceptionCode.NO_SUCH_CATEGORY));
         }else{
             throw new RuntimeException("there is no kind of category name");
         }
@@ -61,8 +64,9 @@ public class CategoryService {
 
     public void deleteCategoryEntity(CategoryEntity categoryEntity){
 
-        if(categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName())!=null){
-            CategoryEntity category = categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_CATEGORY));
+        if(categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName())!=null){//todo 찬일님에게 말씀 드릴것
+            CategoryEntity category = categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName()).orElseThrow(()
+                    -> new BusinessLogicException(ExceptionCode.NO_SUCH_CATEGORY));
              categoryRepository.deleteCategoryEntityByCategoryId(category.getCategoryId());
         }else{
             throw new RuntimeException("there is no kind of category");
