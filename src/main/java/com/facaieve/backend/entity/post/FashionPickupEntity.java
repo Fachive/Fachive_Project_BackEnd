@@ -58,7 +58,7 @@ public class FashionPickupEntity extends BaseEntity {
     @Schema(description = "패션 픽업에 달린 태그 객체 목록")
     private List<FashionPickupEntityToTagEntity> tagEntities = new ArrayList<FashionPickupEntityToTagEntity>();  // 패션픽업 - 카테고리 매핑
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "categoryEntity")
     CategoryEntity categoryEntity;
 

@@ -86,8 +86,8 @@ public class FashionPickupEntityService {
 
     }
 
-    public void removeFashionPickupEntity(Long deletingFashionPickupEntityId) {// 패션픽업 게시물 삭제
-        fashionPickupRepository.deleteById(deletingFashionPickupEntityId);
+    public void removeFashionPickupEntity(FashionPickupEntity deletingFashionPickupEntity) {// 패션픽업 게시물 삭제
+        fashionPickupRepository.delete(deletingFashionPickupEntity);
     }
 
 

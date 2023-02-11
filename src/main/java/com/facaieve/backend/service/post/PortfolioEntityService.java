@@ -2,28 +2,20 @@ package com.facaieve.backend.service.post;
 
 import com.facaieve.backend.dto.post.PortfolioDto;
 import com.facaieve.backend.entity.etc.CategoryEntity;
-import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.repository.post.PortfolioRepository;
-import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
-import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByViews;
-import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
-import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioEntitiesByDueDate;
 import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioPickupEntitiesByMyPicks;
 import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioPickupEntitiesByViews;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
