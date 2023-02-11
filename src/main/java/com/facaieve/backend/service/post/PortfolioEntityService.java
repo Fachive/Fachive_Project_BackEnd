@@ -59,8 +59,8 @@ public class PortfolioEntityService {
         return portfolioRepository.findAll(PageRequest.of(pageIndex, 30, Sort.by("createdBy")));
     }
 
-    public void removePortfolioEntity(Long deletingPortfolioEntityId) {// 포트폴리오 게시물 삭제
-        portfolioRepository.deleteById(deletingPortfolioEntityId);
+    public void removePortfolioEntity(PortfolioEntity deletingPortfolioEntity) {// 포트폴리오 게시물 삭제
+        portfolioRepository.delete(deletingPortfolioEntity);
     }
 
     public void setCondition(String sortWay) {

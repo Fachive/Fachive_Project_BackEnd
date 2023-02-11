@@ -86,9 +86,9 @@ public class FundingEntityService {
         return fundingRepository.findAll(PageRequest.of(pageIndex, 30, Sort.by("updateTime").descending()));
     }
 
-    public void removeFundingEntity(Long deletingFundingEntityId) {// 펀딩 게시글 삭제
+    public void removeFundingEntity(FundingEntity deletingFundingEntity) {// 펀딩 게시글 삭제
         log.info("펀딩 게시물이 삭제되었습니다.");
-        fundingRepository.deleteById(deletingFundingEntityId);
+        fundingRepository.delete(deletingFundingEntity);
     }
 
     public FundingDto.ResponseFundingDtoForEntity calculatingPercentage(FundingDto.ResponseFundingDtoForEntity responseFundingDto){

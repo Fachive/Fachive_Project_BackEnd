@@ -7,6 +7,7 @@ import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.etc.TagEntity;
+import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.etc.TagMapper;
 import com.facaieve.backend.mapper.post.FundingMapper;
@@ -244,7 +245,13 @@ public class FundingEntityController {
     @DeleteMapping()//DELETE API
     public ResponseEntity deleteFundingEntity(@RequestBody FundingDto.DeleteDto deleteDto) {
 
-        fundingEntityService.removeFundingEntity(deleteDto.getFundingEntityId());
+        FundingEntity deletingFundingPickupEntity = fundingEntityService.findFundingEntity(deleteDto.getFundingEntityId());
+        log.info("수정할 객체 가져오기 {} ", deletingFundingPickupEntity);
+
+        List<String> entityUrlList = deletingFundingPickupEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileName).collect(Collectors.toList());
+        log.info("수정할 객체에 있는 이미지 데이터, s3에서 삭제하기 위해 호출 {} ", entityUrlList);
+
+        fundingEntityService.removeFundingEntity(deletingFundingPickupEntity);
         log.info("기존 패션픽업 게시글을 삭제합니다.");
         return new ResponseEntity(HttpStatus.OK);
     }
