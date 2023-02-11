@@ -18,7 +18,7 @@ public class CategoryService {
     CategoryRepository categoryRepository;
 
     public CategoryEntity createCategoryEntity(CategoryEntity categoryEntity){
-        if(categoryRepository.existsByCategoryName(categoryEntity.getCategoryName())){
+        if(categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName())!=null){
             throw new RuntimeException("there is already exists category");
 
         }else{
@@ -28,7 +28,7 @@ public class CategoryService {
     }
     @Transactional
     public CategoryEntity modifyCategoryEntity(CategoryEntity categoryEntity){
-        if(categoryRepository.existsByCategoryId(categoryEntity.getCategoryId())){
+        if(categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName())!=null){
             CategoryEntity categoryEntityChange =
                     categoryRepository.findCategoryEntityByCategoryId(categoryEntity.getCategoryId());
             categoryEntityChange.setCategoryName(categoryEntity.getCategoryName());
@@ -61,7 +61,7 @@ public class CategoryService {
 
     public void deleteCategoryEntity(CategoryEntity categoryEntity){
 
-        if(categoryRepository.existsByCategoryName(categoryEntity.getCategoryName())){
+        if(categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName())!=null){
             CategoryEntity category = categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_CATEGORY));
              categoryRepository.deleteCategoryEntityByCategoryId(category.getCategoryId());
         }else{
