@@ -25,7 +25,7 @@ public class FindFundingEntitiesByDueDate implements Condition<FundingEntity, Ca
     @Override
     public Page<FundingEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
 
-        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("update_time").descending());
+        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("updateTime").descending());
 
         if(categoryEntity.getCategoryName().equals("total")){
             return fundingRepository.findAll(pageRequest);

@@ -85,7 +85,7 @@ public class FundingEntityController {
 
         fundingEntityService.setCondition(sortWay);
 
-        Page<FundingEntity> fundingEntityPage = fundingEntityService.findFundingEntitiesByCondition(categoryEntity, pageIndex,30);
+        Page<FundingEntity> fundingEntityPage = fundingEntityService.findFundingEntitiesByCondition(categoryEntity, pageIndex,contentNumByPage);
 
         List<FundingDto.ResponseFundingDtoForEntity> list = fundingEntityPage.stream().map(entity -> fundingMapper.fundingEntityToResponseFundingDto(entity)).collect(Collectors.toList());
 

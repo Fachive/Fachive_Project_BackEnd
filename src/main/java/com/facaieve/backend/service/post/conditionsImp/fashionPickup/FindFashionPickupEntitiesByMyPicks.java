@@ -27,7 +27,7 @@ public class FindFashionPickupEntitiesByMyPicks implements Condition<FashionPick
 
     @Override
     public Page<FashionPickupEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
-        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("views").descending());
+        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("myPicks").descending());
         Page<FashionPickupEntity> fashionPickupEntities;
 
         if(categoryEntity.getCategoryName().equals("total")){

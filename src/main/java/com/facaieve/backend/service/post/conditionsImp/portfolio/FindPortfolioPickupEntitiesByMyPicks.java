@@ -21,7 +21,7 @@ public class FindPortfolioPickupEntitiesByMyPicks implements Condition<Portfolio
     PortfolioRepository portfolioRepository;
     @Override
     public Page<PortfolioEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
-        PageRequest pageRequest =  PageRequest.of(pageIndex - 1, elementNum, Sort.by("views").descending());
+        PageRequest pageRequest =  PageRequest.of(pageIndex - 1, elementNum, Sort.by("myPicks").descending());
         Page<PortfolioEntity> portfolioEntities;
 
         if(categoryEntity.getCategoryName().equals("total")){

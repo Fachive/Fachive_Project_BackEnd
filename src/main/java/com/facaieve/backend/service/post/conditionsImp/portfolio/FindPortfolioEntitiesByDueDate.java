@@ -21,7 +21,7 @@ public class FindPortfolioEntitiesByDueDate implements Condition<PortfolioEntity
 
     @Override
     public Page<PortfolioEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex,  int elementNum) {
-        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("update_time").descending());
+        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("updateTime").descending());
         Page<FashionPickupEntity> fashionPickupEntities;
 
         if(categoryEntity.getCategoryName().equals("total")){
