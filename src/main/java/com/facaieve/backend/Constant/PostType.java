@@ -4,7 +4,10 @@ public enum PostType {
 
     PORTFOLIO("PORTFOLIO"),
     FASHIONPICKUP("FASHIONPICKUP"),
-    FUNDING("FUNDING");
+    FUNDING("FUNDING"),
+    PortfolioComment("PORTFOLIO COMMENT"),
+    FashionPickUpComment("FASHIONPICKUP COMMENT"),
+    FundingComment("FUNDING COMMENT");
 
     private String type;
 

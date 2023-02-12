@@ -36,6 +36,9 @@ public class PortfolioEntity extends BaseEntity {
     @Column
     @Schema(description = "포트폴리오 객체 조회수")
     Integer views;
+    @Column
+    @Schema(description = "마이픽(좋아요) 수")
+    Integer myPicks = 0;
 
     @OneToMany(mappedBy = "portfolioEntityPost",fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @Schema(description = "포트폴리오 이미지 목록(S3 버킷 uri)")
@@ -66,5 +69,18 @@ public class PortfolioEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "portfolioEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PostImageEntity> postImageEntities = new ArrayList<>();
+
+
+    public void plusMypickNum(){
+        this.myPicks++;
+    }
+
+    public void minusMypickNum(){
+        this.myPicks--;
+    }
+    public void plusViewNum(){
+        this.views++;
+    }
+
 
 }

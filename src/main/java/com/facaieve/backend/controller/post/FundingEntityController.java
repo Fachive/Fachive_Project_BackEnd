@@ -137,6 +137,7 @@ public class FundingEntityController {
                 .userEntity(postingUser)
                 .myPick(new ArrayList<>())
                 .views(0)
+                .myPicks(0)
                 .targetPrice(postDto.getTargetPrice())
                 .fundedPrice(postDto.getFundedPrice())
                 .dueDate(LocalDateTime.now())

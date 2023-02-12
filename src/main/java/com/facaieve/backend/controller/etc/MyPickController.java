@@ -34,7 +34,7 @@ public class MyPickController {
     @PostMapping("/post")//test pass
     public ResponseEntity postMyPick(@RequestBody MyPickDTO.PostMyPickDTO postMyPickDTO){
 
-        myPickService.createMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick(),postMyPickDTO.getEntityId());
+        myPickService.createMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick().getPostType(),postMyPickDTO.getEntityId());
 
         return new ResponseEntity(
                 HttpStatus.CREATED);
@@ -54,7 +54,7 @@ public class MyPickController {
     @DeleteMapping("/delete")//test pass
     public void deleteMyPick(@RequestBody MyPickDTO.PostMyPickDTO postMyPickDTO){
 
-        myPickService.deleteMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick(),postMyPickDTO.getEntityId());
+        myPickService.deleteMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick().getPostType(),postMyPickDTO.getEntityId());
         log.info("delete complete");
 
     }

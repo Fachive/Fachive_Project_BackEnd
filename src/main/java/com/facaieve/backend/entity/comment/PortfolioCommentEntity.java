@@ -1,9 +1,14 @@
 package com.facaieve.backend.entity.comment;
 
+import com.facaieve.backend.Constant.PostType;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.entity.user.UserEntity;
 import javax.persistence.*;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import lombok.NoArgsConstructor;
@@ -12,6 +17,8 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Data
+@AllArgsConstructor
+@Builder
 public class PortfolioCommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +27,15 @@ public class PortfolioCommentEntity {
     Long userId;
     @Column
     String commentBody;
+
+    @Schema(description = "포스트 타입 선택")
+    @Enumerated(value = EnumType.STRING)
+    PostType postType = PostType.PORTFOLIO;
+
     @Column
-    String postType;
+    @Schema(description = "마이픽(좋아요) 수")
+    Integer myPicks = 0;
+
     @Column
     Long postId;
 
@@ -38,5 +52,13 @@ public class PortfolioCommentEntity {
 
     public void update(String commentBody){
         this.commentBody = commentBody;
+    }
+
+    public void plusMypickNum(){
+        this.myPicks++;
+    }
+
+    public void minusMypickNum(){
+        this.myPicks--;
     }
 }

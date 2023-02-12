@@ -1,16 +1,14 @@
 package com.facaieve.backend.dto.comment;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 public class PortfolioCommentDTO  {
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class PostCommentDTO{
 
         String commentBody;
@@ -27,7 +25,7 @@ public class PortfolioCommentDTO  {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-
+    @Builder
     public static class GetCommentDTO{
 
         Long commentId;
@@ -45,7 +43,7 @@ public class PortfolioCommentDTO  {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-
+    @Builder
     public static class DeleteCommentDTO{
 
         Long commentId;
@@ -62,6 +60,7 @@ public class PortfolioCommentDTO  {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class ResponseCommentDTO{
 
         String commentBody;
@@ -78,6 +77,7 @@ public class PortfolioCommentDTO  {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class PatchCommentDTO{
 
         Long commentId;

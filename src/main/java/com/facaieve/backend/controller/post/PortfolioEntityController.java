@@ -129,6 +129,7 @@ public class PortfolioEntityController {
                 .userEntity(postingUser)
                 .myPick(new ArrayList<>())
                 .views(0)
+                .myPicks(0)
                 .myPick(new ArrayList<>())
                 .s3ImgInfo(s3ImageInfoList)
                 .commentList(new ArrayList<>())

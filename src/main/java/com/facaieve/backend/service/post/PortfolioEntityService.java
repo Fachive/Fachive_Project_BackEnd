@@ -52,7 +52,10 @@ public class PortfolioEntityService {
     }
 
     public PortfolioEntity findPortfolioEntity(Long foundingPortfolioEntityId) {// 포트폴리오 게시물 호출(1개)
-        return portfolioRepository.findById(foundingPortfolioEntityId).orElseThrow();
+        PortfolioEntity foundPortfolio = portfolioRepository.findById(foundingPortfolioEntityId).orElseThrow();
+        foundPortfolio.plusViewNum();
+        portfolioRepository.save(foundPortfolio);
+        return foundPortfolio;
     }
 
     public Page<PortfolioEntity> findPortfolioEntities(int pageIndex) {// 포트폴리오 게시물 호출(시간순)

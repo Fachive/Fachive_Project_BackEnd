@@ -1,4 +1,6 @@
 package com.facaieve.backend.dto.etc;
+import com.facaieve.backend.Constant.PostType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 public class MyPickDTO {
@@ -9,25 +11,12 @@ public class MyPickDTO {
     @Getter
     @Setter
     public static class PostMyPickDTO{//생성할땐 유저 아이디만 받음 다른 외래키 필요함.
+        @Schema(description = "좋아요를 하는 사람")
         Long userId;
-        String whatToPick;
+        @Schema(description = "좋아요의 대상이 되는 게시물, 댓글 엔티티 지정(")
+        PostType whatToPick;
+        @Schema(description = "선택한 엔티티의 식별자")
         Long entityId;
-
-        public enum PickableEntity{
-            Portfolio("포트폴리오"),
-            FashionPickUp("패션픽업"),
-            Funding("펀딩"),
-            PortfolioComment("포트폴리오 댓글"),
-            FashionPickUpComment("패션픽업 댓글"),
-            FundingComment("펀딩 팻들");
-
-            @Getter
-            private final String entityType;
-
-            PickableEntity(String entityType) {
-                this.entityType =entityType;
-            }
-        }
 
     }
 
@@ -37,8 +26,11 @@ public class MyPickDTO {
     @Setter
     public static class deleteMyPickDTO{//삭제할때 유저 정보만을 받음 근데 이건 다른것도 필요할듯
 
+        @Schema(description = "좋아요를 하는 사람")
         Long userId;
-        String whatToUnPick;
+        @Schema(description = "좋아요의 대상이 되는 게시물, 댓글 엔티티 지정")
+        String whatToPick;
+        @Schema(description = "선택한 엔티티의 식별자")
         Long entityId;
     }
 

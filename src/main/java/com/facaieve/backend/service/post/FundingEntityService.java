@@ -78,7 +78,10 @@ public class FundingEntityService {
     }
 
     public FundingEntity findFundingEntity(Long foundingFundingEntityId) {// 펀딩 게시글 호출
-         return fundingRepository.findById(foundingFundingEntityId).orElseThrow();
+        FundingEntity foundFundingEntity = fundingRepository.findById(foundingFundingEntityId).orElseThrow();
+        foundFundingEntity.plusViewNum();
+        fundingRepository.save(foundFundingEntity);
+         return foundFundingEntity;
     }
 
     public Page<FundingEntity> findFundingEntitiesByDate(int pageIndex) {// 펀딩 게시글 페이지 별로 호출(최신순)

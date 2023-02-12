@@ -44,7 +44,8 @@ public class MainPostController {
     @GetMapping("/get/ten")
     public ResponseEntity get10Each(){
 
-        CategoryEntity categoryEntity = categoryService.getCategory(CategoryEntity.builder().categoryName("아무거나").build());
+
+        CategoryEntity categoryEntity = categoryService.getCategory(CategoryEntity.builder().categoryName("total").build());
 
         fashionPickupEntityService.setCondition("views");
         fundingEntityService.setCondition("views");
@@ -59,15 +60,17 @@ public class MainPostController {
 
         List<Object> postEntities = new ArrayList<>();//Object -> 새로운 dto 인터페이스로 추상화 필요
 
+
         MainPostDto.ResponseMainDtoForEntity responseMainDtoForEntity  = MainPostDto.ResponseMainDtoForEntity.builder()
                 .fundingList(fundingEntityPage.stream()
                         .map(fundingEntity -> fundingMapper.fundingEntityToResponseFundingDto(fundingEntity)).toList())
                 .fashionpickList(fashionPickupEntityPage.stream()
                         .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(fashionPickupEntity)).toList())
-                .build();
+                .build();// 프론트에서 포트폴리오는 뺴달라고 하여 제거
 
 
         return new ResponseEntity(responseMainDtoForEntity, HttpStatus.OK);
+
     }
 
 
