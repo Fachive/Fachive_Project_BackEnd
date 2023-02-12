@@ -1,6 +1,7 @@
 package com.facaieve.backend.entity.user;
 
 
+import com.facaieve.backend.Constant.UserRole;
 import com.facaieve.backend.entity.basetime.BaseEntity;
 import com.facaieve.backend.Constant.UserActive;
 import com.facaieve.backend.entity.comment.FashionPickUpCommentEntity;
@@ -15,20 +16,27 @@ import com.facaieve.backend.entity.post.PortfolioEntity;
 import javax.persistence.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "email")})// 이메일 기준으로 사용자 구분
 public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)//개별 엔티티 적용
     @Schema(description = "유저 식별ID")
     Long userEntityId;
+
+    @Schema(description = "유저 권한")
+    @Enumerated(EnumType.STRING)
+    @Column
+    UserRole role;//todo 관리자와 일반 사용자를 구분하는 로직을 구현할 것
 
     @Schema(description = "유저 닉네임")
     @Column

@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 
 //todo 찬일님과 구현방식 상의해서 변경할거 변경할 수 있게 만들기
-public class FashionPickupCommentService implements CommentService<FashionPickUpCommentEntity>{
+public class FashionPickupCommentService implements CommentService<FashionPickUpCommentEntity> {
 
     @Autowired
     FashionPickupCommentRepository fashionPickupCommentRepository;
@@ -40,58 +40,65 @@ public class FashionPickupCommentService implements CommentService<FashionPickUp
     TotalCommentMapper totalCommentMapper;
 
     //댓글 생성
-    public TotalCommentDTO.ResponseCommentDTO createComment(TotalCommentDTO.PostCommentDTO postCommentDTO){
+    public TotalCommentDTO.ResponseCommentDTO createComment(TotalCommentDTO.PostCommentDTO postCommentDTO) {
 
 
-            UserEntity userEntity = userService.findUserEntityById(postCommentDTO.getUserId());
-            FashionPickupEntity fashionPickupEntity = fashionPickUpCommentService
-                    .findFashionPickupEntity(postCommentDTO.getPostId());
+        UserEntity userEntity = userService.findUserEntityById(postCommentDTO.getUserId());
+        if (userEntity == null) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+        }
 
-            FashionPickUpCommentEntity fashionPickUpComment =
-                    totalCommentMapper.totalPostCommentDtoToFashionPickupCommentEntity(postCommentDTO);
-            //todo mapper class 제대로 구현할것
+        FashionPickupEntity fashionPickupEntity = fashionPickUpCommentService
+                .findFashionPickupEntity(postCommentDTO.getPostId());
+        if(fashionPickupEntity == null){
+            throw new BusinessLogicException(ExceptionCode.POST_NOT_FOUND);
+        }
 
-            fashionPickUpComment.setFashionPickupEntity(fashionPickupEntity);
-            fashionPickUpComment.setUserEntity(userEntity);
-            fashionPickUpComment.setMyPickEntity(new ArrayList<>());//초기에 빈 값으로 생성하는 과정이 필요함 자동으로 생성이 안됨.
+        FashionPickUpCommentEntity fashionPickUpComment =
+                totalCommentMapper.totalPostCommentDtoToFashionPickupCommentEntity(postCommentDTO);
+        //todo mapper class 제대로 구현할것
 
-            FashionPickUpCommentEntity fashionPickUpCommentSaved =
-                    fashionPickupCommentRepository.save(fashionPickUpComment);
+        fashionPickUpComment.setFashionPickupEntity(fashionPickupEntity);
+        fashionPickUpComment.setUserEntity(userEntity);
+        fashionPickUpComment.setMyPickEntity(new ArrayList<>());//초기에 빈 값으로 생성하는 과정이 필요함 자동으로 생성이 안됨.
+
+        FashionPickUpCommentEntity fashionPickUpCommentSaved =
+                fashionPickupCommentRepository.save(fashionPickUpComment);
 
 
-            return totalCommentMapper.fashionCommentEntityToResponseCommentDto(fashionPickUpCommentSaved);
+        return totalCommentMapper.fashionCommentEntityToResponseCommentDto(fashionPickUpCommentSaved);
 
 
     }
-    //댓글 삭제
-    public void deleteComment(Long fashionPickUpCommentEntityId){
 
-        if(fashionPickupCommentRepository.existsById(fashionPickUpCommentEntityId)){
+    //댓글 삭제
+    public void deleteComment(Long fashionPickUpCommentEntityId) {
+
+        if (fashionPickupCommentRepository.existsById(fashionPickUpCommentEntityId)) {
             fashionPickupCommentRepository.deleteByFashionPickupCommentEntityId(fashionPickUpCommentEntityId);
-        }else{
-            throw new RuntimeException("there is no kind of comment");
+        } else {
+            throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
         }
     }
 
     //댓글 가져오기
-    public TotalCommentDTO.ResponseCommentDTO getComment(Long fashionPickupEntityId){
+    public TotalCommentDTO.ResponseCommentDTO getComment(Long fashionPickupEntityId) {
 
-        if(fashionPickupCommentRepository.existsById(fashionPickupEntityId)){
-             FashionPickUpCommentEntity fashionPickUpComment =
-                     fashionPickupCommentRepository.findById(fashionPickupEntityId).orElseThrow();
+        if (fashionPickupCommentRepository.existsById(fashionPickupEntityId)) {
+            FashionPickUpCommentEntity fashionPickUpComment =
+                    fashionPickupCommentRepository.findById(fashionPickupEntityId).orElseThrow();
             return totalCommentMapper.fashionCommentEntityToResponseCommentDto(fashionPickUpComment);
-        }else{
-
-            throw new RuntimeException("there is no Comment");
+        } else {
+            throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
         }
     }
 
 
     //사실 변경하는 거는 그냥 가져와서 새로운거 다시 넣고 반환할거임
     @Transactional
-    public TotalCommentDTO.ResponseCommentDTO modifyComment(TotalCommentDTO.FetchCommentDTO fetchCommentDTO){
+    public TotalCommentDTO.ResponseCommentDTO modifyComment(TotalCommentDTO.FetchCommentDTO fetchCommentDTO) {
 
-        if(fashionPickupCommentRepository.existsById(fetchCommentDTO.getCommentId())){
+        if (fashionPickupCommentRepository.existsById(fetchCommentDTO.getCommentId())) {
 
             FashionPickUpCommentEntity fashionPickUpCommentUpdated = fashionPickupCommentRepository.
                     findFashionPickUpCommentEntityByFashionPickupCommentEntityId(fetchCommentDTO.getCommentId());
@@ -99,8 +106,8 @@ public class FashionPickupCommentService implements CommentService<FashionPickUp
             fashionPickUpCommentUpdated.update(fetchCommentDTO.getCommentBody());
             //JPA 자동화 context로 저장함.
             return totalCommentMapper.fashionCommentEntityToResponseCommentDto(fashionPickUpCommentUpdated);
-        }else{
-            throw new RuntimeException("there is no comment");
+        } else {
+            throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
         }
 
     }
@@ -117,6 +124,7 @@ public class FashionPickupCommentService implements CommentService<FashionPickUp
                 .build();
 
         fashionPickUpComment.getMyPickEntity().add(myPickEntity);
+        fashionPickUpComment.setMyPicks(fashionPickUpComment.getMyPickEntity().size());
 
         return totalCommentMapper
                 .fashionCommentEntityToResponseCommentDto(fashionPickupCommentRepository
@@ -128,8 +136,8 @@ public class FashionPickupCommentService implements CommentService<FashionPickUp
         List<UserEntity> pickedUserList = fashionPickUpCommentEntity.getMyPickEntity()
                 .stream().map(MyPickEntity::getPickingUser).collect(Collectors.toList());
 
-        for(UserEntity userEntity : pickedUserList){
-            if(userEntity.getUserEntityId() == pushingMyPickAtCommentDTO.getPushingUserId()){
+        for (UserEntity userEntity : pickedUserList) {
+            if (userEntity.getUserEntityId() == pushingMyPickAtCommentDTO.getPushingUserId()) {
                 log.info("좋아요는 두번 누를 수 없습니다.");
                 throw new BusinessLogicException(ExceptionCode.ALREADY_EXSIT_MYPICK_USER);//이미 누른 사람이 또 누른 경우의 exception 을 발생
             }

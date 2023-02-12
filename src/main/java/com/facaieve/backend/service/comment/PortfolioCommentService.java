@@ -43,8 +43,13 @@ public class PortfolioCommentService implements CommentService<PortfolioCommentE
     public TotalCommentDTO.ResponseCommentDTO createComment(TotalCommentDTO.PostCommentDTO postCommentDTO) {
 
         UserEntity userEntity = userService.findUserEntityById(postCommentDTO.getUserId());
+        if(userEntity == null){
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+        }
         PortfolioEntity portfolio = portfolioEntityService.findPortfolioEntity(postCommentDTO.getPostId());
-
+        if(portfolio == null){
+            throw new BusinessLogicException(ExceptionCode.POST_NOT_FOUND);
+        }
         PortfolioCommentEntity portfolioComment =
                 totalCommentMapper.totalPostCommentDtoToPortfolioCommentEntity(postCommentDTO);
         //todo mapper class 제대로 구현할것
@@ -67,7 +72,7 @@ public class PortfolioCommentService implements CommentService<PortfolioCommentE
         if(portfolioCommentRepository.existsById(portfolioCommentEntityId)){
             portfolioCommentRepository.deleteByPortfolioCommentEntityId(portfolioCommentEntityId);
         }else{
-            throw new RuntimeException("there is no kind of comment");
+            throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
         }
 
     }
@@ -85,8 +90,7 @@ public class PortfolioCommentService implements CommentService<PortfolioCommentE
             //JPA context 자동 저장
             return totalCommentMapper.portfolioCommentEntityToResponseCommentDto(portfolioCommentUpdated);
         }else{
-            throw new RuntimeException("there is no kind of comment");
-
+            throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
         }
 
     }
@@ -101,7 +105,7 @@ public class PortfolioCommentService implements CommentService<PortfolioCommentE
                             .findPortfolioCommentEntityByPortfolioCommentEntityId(portfolioEntityId);
             return totalCommentMapper.portfolioCommentEntityToResponseCommentDto(portfolioComment);
         }else{
-            throw new RuntimeException("there is no kind of comment");
+            throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
         }
     }
 //    이미 좋아요를 누른 user 가 다시 같은 게시글에 좋아요를 누르 못하게 하는 메소드
@@ -133,6 +137,8 @@ public class PortfolioCommentService implements CommentService<PortfolioCommentE
         validatePickedUser(portfolioComment,pushingMyPickAtCommentDTO);//좋아요를 누른 사람 validation logic implementation
 
         portfolioComment.getMyPickEntity().add(myPickEntity);
+        portfolioComment.setMyPicks(portfolioComment.getMyPickEntity().size());//리스트 사이즈를 integer column으로 변환
+
 
         return totalCommentMapper
                 .portfolioCommentEntityToResponseCommentDto(portfolioCommentRepository.save(portfolioComment));

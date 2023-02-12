@@ -8,6 +8,7 @@ import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
 import com.facaieve.backend.entity.image.ImageEntityProfile;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.user.UserEntity;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
 import com.facaieve.backend.mapper.user.UserMapper;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.image.ImageService;
@@ -52,6 +53,7 @@ public class UserEntityController {
     UserMapper userMapper;
 
     S3FileService s3FileService;
+
 
 
 

@@ -77,14 +77,10 @@ public class FashionPickupEntity extends BaseEntity {
     public void plusMypickNum(){
         this.myPicks++;
     }
-
     public void minusMypickNum(){
         this.myPicks--;
     }
     public void plusViewNum(){
         this.views++;
     }
-
-
-
 }
