@@ -160,8 +160,10 @@ public class UserDto {
 
         @Schema(description = "유저 닉네임")
         String displayName;
+
 //        @Schema(description = "유저의 권한")
 //        UserRole role;
+
         @Email
         @Schema(description = "유저 이메일")
         String email;
@@ -186,6 +188,27 @@ public class UserDto {
         private String email;
         private String password;
         private Long id;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Schema(description = "로그인 이후의 DTO")
+    public static class ResponseUserAfterLoginDto{
+        @Schema(description = "유저 닉네임")
+        String displayName;
+
+        @Schema(description = "유저의 권한")
+        UserRole role;
+
+        @Email
+        @Schema(description = "유저 이메일")
+        String email;
+
+        @Schema(description = "유저 이메일")
+        String profileImg;
     }
 
 

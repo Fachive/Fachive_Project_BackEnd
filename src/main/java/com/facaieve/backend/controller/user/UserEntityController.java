@@ -9,6 +9,7 @@ import com.facaieve.backend.entity.image.ImageEntityProfile;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.mapper.user.UserMapper;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.image.ImageService;
@@ -23,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
+import org.apache.catalina.User;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.FileUtils;
@@ -51,9 +53,17 @@ public class UserEntityController {
     ImageService imageService;
     UserService userService;
     UserMapper userMapper;
-
     S3FileService s3FileService;
 
+    @PostMapping("/signin")//로그인을 위한 api
+    public ResponseEntity<?> authenticate(@RequestBody UserDto.SignInUserDto signInUserDto){
+        UserEntity userEntity = userService.getByCredentials( signInUserDto.getEmail(), signInUserDto.getPassword());
+        if(userEntity != null){
+            return ResponseEntity.ok().body(userMapper.userEntityToResponseUserAfterLogin(userEntity));
+        }else{
+            throw new BusinessLogicException(ExceptionCode.UNAUTHORIZED_MEMBER);
+        }
+    }
 
 
 

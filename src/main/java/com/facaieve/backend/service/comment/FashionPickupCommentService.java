@@ -118,6 +118,8 @@ public class FashionPickupCommentService implements CommentService<FashionPickUp
         FashionPickUpCommentEntity fashionPickUpComment = fashionPickupCommentRepository
                 .findFashionPickUpCommentEntityByFashionPickupCommentEntityId(pushingMyPickAtCommentDTO.getCommentId());
 
+        validatePickedUser(fashionPickUpComment,pushingMyPickAtCommentDTO);
+
         MyPickEntity myPickEntity = MyPickEntity.builder()
                 .fashionPickupCommentEntity(fashionPickUpComment)
                 .pickingUser(userService.findUserEntityById(pushingMyPickAtCommentDTO.getPushingUserId()))
