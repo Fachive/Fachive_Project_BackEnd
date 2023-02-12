@@ -1,6 +1,7 @@
 package com.facaieve.backend.controller.post;
 
 
+import com.facaieve.backend.dto.post.MainPostDto;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
@@ -12,9 +13,6 @@ import com.facaieve.backend.mapper.post.PostMapper;
 import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.post.FashionPickupEntityService;
 import com.facaieve.backend.service.post.FundingEntityService;
-import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
-import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
-import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioEntitiesByDueDate;
 import com.facaieve.backend.service.post.PortfolioEntityService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -47,6 +44,7 @@ public class MainPostController {
     @GetMapping("/get/ten")
     public ResponseEntity get10Each(){
 
+
         CategoryEntity categoryEntity = categoryService.getCategory(CategoryEntity.builder().categoryName("total").build());
 
         fashionPickupEntityService.setCondition("views");
@@ -57,24 +55,22 @@ public class MainPostController {
                 .findFashionPickupEntitiesByCondition(categoryEntity, 1,10);
         Page<FundingEntity> fundingEntityPage = fundingEntityService
                 .findFundingEntitiesByCondition(categoryEntity, 1,10);
-        Page<PortfolioEntity> portfolioEntityPage = portfolioEntityService
-                .findPortfolioEntitiesByCondition(categoryEntity, 1,10);
+//        Page<PortfolioEntity> portfolioEntityPage = portfolioEntityService
+//                .findPortfolioEntitiesByCondition(categoryEntity, 1,10);// 주완님 요청으로 삭제(2-12)
 
-        List<Object> postEntities = new ArrayList<>();//Object -> 새로운 dto 인터페이스로 추상화 필요
+//        List<Object> postEntities = new ArrayList<>();//Object -> 새로운 dto 인터페이스로 추상화 필요 // 주완님 요청으로 DTO(ResponseMainDtoForEntity)로 각 항목 감싸 반환하도록 설정(2-12)
 
-        postEntities.addAll(fundingEntityPage.stream()
-                 .map(fundingEntity -> fundingMapper
-                         .fundingEntityToResponseFundingDto(fundingEntity)).toList());
 
-        postEntities.addAll(fashionPickupEntityPage.stream()
-                .map(fashionPickupEntity -> fashionPickupMapper
-                        .fashionPickupEntityToResponseFashionPickupDto(fashionPickupEntity)).toList());
+        MainPostDto.ResponseMainDtoForEntity responseMainDtoForEntity  = MainPostDto.ResponseMainDtoForEntity.builder()
+                .fundingList(fundingEntityPage.stream()
+                        .map(fundingEntity -> fundingMapper.fundingEntityToResponseFundingDto(fundingEntity)).toList())
+                .fashionpickList(fashionPickupEntityPage.stream()
+                        .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(fashionPickupEntity)).toList())
+                .build();// 프론트에서 포트폴리오는 뺴달라고 하여 제거
 
-        postEntities.addAll(portfolioEntityPage.stream()
-                .map(portfolioEntity -> portfolioMapper
-                        .portfolioEntityToResponsePortfolioEntity(portfolioEntity)).toList());
 
-        return new ResponseEntity(postEntities,HttpStatus.OK);
+        return new ResponseEntity(responseMainDtoForEntity, HttpStatus.OK);
+
     }
 
 

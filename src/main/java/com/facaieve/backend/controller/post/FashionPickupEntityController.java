@@ -120,6 +120,7 @@ public class FashionPickupEntityController {
                 .body(postDto.getBody())
                 .myPick(new ArrayList<>())
                 .views(0)
+                .myPicks(0)
                 .categoryEntity(categoryEntity)
                 .s3ImgInfo(s3ImageInfoList)
                 .commentList(new ArrayList<>())
@@ -231,7 +232,7 @@ public class FashionPickupEntityController {
         log.info("수정할 객체에 있는 이미지 데이터, s3에서 삭제하기 위해 호출 {} ", entityUrlList);
         s3FileService.deleteMultiFileList(entityUrlList);
 
-        fashionPickupEntityService.removeFashionPickupEntity(deleteFashionPickupDto.getFashionPickupEntityId());
+        fashionPickupEntityService.removeFashionPickupEntity(deletingFashionPickupEntity);
 
         log.info("기존 패션픽업 게시글을 삭제합니다.");
         return new ResponseEntity(HttpStatus.OK);

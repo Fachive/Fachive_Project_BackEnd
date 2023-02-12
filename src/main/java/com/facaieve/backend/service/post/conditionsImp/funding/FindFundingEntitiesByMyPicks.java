@@ -25,7 +25,7 @@ public class FindFundingEntitiesByMyPicks implements Condition<FundingEntity, Ca
     @Override
     public Page<FundingEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
 
-        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("views").descending());
+        PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("myPicks").descending());
         Page<FundingEntity> fundingEntities;
 
         if(categoryEntity.getCategoryName().equals("total")) {

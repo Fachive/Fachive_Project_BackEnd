@@ -24,6 +24,7 @@ public interface TotalCommentMapper {
         return FashionPickUpCommentEntity.builder()
                 .postId(postCommentDTO.getPostId())
                 .postType(postCommentDTO.getPostType())
+                .myPicks(0)// 좋아요 순 호출위해 PageRequest의 sort.by용으로 변수 생성
                 .commentBody(postCommentDTO.getCommentBody())
                 .build();
     }
@@ -45,6 +46,7 @@ public interface TotalCommentMapper {
         return FundingCommentEntity.builder()
                 .postId(postCommentDTO.getPostId())
                 .postType(postCommentDTO.getPostType())
+                .myPicks(0)
                 .commentBody(postCommentDTO.getCommentBody())
                 .build();
     }
@@ -65,6 +67,7 @@ public interface TotalCommentMapper {
         return PortfolioCommentEntity.builder()
                 .commentBody(postCommentDTO.getCommentBody())
                 .postId(postCommentDTO.getPostId())
+                .myPicks(0)
                 .userId(postCommentDTO.getUserId())
                 .postType(postCommentDTO.getPostType()).build();
     }

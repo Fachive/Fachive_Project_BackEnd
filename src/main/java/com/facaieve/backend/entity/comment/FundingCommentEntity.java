@@ -36,6 +36,9 @@ public class FundingCommentEntity {
     @Column
     Long postId;
 
+    @Column
+    @Schema(description = "마이픽(좋아요) 수")
+    Integer myPicks = 0;
 
     @OneToMany(mappedBy = "fundingCommentEntity", cascade = CascadeType.ALL)
     private List<MyPickEntity> myPickEntity = new ArrayList<>();;
@@ -49,5 +52,13 @@ public class FundingCommentEntity {
     private UserEntity userEntity;  // 유저 - 펀딩 댓글 매핑
     public void update(String commentBody){
         this.commentBody = commentBody;
+    }
+
+    public void plusMypickNum(){
+        this.myPicks++;
+    }
+
+    public void minusMypickNum(){
+        this.myPicks--;
     }
 }

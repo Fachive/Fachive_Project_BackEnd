@@ -53,6 +53,10 @@ public class FundingEntity extends BaseEntity {
     @Schema(description = "펀딩 객체 조회수")
     Integer views = 0;
 
+    @Column
+    @Schema(description = "마이픽(좋아요) 수")
+    Integer myPicks = 0;
+
     @OneToMany(mappedBy = "fundingEntityPost",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Schema(description = "펀딩 이미지 목록(S3 버킷 uri)")
     List<S3ImageInfo> s3ImgInfo = new ArrayList<S3ImageInfo>();
@@ -81,4 +85,17 @@ public class FundingEntity extends BaseEntity {
 
     @OneToMany (mappedBy = "fundingEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PostImageEntity> postImageEntities = new ArrayList<>();
+
+    public void plusMypickNum(){
+        this.myPicks++;
+    }
+
+    public void minusMypickNum(){
+        this.myPicks--;
+    }
+    public void plusViewNum(){
+        this.views++;
+    }
+
+
 }

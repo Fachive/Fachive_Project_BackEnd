@@ -32,6 +32,10 @@ public class FashionPickUpCommentEntity {
     @Column
     Long postId;
 
+    @Column
+    @Schema(description = "마이픽(좋아요) 수")
+    Integer myPicks = 0;
+
     @OneToMany(mappedBy = "fashionPickupCommentEntity", cascade = CascadeType.ALL)
     List<MyPickEntity> myPickEntity = new ArrayList<>();   // FP 댓글 - 마이픽 매핑
 
@@ -48,4 +52,12 @@ public class FashionPickUpCommentEntity {
         this.commentBody = commentBody;
     }
 
+
+    public void plusMypickNum(){
+        this.myPicks++;
+    }
+
+    public void minusMypickNum(){
+        this.myPicks--;
+    }
 }

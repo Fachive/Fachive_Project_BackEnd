@@ -41,12 +41,16 @@ public class FashionPickupEntity extends BaseEntity {
     @Schema(description = "조회수")
     Integer views = 0;
 
+    @Column
+    @Schema(description = "마이픽(좋아요) 수")
+    Integer myPicks = 0;
+
 
     @OneToMany(mappedBy = "fashionPickupEntityPost",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Schema(description = "패션 픽업 이미지 목록(S3 버킷 uri)")
     private List<S3ImageInfo> s3ImgInfo = new ArrayList<S3ImageInfo>();
 
-    @OneToMany(mappedBy = "fashionPickupEntity",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "fashionPickupEntity",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Schema(description = "패션 픽업에 달린 마이픽(좋아요) 객체 목록")
     private List<MyPickEntity> myPick = new ArrayList<MyPickEntity>();  // 패션픽업 - 마이픽 매핑
 
@@ -58,7 +62,7 @@ public class FashionPickupEntity extends BaseEntity {
     @Schema(description = "패션 픽업에 달린 태그 객체 목록")
     private List<FashionPickupEntityToTagEntity> tagEntities = new ArrayList<FashionPickupEntityToTagEntity>();  // 패션픽업 - 카테고리 매핑
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "categoryEntity")
     CategoryEntity categoryEntity;
 
@@ -70,6 +74,16 @@ public class FashionPickupEntity extends BaseEntity {
     @OneToMany(mappedBy = "fashionPickupEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PostImageEntity> postImageEntities = new ArrayList<>();// 프로필사진 전용(이미지 로컬 저장용)
 
+    public void plusMypickNum(){
+        this.myPicks++;
+    }
+
+    public void minusMypickNum(){
+        this.myPicks--;
+    }
+    public void plusViewNum(){
+        this.views++;
+    }
 
 
 

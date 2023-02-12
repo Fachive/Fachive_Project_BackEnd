@@ -1,26 +1,16 @@
 package com.facaieve.backend.controller.etc;
 
-import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.etc.MyPickDTO;
-import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.mapper.etc.MyPickMapper;
 import com.facaieve.backend.service.etc.MyPickService;
-import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
-import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByMyPicks;
-import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByViews;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static com.facaieve.backend.dto.etc.MyPickDTO.PostMyPickDTO.PickableEntity.*;
 
 @RestController
 @RequestMapping("/MyPick")
@@ -44,7 +34,7 @@ public class MyPickController {
     @PostMapping("/post")//test pass
     public ResponseEntity postMyPick(@RequestBody MyPickDTO.PostMyPickDTO postMyPickDTO){
 
-        myPickService.createMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick(),postMyPickDTO.getEntityId());
+        myPickService.createMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick().getPostType(),postMyPickDTO.getEntityId());
 
         return new ResponseEntity(
                 HttpStatus.CREATED);
@@ -64,7 +54,7 @@ public class MyPickController {
     @DeleteMapping("/delete")//test pass
     public void deleteMyPick(@RequestBody MyPickDTO.PostMyPickDTO postMyPickDTO){
 
-        myPickService.deleteMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick(),postMyPickDTO.getEntityId());
+        myPickService.deleteMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick().getPostType(),postMyPickDTO.getEntityId());
         log.info("delete complete");
 
     }

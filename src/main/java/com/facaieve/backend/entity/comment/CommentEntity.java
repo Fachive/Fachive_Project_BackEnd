@@ -2,6 +2,8 @@ package com.facaieve.backend.entity.comment;
 import com.facaieve.backend.entity.basetime.BaseEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import javax.persistence.*;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -19,6 +21,7 @@ public abstract class CommentEntity extends BaseEntity {
     String postType;
     @Getter
     Long postId;
+
 
     MyPickEntity myPickEntity;
 

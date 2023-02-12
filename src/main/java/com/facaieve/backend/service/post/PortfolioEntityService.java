@@ -2,28 +2,20 @@ package com.facaieve.backend.service.post;
 
 import com.facaieve.backend.dto.post.PortfolioDto;
 import com.facaieve.backend.entity.etc.CategoryEntity;
-import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.repository.post.PortfolioRepository;
-import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByDueDate;
-import com.facaieve.backend.service.post.conditionsImp.fashionPickup.FindFashionPickupEntitiesByViews;
-import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByDueDate;
-import com.facaieve.backend.service.post.conditionsImp.funding.FindFundingEntitiesByMyPicks;
 import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioEntitiesByDueDate;
 import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioPickupEntitiesByMyPicks;
 import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioPickupEntitiesByViews;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -60,15 +52,18 @@ public class PortfolioEntityService {
     }
 
     public PortfolioEntity findPortfolioEntity(Long foundingPortfolioEntityId) {// 포트폴리오 게시물 호출(1개)
-        return portfolioRepository.findById(foundingPortfolioEntityId).orElseThrow();
+        PortfolioEntity foundPortfolio = portfolioRepository.findById(foundingPortfolioEntityId).orElseThrow();
+        foundPortfolio.plusViewNum();
+        portfolioRepository.save(foundPortfolio);
+        return foundPortfolio;
     }
 
     public Page<PortfolioEntity> findPortfolioEntities(int pageIndex) {// 포트폴리오 게시물 호출(시간순)
         return portfolioRepository.findAll(PageRequest.of(pageIndex, 30, Sort.by("createdBy")));
     }
 
-    public void removePortfolioEntity(Long deletingPortfolioEntityId) {// 포트폴리오 게시물 삭제
-        portfolioRepository.deleteById(deletingPortfolioEntityId);
+    public void removePortfolioEntity(PortfolioEntity deletingPortfolioEntity) {// 포트폴리오 게시물 삭제
+        portfolioRepository.delete(deletingPortfolioEntity);
     }
 
     public void setCondition(String sortWay) {

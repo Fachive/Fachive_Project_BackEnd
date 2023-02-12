@@ -64,8 +64,10 @@ public class FashionPickupEntityService {
 
 
     public FashionPickupEntity findFashionPickupEntity(Long foundingFashionPickupEntityId) {//패션픽업 게시물 호출
-
-        return fashionPickupRepository.findById(foundingFashionPickupEntityId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_POST_ENTITY));
+        FashionPickupEntity foundFashionPickupEntity = fashionPickupRepository.findById(foundingFashionPickupEntityId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_POST_ENTITY));
+        foundFashionPickupEntity.plusViewNum();
+        fashionPickupRepository.save(foundFashionPickupEntity);
+        return foundFashionPickupEntity;
     }
 
     public void setCondition(String sortWay) {
@@ -86,8 +88,8 @@ public class FashionPickupEntityService {
 
     }
 
-    public void removeFashionPickupEntity(Long deletingFashionPickupEntityId) {// 패션픽업 게시물 삭제
-        fashionPickupRepository.deleteById(deletingFashionPickupEntityId);
+    public void removeFashionPickupEntity(FashionPickupEntity deletingFashionPickupEntity) {// 패션픽업 게시물 삭제
+        fashionPickupRepository.delete(deletingFashionPickupEntity);
     }
 
 

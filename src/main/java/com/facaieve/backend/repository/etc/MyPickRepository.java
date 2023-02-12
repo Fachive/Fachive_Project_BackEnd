@@ -31,4 +31,5 @@ public interface MyPickRepository extends JpaRepository<MyPickEntity,Long> {
     void deleteByFashionPickupCommentEntityAndPickingUser(FashionPickUpCommentEntity fashionPickUpCommentEntity, UserEntity pickingUser);
 
     void deleteByFundingCommentEntityAndPickingUser(FundingCommentEntity fundingCommentEntity, UserEntity pickingUser);
+
 }

@@ -34,7 +34,6 @@ public class S3FileService implements FileServiceCRUD{
     S3ImageInfoRepository s3ImageInfoRepository;
 
 
-
     @Value("${cloud.aws.s3.bucket}")
     private String s3BucketName;
 //    @Value("${custom.path.upload-images}")

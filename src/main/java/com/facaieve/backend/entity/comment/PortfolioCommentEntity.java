@@ -33,6 +33,10 @@ public class PortfolioCommentEntity {
     PostType postType = PostType.PORTFOLIO;
 
     @Column
+    @Schema(description = "마이픽(좋아요) 수")
+    Integer myPicks = 0;
+
+    @Column
     Long postId;
 
     @OneToMany(mappedBy = "portfolioCommentEntity", cascade = CascadeType.ALL)
@@ -48,5 +52,13 @@ public class PortfolioCommentEntity {
 
     public void update(String commentBody){
         this.commentBody = commentBody;
+    }
+
+    public void plusMypickNum(){
+        this.myPicks++;
+    }
+
+    public void minusMypickNum(){
+        this.myPicks--;
     }
 }
