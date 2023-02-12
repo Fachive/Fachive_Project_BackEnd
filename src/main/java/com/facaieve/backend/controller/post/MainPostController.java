@@ -1,6 +1,7 @@
 package com.facaieve.backend.controller.post;
 
 
+import com.facaieve.backend.dto.post.MainPostDto;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
@@ -58,14 +59,15 @@ public class MainPostController {
 
         List<Object> postEntities = new ArrayList<>();//Object -> 새로운 dto 인터페이스로 추상화 필요
 
-        postEntities.addAll(fundingEntityPage.stream()
-                 .map(fundingEntity -> fundingMapper.fundingEntityToResponseFundingDto(fundingEntity)).toList());
-        postEntities.addAll(fashionPickupEntityPage.stream()
-                .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(fashionPickupEntity)).toList());
-        postEntities.addAll(portfolioEntityPage.stream()
-                .map(portfolioEntity -> portfolioMapper.portfolioEntityToResponsePortfolioEntityDto(portfolioEntity)).toList());
+        MainPostDto.ResponseMainDtoForEntity responseMainDtoForEntity  = MainPostDto.ResponseMainDtoForEntity.builder()
+                .fundingList(fundingEntityPage.stream()
+                        .map(fundingEntity -> fundingMapper.fundingEntityToResponseFundingDto(fundingEntity)).toList())
+                .fashionpickList(fashionPickupEntityPage.stream()
+                        .map(fashionPickupEntity -> fashionPickupMapper.fashionPickupEntityToResponseFashionPickupDto(fashionPickupEntity)).toList())
+                .build();
 
-        return new ResponseEntity(postEntities, HttpStatus.OK);
+
+        return new ResponseEntity(responseMainDtoForEntity, HttpStatus.OK);
     }
 
 

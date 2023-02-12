@@ -225,7 +225,7 @@ public class PortfolioEntityController {
     @DeleteMapping("/delete")//DELETE API
     public ResponseEntity deletePortfolioEntity(@RequestBody PortfolioDto.DeletePortfolioDtoDto deletePortfolioDtoDto){
 
-        PortfolioEntity deletingPortfolioEntity = portfolioEntityService.findPortfolioEntity(deletePortfolioDtoDto.getFashionPickupEntityId());
+        PortfolioEntity deletingPortfolioEntity = portfolioEntityService.findPortfolioEntity(deletePortfolioDtoDto.getPortfolioEntityId());
         log.info("수정할 객체 가져오기 {} ", deletingPortfolioEntity);
 
         List<String> entityUrlList = deletingPortfolioEntity.getS3ImgInfo().stream().map(S3ImageInfo::getFileName).collect(Collectors.toList());
