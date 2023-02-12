@@ -45,7 +45,13 @@ public class FundingCommentService implements CommentService<FundingCommentEntit
     public TotalCommentDTO.ResponseCommentDTO createComment(TotalCommentDTO.PostCommentDTO postCommentDTO) {
 
         UserEntity userEntity = userService.findUserEntityById(postCommentDTO.getUserId());
+        if(userEntity == null){
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+        }
         FundingEntity fundingEntity = fundingEntityService.findFundingEntity(postCommentDTO.getPostId());
+        if(fundingEntity == null){
+            throw new BusinessLogicException(ExceptionCode.POST_NOT_FOUND);
+        }
 
         FundingCommentEntity fundingCommentEntity =
                 totalCommentMapper.totalPostCommentDtoToFundingCommentEntity(postCommentDTO);
@@ -67,7 +73,7 @@ public class FundingCommentService implements CommentService<FundingCommentEntit
         if (fundingCommentRepository.existsById(fundingCommentEntityId)) {
             fundingCommentRepository.deleteByFundingCommentEntityId(fundingCommentEntityId);
         } else {
-            throw new RuntimeException("there is no kind of funding comment");
+            throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
         }
 
     }
@@ -84,7 +90,7 @@ public class FundingCommentService implements CommentService<FundingCommentEntit
             //JPA 자동 context로 저장
             return totalCommentMapper.fundingCommentEntityToResponseCommentDto(fundingCommentUpdated);// 새로 저장된거 반환함.
         } else {
-            throw new RuntimeException("there is no kind of funding comment");
+            throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
         }
 
     }
@@ -99,7 +105,7 @@ public class FundingCommentService implements CommentService<FundingCommentEntit
 
             return totalCommentMapper.fundingCommentEntityToResponseCommentDto(fundingComment);// 새로 저장된거 반환함.
         } else {
-            throw new RuntimeException("there is no kind of funding comment");
+            throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
         }
 
     }
@@ -135,6 +141,8 @@ public class FundingCommentService implements CommentService<FundingCommentEntit
         validatePickedUser(fundingComment,pushingMyPickAtCommentDTO);//validation method for picking user
 
         fundingComment.getMyPickEntity().add(myPickEntity);
+        fundingComment.setMyPicks(fundingComment.getMyPickEntity().size());
+
 
         return totalCommentMapper.fundingCommentEntityToResponseCommentDto(fundingCommentRepository.save(fundingComment));
     }

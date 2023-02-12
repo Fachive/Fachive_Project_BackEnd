@@ -1,8 +1,10 @@
 package com.facaieve.backend.dto;
 
 
+import com.facaieve.backend.Constant.UserRole;
 import com.facaieve.backend.entity.user.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
@@ -23,31 +25,32 @@ public class UserDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class PostUserDto{
+    public static class PostUserDto {
 
-    @Schema(description = "유저 닉네임")
-    String displayName;
+        @Schema(description = "유저 닉네임")
+        String displayName;
+        @Schema(description = "유저 권한")
+        UserRole role;
+        @Email
+        @Schema(description = "유저 이메일")
+        String email;
+        @Schema(description = "비밀번호")
+        String password;
+        @Schema(description = "시,도")
+        String state;
+        @Schema(description = "시군구")
+        String city;
+        @Schema(description = "간단한 자기소개")
+        String userInfo;
+        @Schema(description = "커리어")
+        String career;
+        @Schema(description = "학력 및 교육사항")
+        String education;
+        @Schema(description = "재직회사")
+        String Company;
 
-    @Email
-    @Schema(description = "유저 이메일")
-    String email;
-    @Schema(description = "비밀번호")
-    String password;
-    @Schema(description = "시,도")
-    String state;
-    @Schema(description = "시군구")
-    String city;
-    @Schema(description = "간단한 자기소개")
-    String userInfo;
-    @Schema(description = "커리어")
-    String career;
-    @Schema(description = "학력 및 교육사항")
-    String education;
-    @Schema(description = "재직회사")
-    String Company;
-
-    @Schema(description = "사진 URI")
-    List<MultipartFile> multipartFileList = new ArrayList<>();
+        @Schema(description = "사진 URI")
+        List<MultipartFile> multipartFileList = new ArrayList<>();
     }
 
 
@@ -56,13 +59,14 @@ public class UserDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Schema(description = "회원 정보 수정 DTO")
-    public static class PatchUserDto{
+    public static class PatchUserDto {
 
         @Schema(description = "사용자 식별자")
         Long userEntityId;
         @Schema(description = "사용자 활동명")
         String displayName;
-
+        @Schema(description = "유저의 권한")
+        UserRole role;
         @Email
         @Schema(description = "유저 이메일")
         String email;
@@ -86,7 +90,7 @@ public class UserDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Schema(description = "회원 정보 요청 DTO")
-    public static class GetUserDto{
+    public static class GetUserDto {
         @Schema(description = "유저 식별ID")
         Long userEntityId;
 
@@ -97,7 +101,7 @@ public class UserDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Schema(description = "회원 삭제 DTO")
-    public static class DeleteUserDto{
+    public static class DeleteUserDto {
 
         @Schema(description = "유저 식별ID")
         Long UserEntityId;
@@ -113,7 +117,7 @@ public class UserDto {
     @NoArgsConstructor
     @Builder
     @Schema(description = "팔로우 회원 정보 Response")
-    public static class FollowUserInfoResponseDto{
+    public static class FollowUserInfoResponseDto {
 
         @Schema(description = "팔로우 유저의 식별자")
         Long userEntityId;
@@ -133,7 +137,7 @@ public class UserDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Schema(description = "회원 Response")
-    public static class ResponseUserDto{
+    public static class ResponseUserDto {
 
         @Schema(description = "유저 닉네임")
         String displayName;
@@ -152,11 +156,12 @@ public class UserDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Schema(description = "회원 Response")
-    public static class ResponseUserDto2{
+    public static class ResponseUserDto2 {
 
         @Schema(description = "유저 닉네임")
         String displayName;
-
+//        @Schema(description = "유저의 권한")
+//        UserRole role;
         @Email
         @Schema(description = "유저 이메일")
         String email;
@@ -169,6 +174,19 @@ public class UserDto {
         }
     }
 
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Schema(description = "로그인을 위한 유저 DTO")
+    public static class SignInUserDto{
+        private String token;
+        private String email;
+        private String password;
+        private Long id;
+    }
 
 
 }

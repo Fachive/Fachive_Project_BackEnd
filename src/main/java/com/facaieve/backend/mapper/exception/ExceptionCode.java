@@ -31,6 +31,7 @@ public enum ExceptionCode {
     NO_FOLLOW_ENTITY_EXIST(NOT_FOUND, "팔로우 정보가 없습니다" ),
     NO_SUCH_CATEGORY(NOT_FOUND, "해당 카테고리는 존재하지 않습니다."),
     POST_NOT_FOUND(NOT_FOUND, "해당 포스트를 찾을 수 없습니다"),
+    COMMENT_NOT_FOUND(NOT_FOUND,"해당 댓들을 찾을 수 없습니다"),
 
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
