@@ -8,6 +8,7 @@ import com.facaieve.backend.mapper.etc.CategoryMapper;
 import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.stubDate.CategoryStubData;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,7 +42,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @GetMapping("/get")//test pass
-    public ResponseEntity readCategory(@RequestParam String categoryName){
+    public ResponseEntity readCategory(@Parameter(description="카테고리(total, 상의, 아우터, 바지,원피스, 스커트, 액세서리, 정장, 드레스) 문자열로 명시하면됨 기본값은 total 로 설정 되어있음 나머지 다른 유형의 post 동일함") @RequestParam(defaultValue = "total") String categoryName){
 
         CategoryEntity foundingCategoryEntity = getCategoryFromService(categoryName);
         return new ResponseEntity (categoryMapper.categoryEntityToResponseCategoryDto(foundingCategoryEntity), HttpStatus.OK);
@@ -49,7 +50,7 @@ public class CategoryController {
 //        return new ResponseEntity(categoryMapper.categoryStubDataToCategoryEntity(categoryStubData), HttpStatus.OK);
     }
 
-    @Operation(summary = "카테고리 작성 메서드 예제", description = "json 바디값을 통한 카테고리 POST 요청 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
+    @Operation(summary = "카테고리 작성 메서드 예제", description = "json 바디값을 통한 카테고리 POST 요청 메서드, 정해진 카테고리만 넣기에 일반 회원은 사용 불가 API")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "201" ,description = "카테고리가 정상 등록됨", content = @Content(schema = @Schema(implementation = FundingDto.ResponseFundingDto.class))),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),

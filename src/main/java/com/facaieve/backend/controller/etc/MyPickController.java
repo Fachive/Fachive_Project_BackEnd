@@ -23,7 +23,7 @@ public class MyPickController {
     MyPickService myPickService;
     MyPickMapper myPickMapper;
 
-    @Operation(summary = "좋아요 등록 메서드", description = "json 바디값을 통한 좋아요 등록")//대상 api의 대한 설명을 작성하는 어노테이션
+    @Operation(summary = "좋아요 등록 메서드", description = "json 바디값을 통한 좋아요 등록/Schemas의 MyPickDTO.PostMyPickDTO 내용 참고할 것!")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "201" ,description = "사용자가 게시물 혹은 댓글에 좋아요를 달았습니다."),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
@@ -52,9 +52,9 @@ public class MyPickController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @DeleteMapping("/delete")//test pass
-    public void deleteMyPick(@RequestBody MyPickDTO.PostMyPickDTO postMyPickDTO){
+    public void deleteMyPick(@RequestBody MyPickDTO.DeleteMyPickDTO deleteMyPickDTO){
 
-        myPickService.deleteMyPick(postMyPickDTO.getUserId(), postMyPickDTO.getWhatToPick().getPostType(),postMyPickDTO.getEntityId());
+        myPickService.deleteMyPick(deleteMyPickDTO.getUserId(), deleteMyPickDTO.getWhatToPick().getPostType(),deleteMyPickDTO.getEntityId());
         log.info("delete complete");
 
     }
