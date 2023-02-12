@@ -10,6 +10,8 @@ import org.apache.catalina.User;
 import org.mapstruct.Mapper;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.Random;
+
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
@@ -60,5 +62,17 @@ public interface UserMapper {
         return responseUserDto2;
     }
 
+    default  UserDto.ResponseUserAfterLoginDto userEntityToResponseUserAfterLogin(UserEntity userEntity){
+        if( userEntity == null){
+            return null;
+        }
+
+        return UserDto.ResponseUserAfterLoginDto.builder()
+                        .displayName(userEntity.getDisplayName())
+                        .email(userEntity.getEmail())
+                        .profileImg(userEntity.getProfileImg().getFileURI())
+                        .role(userEntity.getRole())
+                        .build();
+    }
 
 }
