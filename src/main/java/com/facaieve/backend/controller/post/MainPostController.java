@@ -55,10 +55,10 @@ public class MainPostController {
                 .findFashionPickupEntitiesByCondition(categoryEntity, 1,10);
         Page<FundingEntity> fundingEntityPage = fundingEntityService
                 .findFundingEntitiesByCondition(categoryEntity, 1,10);
-        Page<PortfolioEntity> portfolioEntityPage = portfolioEntityService
-                .findPortfolioEntitiesByCondition(categoryEntity, 1,10);
+//        Page<PortfolioEntity> portfolioEntityPage = portfolioEntityService
+//                .findPortfolioEntitiesByCondition(categoryEntity, 1,10);// 주완님 요청으로 삭제(2-12)
 
-        List<Object> postEntities = new ArrayList<>();//Object -> 새로운 dto 인터페이스로 추상화 필요
+//        List<Object> postEntities = new ArrayList<>();//Object -> 새로운 dto 인터페이스로 추상화 필요 // 주완님 요청으로 DTO(ResponseMainDtoForEntity)로 각 항목 감싸 반환하도록 설정(2-12)
 
 
         MainPostDto.ResponseMainDtoForEntity responseMainDtoForEntity  = MainPostDto.ResponseMainDtoForEntity.builder()
