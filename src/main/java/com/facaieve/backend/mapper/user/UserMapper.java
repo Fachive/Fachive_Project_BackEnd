@@ -2,6 +2,7 @@
 package com.facaieve.backend.mapper.user;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.facaieve.backend.dto.UserDto;
+import com.facaieve.backend.dto.security.JwtRequest;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.entity.user.WithdrawalEntity;
@@ -73,6 +74,14 @@ public interface UserMapper {
                         .profileImg(userEntity.getProfileImg().getFileURI())
                         .role(userEntity.getRole())
                         .build();
+    }
+    //jwt 요청시 다른 인터페이스를 적용하기 위한 DTO로 변환하기 위해서 사용하는 mapper
+    default JwtRequest userEntityToJwtRequest(UserEntity userEntity){
+
+        return JwtRequest.builder()
+                .email(userEntity.getEmail())
+                .role(userEntity.getRole())
+                .build();
     }
 
 }

@@ -184,10 +184,13 @@ public class UserDto {
     @Builder
     @Schema(description = "로그인을 위한 유저 DTO")
     public static class SignInUserDto{
-        private String token;
+
+        @Schema(description = "user's email")
+        @Email
         private String email;
+
+        @Schema(description = "비밀번호")
         private String password;
-        private Long id;
     }
 
     @Getter
@@ -197,17 +200,21 @@ public class UserDto {
     @Builder
     @Schema(description = "로그인 이후의 DTO")
     public static class ResponseUserAfterLoginDto{
+
         @Schema(description = "유저 닉네임")
         String displayName;
 
         @Schema(description = "유저의 권한")
         UserRole role;
 
+        @Schema
+        String token;
+
         @Email
         @Schema(description = "유저 이메일")
         String email;
 
-        @Schema(description = "유저 이메일")
+        @Schema(description = "유저 프로필 이미지")
         String profileImg;
     }
 

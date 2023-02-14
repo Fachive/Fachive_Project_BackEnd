@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -92,8 +93,12 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserEntity getByCredentials(final String email, final String password) {
-        return userRepository.findUserEntityByEmailAndPassword(email, password);
+    public UserEntity getByCredentials(final String email, final String password, final PasswordEncoder passwordEncoder) {
+        final UserEntity originalUser = userRepository.findByEmail(email).orElseThrow();
+        if(originalUser != null && passwordEncoder.matches(password,originalUser.getPassword())){
+            return originalUser;
+        }
+        return null;
     }
 
     public void deleteUserEntity(final UserEntity deleteUserEntity) {
