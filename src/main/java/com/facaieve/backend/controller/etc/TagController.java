@@ -36,7 +36,7 @@ public class TagController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @GetMapping("/get/{tagName}")//test pass
+    @GetMapping("auth/get/{tagName}")//test pass
     public ResponseEntity getTagEntity(@PathVariable("tagName") String tagName){
 //        tagName = "tagName";//todo delete
 //        TagEntity tagEntity = tagService.getTagEntityByTagName(tagName);

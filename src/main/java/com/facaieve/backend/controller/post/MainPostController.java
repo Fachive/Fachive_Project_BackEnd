@@ -41,7 +41,7 @@ public class MainPostController {
 
     PostMapper postMapper;
 
-    @GetMapping("/get/ten")
+    @GetMapping("auth/get/ten")
     public ResponseEntity get10Each(){
 
 

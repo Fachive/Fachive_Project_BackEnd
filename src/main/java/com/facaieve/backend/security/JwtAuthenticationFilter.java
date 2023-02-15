@@ -28,6 +28,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {//OncePerRequ
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
+
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html; charset=UTF-8");//한글깨짐 방지용
+
             // 요청에서 토큰 가져오기.
             String token = parseBearerToken(request);
             log.info("Filter is running...");
@@ -45,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {//OncePerRequ
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 securityContext.setAuthentication(authentication);
-                SecurityContextHolder.setContext(securityContext);//context 에 들록해서 local thread 에 저장
+                SecurityContextHolder.setContext(securityContext);//context 에 등록해서 local thread 에 저장
             }
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);

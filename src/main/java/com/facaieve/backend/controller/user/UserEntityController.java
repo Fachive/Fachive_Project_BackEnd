@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.UserDto.PostUserDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
+import com.facaieve.backend.entity.email.EmailTokenEntity;
 import com.facaieve.backend.entity.image.ImageEntityProfile;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.user.UserEntity;
@@ -13,6 +14,7 @@ import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.mapper.user.UserMapper;
 import com.facaieve.backend.security.TokenProvider;
 import com.facaieve.backend.service.aswS3.S3FileService;
+import com.facaieve.backend.service.email.EmailTokenService;
 import com.facaieve.backend.service.image.ImageService;
 import com.facaieve.backend.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,6 +49,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -56,18 +59,35 @@ import java.util.List;
 @RequiredArgsConstructor
 //@Tag(name = "UserEntity", description = "사용자와 관련된 api")
 public class UserEntityController {
-
+    @Autowired
     ImageService imageService;
+    @Autowired
     UserService userService;
+    @Autowired
     UserMapper userMapper;
+    @Autowired
     S3FileService s3FileService;
+    @Autowired
     TokenProvider tokenProvider;
-    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    EmailTokenService emailTokenService;//이메일 토큰을 만들어서 인증하는 서비스 클래스
 
 
     @GetMapping
     public ResponseEntity<?> getTest(@AuthenticationPrincipal String userEmail){
         return ResponseEntity.ok().body(userEmail);
+    }
+    @GetMapping
+    public ResponseEntity<?> getUserEmailAuthenticationToken(@RequestParam String userEmail){
+        Optional<EmailTokenEntity> emailToken = emailTokenService.sendToFrontEndBeforeAuthentication(userEmail);
+        if(emailToken.isPresent()){
+            return ResponseEntity.ok().body(emailToken.get());
+        }else{
+            return ResponseEntity.ok().body("there is no token please try again");
+        }
+
     }
 
     @Operation(summary = "유저 로그인 메서드 예제", description = "json 바디값을 통한 로그인 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
@@ -81,7 +101,7 @@ public class UserEntityController {
             @io.swagger.annotations.ApiResponse(
                     response = UserDto.ResponseUserAfterLoginDto.class, message = "login", code=201)
     )
-    @PostMapping("/signin")//로그인을 위한 api 아이디와 비밀번호만을 가진 DTO 받음 Test pass
+    @PostMapping("auth/signin")//로그인을 위한 api 아이디와 비밀번호만을 가진 DTO 받음 Test pass
     public ResponseEntity<?> authenticate(@RequestBody UserDto.SignInUserDto signInUserDto){
 
         signInUserDto.setPassword(passwordEncoder.encode(signInUserDto.getPassword()));//password encoder 적용
@@ -116,7 +136,7 @@ public class UserEntityController {
             @io.swagger.annotations.ApiResponse(
                     response = UserEntity.class, message = "created", code=201)
     )
-    @PostMapping("/post")// 유저 등록
+    @PostMapping("auth/post")// 유저 등록
     public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @ModelAttribute PostUserDto postUserDto) throws IOException {
        log.info("신규 유저를 등록합니다.");
         postUserDto.setPassword(passwordEncoder.encode(postUserDto.getPassword()));//password encode 적용
@@ -134,7 +154,8 @@ public class UserEntityController {
         }
 
         postingUserEntity.getProfileImg().addUserEntity(postingUserEntity);
-       UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
+        UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
+        emailTokenService.createEmailToken(postedUserEntity.getEmail());//todo 수정
 
         return new ResponseEntity(userMapper.userEntityToResponseDto2(postedUserEntity), HttpStatus.CREATED);
 

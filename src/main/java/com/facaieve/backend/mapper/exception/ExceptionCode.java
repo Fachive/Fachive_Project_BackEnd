@@ -20,6 +20,7 @@ public enum ExceptionCode {
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "현재 내 계정 정보가 존재하지 않습니다"),
+    MISS_TOKEN(UNAUTHORIZED,"이메일 인증을 다시 시돟해 주세요"),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     MEMBER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
@@ -32,6 +33,7 @@ public enum ExceptionCode {
     NO_SUCH_CATEGORY(NOT_FOUND, "해당 카테고리는 존재하지 않습니다."),
     POST_NOT_FOUND(NOT_FOUND, "해당 포스트를 찾을 수 없습니다"),
     COMMENT_NOT_FOUND(NOT_FOUND,"해당 댓들을 찾을 수 없습니다"),
+    EMAIL_TOKEN_NOT_FOUND(NOT_FOUND,"해당 이메일 토큰을 찾을 수 없습니다"),
 
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */

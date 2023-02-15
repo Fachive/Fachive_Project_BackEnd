@@ -85,6 +85,10 @@ public class UserService {
         return userRepository.findById(userEntityId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
     }/*엔티티 식별자(ID)로 유저 확인 */
 
+    public Optional<UserEntity> findByEmail(String email){
+        return  userRepository.findByEmail(email);
+    }/* constraint 설정으로 만든 userEntity 의 또다른 식별자인 email을 이용해서 특정 userEntity 를 가지고 오는 메소드*/
+
     public List<UserDto.ResponseUserDto> findAllUserEntityWithPaginationByUpdateTime(int page) {/*업데이트 순으로 30개씩 유저 정보를 반환 */
 
         return userRepository.findAll(PageRequest.of(page, 30, Sort.by("updateTime").descending()))

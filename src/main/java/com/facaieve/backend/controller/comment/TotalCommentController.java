@@ -47,7 +47,7 @@ public class TotalCommentController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")})
-    @GetMapping("/get")//test pass
+    @GetMapping("auth/get")//test pass
     public ResponseEntity getComment(@RequestParam
                                      @Parameter(name = "commentId", description = "댓글의 식별자")
                                              Long commentId,

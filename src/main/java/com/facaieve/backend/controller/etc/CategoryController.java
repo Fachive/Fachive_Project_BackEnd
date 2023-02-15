@@ -40,7 +40,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @GetMapping("/get")//test pass
+    @GetMapping("auth/get")//test pass
     public ResponseEntity readCategory(@RequestParam String categoryName){
 
         CategoryEntity foundingCategoryEntity = getCategoryFromService(categoryName);

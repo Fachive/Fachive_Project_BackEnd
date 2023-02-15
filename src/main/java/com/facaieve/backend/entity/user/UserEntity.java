@@ -17,7 +17,11 @@ import javax.persistence.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.*;
 
 @Entity
@@ -27,7 +31,7 @@ import java.util.*;
 @AllArgsConstructor
 @Builder
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = "email")})// 이메일 기준으로 사용자 구분
-public class UserEntity extends BaseEntity {
+public class UserEntity extends BaseEntity implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)//개별 엔티티 적용
     @Schema(description = "유저 식별ID")
@@ -78,6 +82,9 @@ public class UserEntity extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     UserActive userActive = UserActive.Active;
 
+    @Schema(description = "이메일 인증 상태", defaultValue = "false")
+    private boolean emailVerified = false;
+
     //패션픽업 댓글, 펀딩 댓글, 포폴 댓글 엔티티 매핑
     @Schema(description = "패션 픽업 게시물에 단 댓글 목록")
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.PERSIST)
@@ -122,7 +129,37 @@ public class UserEntity extends BaseEntity {
     List<MyPickEntity>  myPickEntityList = new ArrayList<MyPickEntity>();
 
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.getUserRole()));//권한 반환
+    }
 
+    @Override
+    public String getUsername() {
+        return email;
+    }//위에서 email 을 제약 조건으로 설정했기 때문에 email 을 이름으로 반환함.
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.userActive.equals("활동 상태");
+    }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public void emailVerifiedSuccess(){//email 인증을 위한
+        this.emailVerified = true;
+    }
 }
