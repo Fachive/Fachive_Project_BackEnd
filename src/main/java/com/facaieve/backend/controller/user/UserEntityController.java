@@ -40,6 +40,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -74,12 +75,14 @@ public class UserEntityController {
     @Autowired
     EmailTokenService emailTokenService;//이메일 토큰을 만들어서 인증하는 서비스 클래스
 
+    //todo 로그인 할 때 이메일 인증 여부 검증하는 메소드 작성할것
+    //todo 이메일을 전송하는 주소 달리 할것
 
     @GetMapping
     public ResponseEntity<?> getTest(@AuthenticationPrincipal String userEmail){
         return ResponseEntity.ok().body(userEmail);
     }
-    @GetMapping
+    @GetMapping("/auth/geteamilauthentication") // todo 프론트 엔드와 협의 후 삭이메
     public ResponseEntity<?> getUserEmailAuthenticationToken(@RequestParam String userEmail){
         Optional<EmailTokenEntity> emailToken = emailTokenService.sendToFrontEndBeforeAuthentication(userEmail);
         if(emailToken.isPresent()){
@@ -137,7 +140,8 @@ public class UserEntityController {
                     response = UserEntity.class, message = "created", code=201)
     )
     @PostMapping("auth/post")// 유저 등록
-    public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @ModelAttribute PostUserDto postUserDto) throws IOException {
+    public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고")
+                                             @ModelAttribute PostUserDto postUserDto) throws IOException {
        log.info("신규 유저를 등록합니다.");
         postUserDto.setPassword(passwordEncoder.encode(postUserDto.getPassword()));//password encode 적용
         UserEntity postingUserEntity= userMapper.userPostDtoToUserEntity(postUserDto);
@@ -155,9 +159,14 @@ public class UserEntityController {
 
         postingUserEntity.getProfileImg().addUserEntity(postingUserEntity);
         UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
-        emailTokenService.createEmailToken(postedUserEntity.getEmail());//todo 수정
 
-        return new ResponseEntity(userMapper.userEntityToResponseDto2(postedUserEntity), HttpStatus.CREATED);
+        UserDto.ResponseUserDto2 responseUserDto2 = userMapper.userEntityToResponseDto2(postedUserEntity);
+        String emailToken = emailTokenService.createEmailToken(postedUserEntity.getEmail());// 이메일 인증 문자열을 만들고 전송하는 메소드
+
+        responseUserDto2.setEmailToken(emailToken);//프론트 엔드에게 email token 값을 전송하기 위해서 사용함
+        log.info("프론트엔드에게 이메일 인증 문자열을 전송합니다");
+
+        return new ResponseEntity(responseUserDto2, HttpStatus.CREATED);
 
     }
 

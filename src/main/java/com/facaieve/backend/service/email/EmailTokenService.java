@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,13 +23,12 @@ public class EmailTokenService {
     EmailSenderService emailSenderService;
     @Autowired
     EmailTokenRepository emailTokenRepository;
-
+    //todo value 값으로 설정해서 Localprofile 과  deploy 환경에 따라서 이메일을 보내는 주소를 다르게 만들것
     // 이메일 인증 토큰 생성
+
     public String createEmailToken(String userEmail) {
 
         Assert.notNull(userEmail, "식별자로 사용할 userEmail 을 설정해야합니다 ");
-
-
         // 이메일 토큰 저장
         EmailTokenEntity emailToken = EmailTokenEntity.createEmailToken(userEmail);
         emailTokenRepository.save(emailToken);
@@ -39,7 +39,7 @@ public class EmailTokenService {
         mailMessage.setFrom("fachievhelp@gmail.com");
         mailMessage.setTo(userEmail);
         mailMessage.setSubject("FACHIEV 회원가입 이메일 인증");
-        mailMessage.setText("http://localhost:8080/email/confirm-email?token="+emailToken.getToken());
+        mailMessage.setText("인증 문자열: "+emailToken.getToken());//todo 프론트 엔드랑 협의 볼것
         log.info("이메일을 전송합니다");
         emailSenderService.sendEmail(mailMessage);
 

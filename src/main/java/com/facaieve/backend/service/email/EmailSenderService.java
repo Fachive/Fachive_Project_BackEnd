@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 public class EmailSenderService {
     @Autowired
     JavaMailSender javaMailSender;
-
-    @Async//비동기 적으로 구현해서 이메일을 전송할 thread 확보함
+    @Async
     public void sendEmail(SimpleMailMessage email) {
         log.info("sending email for authentication to user's mail");
         javaMailSender.send(email);

@@ -161,9 +161,6 @@ public class UserDto {
         @Schema(description = "유저 닉네임")
         String displayName;
 
-//        @Schema(description = "유저의 권한")
-//        UserRole role;
-
         @Email
         @Schema(description = "유저 이메일")
         String email;
@@ -171,8 +168,12 @@ public class UserDto {
         @Schema(description = "유저 이메일")
         String profileImg;
 
-        public static ResponseUserDto2 of(UserEntity userEntity, String ImageUri) {
-            return new ResponseUserDto2(userEntity.getDisplayName(), userEntity.getEmail(), ImageUri);
+        //Front end requirements
+        @Schema(description = "email 인증 토큰")
+        String emailToken;
+
+        public static ResponseUserDto2 of(UserEntity userEntity, String ImageUri, String emailToken) {
+            return new ResponseUserDto2(userEntity.getDisplayName(), userEntity.getEmail(), ImageUri, emailToken);
         }
     }
 
