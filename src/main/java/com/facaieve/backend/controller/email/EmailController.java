@@ -4,9 +4,6 @@ import com.facaieve.backend.dto.email.EmailSuccessDTO;
 import com.facaieve.backend.mapper.exception.BusinessLogicException;
 import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.service.email.EmailService;
-import com.facaieve.backend.service.email.EmailTokenService;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +23,13 @@ public class EmailController {
     @Autowired
     EmailService emailService;
 
-    @GetMapping("/confirm-email")
+    @GetMapping("/confirm-email") // test pass
     public ResponseEntity<?> viewConfirmEmail(@Valid @RequestParam String token) { // token 이 Null 값이라면 오를 발생시킨다.
         try {
             EmailSuccessDTO.Answer result = emailService.verifyEmail(token);//토큰을 확인하는 서비스
             return ResponseEntity.ok().body(result);
         } catch (BusinessLogicException exception) {
-            throw new BusinessLogicException(ExceptionCode.MISS_TOKEN);
+            throw new BusinessLogicException(ExceptionCode.EMAIL_AUTHENTICATION_NEED);
         }
     }
 

@@ -20,7 +20,7 @@ public enum ExceptionCode {
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "현재 내 계정 정보가 존재하지 않습니다"),
-    MISS_TOKEN(UNAUTHORIZED,"이메일 인증을 다시 시돟해 주세요"),
+    EMAIL_AUTHENTICATION_NEED(UNAUTHORIZED,"이메일 인증을 다시 시도해 주세요"),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     MEMBER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),

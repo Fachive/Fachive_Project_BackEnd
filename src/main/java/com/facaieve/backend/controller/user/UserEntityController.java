@@ -77,21 +77,23 @@ public class UserEntityController {
 
     //todo 로그인 할 때 이메일 인증 여부 검증하는 메소드 작성할것
     //todo 이메일을 전송하는 주소 달리 할것
+//
+//    @GetMapping
+//    public ResponseEntity<?> getTest(@AuthenticationPrincipal String userEmail){
+//        return ResponseEntity.ok().body(userEmail);
+//    }
+//    @GetMapping("/auth/geteamilauthentication") // todo 프론트 엔드와 협의 후 삭제요망
+//    public ResponseEntity<?> getUserEmailAuthenticationToken(@RequestParam String userEmail){
+//        Optional<EmailTokenEntity> emailToken = emailTokenService.sendToFrontEndBeforeAuthentication(userEmail);
+//        if(emailToken.isPresent()){
+//            return ResponseEntity.ok().body(emailToken.get());
+//        }else{
+//            return ResponseEntity.ok().body("there is no token please try again");
+//        }
+//
+//    }
 
-    @GetMapping
-    public ResponseEntity<?> getTest(@AuthenticationPrincipal String userEmail){
-        return ResponseEntity.ok().body(userEmail);
-    }
-    @GetMapping("/auth/geteamilauthentication") // todo 프론트 엔드와 협의 후 삭이메
-    public ResponseEntity<?> getUserEmailAuthenticationToken(@RequestParam String userEmail){
-        Optional<EmailTokenEntity> emailToken = emailTokenService.sendToFrontEndBeforeAuthentication(userEmail);
-        if(emailToken.isPresent()){
-            return ResponseEntity.ok().body(emailToken.get());
-        }else{
-            return ResponseEntity.ok().body("there is no token please try again");
-        }
 
-    }
 
     @Operation(summary = "유저 로그인 메서드 예제", description = "json 바디값을 통한 로그인 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
@@ -107,10 +109,9 @@ public class UserEntityController {
     @PostMapping("auth/signin")//로그인을 위한 api 아이디와 비밀번호만을 가진 DTO 받음 Test pass
     public ResponseEntity<?> authenticate(@RequestBody UserDto.SignInUserDto signInUserDto){
 
-        signInUserDto.setPassword(passwordEncoder.encode(signInUserDto.getPassword()));//password encoder 적용
-
         log.info("유저정보를 찾습니다");
         UserEntity userEntity = userService.getByCredentials( signInUserDto.getEmail(), signInUserDto.getPassword(), passwordEncoder);//인코더를 사용해서 저장
+        userService.validateEmailAuthentication(userEntity.getEmail());// 이메일 인증 사용자 검증
 
         if(userEntity != null){
 
@@ -139,7 +140,7 @@ public class UserEntityController {
             @io.swagger.annotations.ApiResponse(
                     response = UserEntity.class, message = "created", code=201)
     )
-    @PostMapping("auth/post")// 유저 등록
+    @PostMapping("auth/post")// 유저 등록 test pass
     public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고")
                                              @ModelAttribute PostUserDto postUserDto) throws IOException {
        log.info("신규 유저를 등록합니다.");

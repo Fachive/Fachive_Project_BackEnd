@@ -39,7 +39,7 @@ public class EmailTokenService {
         mailMessage.setFrom("fachievhelp@gmail.com");
         mailMessage.setTo(userEmail);
         mailMessage.setSubject("FACHIEV 회원가입 이메일 인증");
-        mailMessage.setText("인증 문자열: "+emailToken.getToken());//todo 프론트 엔드랑 협의 볼것
+        mailMessage.setText("인증 문자열: "+emailToken.getToken());//사용자에게 이메일 인증 문자열을 전송함
         log.info("이메일을 전송합니다");
         emailSenderService.sendEmail(mailMessage);
 

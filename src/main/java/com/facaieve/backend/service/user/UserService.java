@@ -42,7 +42,14 @@ public class UserService {
     FollowRepository followRepository;
     BadWordFiltering badWordFiltering;
 
-
+    public boolean validateEmailAuthentication(String userEmail) throws BusinessLogicException{ // 이메일 인증 인가 검증
+        UserEntity userEntity = userRepository.findByEmail(userEmail).orElseThrow();
+        if(userEntity.isEmailVerified()){
+            return true;
+        }else{
+            throw new BusinessLogicException(EMAIL_AUTHENTICATION_NEED);
+        }
+    }
 
     //입력 값으로 들어온 userEntity 저장 그리고 반환 todo 보안 설정 아직 안함
     public UserEntity createUserEntity(@NotNull final UserEntity userEntity) throws BusinessLogicException {
@@ -98,7 +105,8 @@ public class UserService {
     }
 
     public UserEntity getByCredentials(final String email, final String password, final PasswordEncoder passwordEncoder) {
-        final UserEntity originalUser = userRepository.findByEmail(email).orElseThrow();
+
+        UserEntity originalUser = userRepository.findByEmail(email).orElseThrow();
         if(originalUser != null && passwordEncoder.matches(password,originalUser.getPassword())){
             return originalUser;
         }
