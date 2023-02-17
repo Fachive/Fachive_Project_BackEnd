@@ -12,6 +12,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         corsRegistry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000")
                 .allowedOrigins("http://localhost:8080")
+                .allowedOrigins("http://ec2-54-180-7-198.ap-northeast-2.compute.amazonaws.com:8080/")// ec2 서버용을 위해 추가
                 .allowedMethods("GET","POST","PUT","PATCH","DELETE","OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)

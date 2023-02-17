@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:application-test.yml")
+@PropertySource("classpath:application.yml")
 
 @Slf4j
 public class EmailConfig {
