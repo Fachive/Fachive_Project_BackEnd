@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync // thread pull 을 활용하기 위한 annotation
 public class BackendApplication {
 
+
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);
     }
