@@ -1,6 +1,7 @@
 package com.facaieve.backend.entity.comment;
 
 import com.facaieve.backend.Constant.PostType;
+import com.facaieve.backend.entity.basetime.BaseEntity;
 import com.facaieve.backend.entity.etc.MyPickEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import com.facaieve.backend.entity.user.UserEntity;
@@ -19,7 +20,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @Builder
-public class PortfolioCommentEntity {
+public class PortfolioCommentEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long portfolioCommentEntityId;

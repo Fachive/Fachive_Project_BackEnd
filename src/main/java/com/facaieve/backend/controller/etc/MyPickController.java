@@ -40,7 +40,7 @@ public class MyPickController {
                 HttpStatus.CREATED);
     }
 
-    @GetMapping("/get")//test pass
+    @GetMapping("auth/get")//test pass
     public ResponseEntity getMyPick(@RequestParam Long myPickId, Long userId){//Response 와 동일한거 사용함.
 
              return new ResponseEntity(HttpStatus.OK);

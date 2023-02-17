@@ -2,12 +2,16 @@
 package com.facaieve.backend.mapper.user;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.facaieve.backend.dto.UserDto;
+import com.facaieve.backend.dto.security.JwtRequest;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.entity.user.WithdrawalEntity;
 import com.facaieve.backend.stubDate.UserStubData;
+import org.apache.catalina.User;
 import org.mapstruct.Mapper;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.Random;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -18,18 +22,18 @@ public interface UserMapper {
             if ( postUserDto == null ) {
                 return null;
             }
-
-            UserEntity userEntity = new UserEntity();
-
-            userEntity.setDisplayName( postUserDto.getDisplayName() );
-            userEntity.setEmail( postUserDto.getEmail() );
-            userEntity.setPassword( postUserDto.getPassword() );
-            userEntity.setState( postUserDto.getState() );
-            userEntity.setCity( postUserDto.getCity() );
-            userEntity.setUserInfo( postUserDto.getUserInfo() );
-            userEntity.setCareer( postUserDto.getCareer() );
-            userEntity.setEducation( postUserDto.getEducation() );
-            userEntity.setCompany( postUserDto.getCompany() );
+            UserEntity userEntity = UserEntity.builder()
+                    .displayName(postUserDto.getDisplayName())
+                    .role(postUserDto.getRole())
+                    .email(postUserDto.getEmail())
+                    .password(postUserDto.getPassword())
+                    .state(postUserDto.getState())
+                    .city(postUserDto.getCity())
+                    .userInfo(postUserDto.getUserInfo())
+                    .education(postUserDto.getEducation())
+                    .Company(postUserDto.getCompany())
+                    .career(postUserDto.getCareer())
+                    .build();
 
             return userEntity;
     };
@@ -51,13 +55,33 @@ public interface UserMapper {
         }
 
         UserDto.ResponseUserDto2 responseUserDto2 = new UserDto.ResponseUserDto2();
-
         responseUserDto2.setDisplayName( userEntity.getDisplayName() );
         responseUserDto2.setEmail( userEntity.getEmail() );
         responseUserDto2.setProfileImg(userEntity.getProfileImg().getFileURI());
 
+
         return responseUserDto2;
     }
 
+    default  UserDto.ResponseUserAfterLoginDto userEntityToResponseUserAfterLogin(UserEntity userEntity){
+        if( userEntity == null){
+            return null;
+        }
+
+        return UserDto.ResponseUserAfterLoginDto.builder()
+                        .displayName(userEntity.getDisplayName())
+                        .email(userEntity.getEmail())
+                        .profileImg(userEntity.getProfileImg().getFileURI())
+                        .role(userEntity.getRole())
+                        .build();
+    }
+    //jwt 요청시 다른 인터페이스를 적용하기 위한 DTO로 변환하기 위해서 사용하는 mapper
+    default JwtRequest userEntityToJwtRequest(UserEntity userEntity){
+
+        return JwtRequest.builder()
+                .email(userEntity.getEmail())
+                .role(userEntity.getRole())
+                .build();
+    }
 
 }

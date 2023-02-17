@@ -1,14 +1,13 @@
 package com.facaieve.backend.Constant;
 
+import lombok.Getter;
+
 public enum PostType {
 
     PORTFOLIO("PORTFOLIO"),
     FASHIONPICKUP("FASHIONPICKUP"),
-    FUNDING("FUNDING"),
-    PortfolioComment("PORTFOLIO COMMENT"),
-    FashionPickUpComment("FASHIONPICKUP COMMENT"),
-    FundingComment("FUNDING COMMENT");
-
+    FUNDING("FUNDING");
+    @Getter
     private String type;
 
     PostType(String postType){

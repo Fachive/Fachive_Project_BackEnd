@@ -3,9 +3,11 @@ package com.facaieve.backend;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableJpaAuditing
+@EnableAsync // thread pull 을 활용하기 위한 annotation
 public class BackendApplication {
 
     public static void main(String[] args) {

@@ -45,7 +45,6 @@ public class MainPostController {
     PostMapper postMapper;
 
 
-
     @Operation(summary = "메인 페이지를 위한 게시물 호출 API",
             description = "모든 카테고리의, 조회수 순으로(변경가능) 패션픽업, 펀딩 게시물 10개씩(현재 고정) 반환 api")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
@@ -54,7 +53,7 @@ public class MainPostController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @GetMapping("/get/ten")
+    @GetMapping("auth/get/ten")
     public ResponseEntity get10Each(){
 
 
