@@ -5,13 +5,16 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.UserDto.PostUserDto;
 import com.facaieve.backend.dto.multi.Multi_ResponseDTO;
+import com.facaieve.backend.entity.email.EmailTokenEntity;
 import com.facaieve.backend.entity.image.ImageEntityProfile;
 import com.facaieve.backend.entity.image.S3ImageInfo;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.mapper.exception.BusinessLogicException;
 import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.mapper.user.UserMapper;
+import com.facaieve.backend.security.TokenProvider;
 import com.facaieve.backend.service.aswS3.S3FileService;
+import com.facaieve.backend.service.email.EmailTokenService;
 import com.facaieve.backend.service.image.ImageService;
 import com.facaieve.backend.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -28,10 +32,15 @@ import org.apache.catalina.User;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,26 +50,79 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
+@RequiredArgsConstructor
 //@Tag(name = "UserEntity", description = "사용자와 관련된 api")
 public class UserEntityController {
-
+    @Autowired
     ImageService imageService;
+    @Autowired
     UserService userService;
+    @Autowired
     UserMapper userMapper;
+    @Autowired
     S3FileService s3FileService;
+    @Autowired
+    TokenProvider tokenProvider;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    EmailTokenService emailTokenService;//이메일 토큰을 만들어서 인증하는 서비스 클래스
 
-    @PostMapping("/signin")//로그인을 위한 api
+    //todo 로그인 할 때 이메일 인증 여부 검증하는 메소드 작성할것
+    //todo 이메일을 전송하는 주소 달리 할것
+//
+//    @GetMapping
+//    public ResponseEntity<?> getTest(@AuthenticationPrincipal String userEmail){
+//        return ResponseEntity.ok().body(userEmail);
+//    }
+//    @GetMapping("/auth/geteamilauthentication") // todo 프론트 엔드와 협의 후 삭제요망
+//    public ResponseEntity<?> getUserEmailAuthenticationToken(@RequestParam String userEmail){
+//        Optional<EmailTokenEntity> emailToken = emailTokenService.sendToFrontEndBeforeAuthentication(userEmail);
+//        if(emailToken.isPresent()){
+//            return ResponseEntity.ok().body(emailToken.get());
+//        }else{
+//            return ResponseEntity.ok().body("there is no token please try again");
+//        }
+//
+//    }
+
+
+
+    @Operation(summary = "유저 로그인 메서드 예제", description = "json 바디값을 통한 로그인 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
+    @ApiResponses({
+            @ApiResponse(responseCode = "201" ,description = "사용자가 정상 로그인됨", content = @Content(schema = @Schema(implementation = UserDto.SignInUserDto.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
+    @io.swagger.annotations.ApiResponses(
+            @io.swagger.annotations.ApiResponse(
+                    response = UserDto.ResponseUserAfterLoginDto.class, message = "login", code=201)
+    )
+    @PostMapping("auth/signin")//로그인을 위한 api 아이디와 비밀번호만을 가진 DTO 받음 Test pass
     public ResponseEntity<?> authenticate(@RequestBody UserDto.SignInUserDto signInUserDto){
-        UserEntity userEntity = userService.getByCredentials( signInUserDto.getEmail(), signInUserDto.getPassword());
+
+        log.info("유저정보를 찾습니다");
+        UserEntity userEntity = userService.getByCredentials( signInUserDto.getEmail(), signInUserDto.getPassword(), passwordEncoder);//인코더를 사용해서 저장
+        userService.validateEmailAuthentication(userEntity.getEmail());// 이메일 인증 사용자 검증
+
         if(userEntity != null){
-            return ResponseEntity.ok().body(userMapper.userEntityToResponseUserAfterLogin(userEntity));
+
+            log.info("토큰을 발급합니다");
+            final String token = tokenProvider.create(userMapper.userEntityToJwtRequest(userEntity));
+            UserDto.ResponseUserAfterLoginDto responseUserAfterLoginDto = userMapper.userEntityToResponseUserAfterLogin(userEntity);
+            responseUserAfterLoginDto.setToken(token);
+            return ResponseEntity.ok().body(responseUserAfterLoginDto);
+
         }else{
+            log.error("로그인을 할 수 없습니다!!");
             throw new BusinessLogicException(ExceptionCode.UNAUTHORIZED_MEMBER);
         }
     }
@@ -78,10 +140,11 @@ public class UserEntityController {
             @io.swagger.annotations.ApiResponse(
                     response = UserEntity.class, message = "created", code=201)
     )
-    @PostMapping("/post")// 유저 등록
-    public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고") @ModelAttribute PostUserDto postUserDto) throws IOException {
+    @PostMapping("auth/post")// 유저 등록 test pass
+    public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고")
+                                             @ModelAttribute PostUserDto postUserDto) throws IOException {
        log.info("신규 유저를 등록합니다.");
-
+        postUserDto.setPassword(passwordEncoder.encode(postUserDto.getPassword()));//password encode 적용
         UserEntity postingUserEntity= userMapper.userPostDtoToUserEntity(postUserDto);
 
         if(postUserDto.getMultipartFileList().isEmpty()){
@@ -96,9 +159,15 @@ public class UserEntityController {
         }
 
         postingUserEntity.getProfileImg().addUserEntity(postingUserEntity);
-       UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
+        UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
 
-        return new ResponseEntity(userMapper.userEntityToResponseDto2(postedUserEntity), HttpStatus.CREATED);
+        UserDto.ResponseUserDto2 responseUserDto2 = userMapper.userEntityToResponseDto2(postedUserEntity);
+        String emailToken = emailTokenService.createEmailToken(postedUserEntity.getEmail());// 이메일 인증 문자열을 만들고 전송하는 메소드
+
+        responseUserDto2.setEmailToken(emailToken);//프론트 엔드에게 email token 값을 전송하기 위해서 사용함
+        log.info("프론트엔드에게 이메일 인증 문자열을 전송합니다");
+
+        return new ResponseEntity(responseUserDto2, HttpStatus.CREATED);
 
     }
 

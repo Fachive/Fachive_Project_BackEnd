@@ -64,7 +64,7 @@ public class PortfolioEntityController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
 
-    @GetMapping("/mainportfolio")//test pass
+    @GetMapping("auth/mainportfolio")//test pass
     public ResponseEntity getPortfolioEntitySortingCategoryConditions(@Parameter(name="categoryName" ,description="카테고리(total, 상의, 아우터, 바지,원피스, 스커트, 액세서리, 정장, 드레스) 문자열로 명시하면됨 기본값은 total 로 설정 되어있음 나머지 다른 유형의 post 동일함")
                                                                           @RequestParam(required = false, defaultValue = "total") String categoryName,
                                                                       @Parameter(name="sortWay" ,description="정렬 방식: myPick(좋아요 순서), views (조회수),dueDate(생성일) default: myPicks")
@@ -89,7 +89,7 @@ public class PortfolioEntityController {
 
 
 //최신순, 추천순
-    @GetMapping("/mainPageGet")//test pass
+    @GetMapping("auth/mainPageGet")//test pass
     public ResponseEntity getPortfolioMainPage(@RequestParam(required = false, defaultValue = "30") int want){
         Multi_ResponseDTO<PortfolioMagePageStubData> responseDTO = new Multi_ResponseDTO<>();
         List<PortfolioMagePageStubData> portfolioMagePageStubDataList = new ArrayList<>();
@@ -209,7 +209,7 @@ public class PortfolioEntityController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @GetMapping("/get/{portfolioId}")//GET API
+    @GetMapping("auth/get/{portfolioId}")//GET API
     public ResponseEntity getPortfolioEntity(@PathVariable("portfolioId") Long portfolioId){
         log.info("기존 패션픽업 게시글을 가져옵니다.");
         PortfolioEntity portfolio = portfolioEntityService.findPortfolioEntity(portfolioId);

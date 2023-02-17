@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -41,7 +42,14 @@ public class UserService {
     FollowRepository followRepository;
     BadWordFiltering badWordFiltering;
 
-
+    public boolean validateEmailAuthentication(String userEmail) throws BusinessLogicException{ // 이메일 인증 인가 검증
+        UserEntity userEntity = userRepository.findByEmail(userEmail).orElseThrow();
+        if(userEntity.isEmailVerified()){
+            return true;
+        }else{
+            throw new BusinessLogicException(EMAIL_AUTHENTICATION_NEED);
+        }
+    }
 
     //입력 값으로 들어온 userEntity 저장 그리고 반환 todo 보안 설정 아직 안함
     public UserEntity createUserEntity(@NotNull final UserEntity userEntity) throws BusinessLogicException {
@@ -84,6 +92,10 @@ public class UserService {
         return userRepository.findById(userEntityId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
     }/*엔티티 식별자(ID)로 유저 확인 */
 
+    public Optional<UserEntity> findByEmail(String email){
+        return  userRepository.findByEmail(email);
+    }/* constraint 설정으로 만든 userEntity 의 또다른 식별자인 email을 이용해서 특정 userEntity 를 가지고 오는 메소드*/
+
     public List<UserDto.ResponseUserDto> findAllUserEntityWithPaginationByUpdateTime(int page) {/*업데이트 순으로 30개씩 유저 정보를 반환 */
 
         return userRepository.findAll(PageRequest.of(page, 30, Sort.by("updateTime").descending()))
@@ -92,8 +104,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserEntity getByCredentials(final String email, final String password) {
-        return userRepository.findUserEntityByEmailAndPassword(email, password);
+    public UserEntity getByCredentials(final String email, final String password, final PasswordEncoder passwordEncoder) {
+
+        UserEntity originalUser = userRepository.findByEmail(email).orElseThrow();
+        if(originalUser != null && passwordEncoder.matches(password,originalUser.getPassword())){
+            return originalUser;
+        }
+        return null;
     }
 
     public void deleteUserEntity(final UserEntity deleteUserEntity) {

@@ -14,6 +14,9 @@ import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.post.FashionPickupEntityService;
 import com.facaieve.backend.service.post.FundingEntityService;
 import com.facaieve.backend.service.post.PortfolioEntityService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -41,7 +44,16 @@ public class MainPostController {
 
     PostMapper postMapper;
 
-    @GetMapping("/get/ten")
+
+    @Operation(summary = "메인 페이지를 위한 게시물 호출 API",
+            description = "모든 카테고리의, 조회수 순으로(변경가능) 패션픽업, 펀딩 게시물 10개씩(현재 고정) 반환 api")//대상 api의 대한 설명을 작성하는 어노테이션
+    @ApiResponses({
+            @ApiResponse(responseCode = "201" ,description = "패션픽업, 펀딩 게시글들이 조회수 높은 순으로 10개씩 정상 호출되었습니다."),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
+            @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
+    })
+    @GetMapping("auth/get/ten")
     public ResponseEntity get10Each(){
 
 

@@ -8,6 +8,7 @@ import com.facaieve.backend.mapper.etc.CategoryMapper;
 import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.stubDate.CategoryStubData;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,7 +41,8 @@ public class CategoryController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND !!"),
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
-    @GetMapping("/get")//test pass
+
+    @GetMapping("auth/get")//test pass
     public ResponseEntity readCategory(@RequestParam String categoryName){
 
         CategoryEntity foundingCategoryEntity = getCategoryFromService(categoryName);
@@ -49,7 +51,7 @@ public class CategoryController {
 //        return new ResponseEntity(categoryMapper.categoryStubDataToCategoryEntity(categoryStubData), HttpStatus.OK);
     }
 
-    @Operation(summary = "카테고리 작성 메서드 예제", description = "json 바디값을 통한 카테고리 POST 요청 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
+    @Operation(summary = "카테고리 작성 메서드 예제", description = "json 바디값을 통한 카테고리 POST 요청 메서드, 정해진 카테고리만 넣기에 일반 회원은 사용 불가 API")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "201" ,description = "카테고리가 정상 등록됨", content = @Content(schema = @Schema(implementation = FundingDto.ResponseFundingDto.class))),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST !!"),
