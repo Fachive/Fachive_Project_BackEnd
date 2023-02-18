@@ -36,7 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/static/css/**, /static/js/**, *.ico");
 
         // swagger
-        web.ignoring().antMatchers("**/auth/**",
+        web.ignoring().antMatchers("/**/auth/**",
                 "/v2/api-docs",  "/configuration/ui",
                 "/swagger-resources", "/configuration/security",
                 "/swagger-ui.html", "/webjars/**","/swagger/**");
@@ -59,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()// **/auth/** 경로는 인증 안해도 됨.
-                .antMatchers("**/auth/**",
+                .antMatchers("/**/auth/**",
                         "/", "/home",
                         "/swagger-ui/**",
                         "/swagger-resources/**",
@@ -69,7 +69,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/user/auth/**"
                         ,"*/*"
                         ,"/email/confirm-email").permitAll()// main page 는 열어둠 todo 마지막에 배포할 때는 제외하고 배포할 것
-
                 .anyRequest() // **/auth/**이외의 모든 경로는 인증 해야됨.
                 .authenticated();
 
