@@ -22,7 +22,6 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-
 public class S3FileService implements FileServiceCRUD{
 
     private static final Logger LOG = LoggerFactory.getLogger(S3FileService.class);
@@ -39,22 +38,23 @@ public class S3FileService implements FileServiceCRUD{
 //    @Value("${custom.path.upload-images}")
 //    private String uploadImagePath;
 
-    @Async
+//    @Async
     public String findByName(String fileName) {
 
         LOG.info("Downloading file with name {}", fileName);
         S3ObjectInputStream image = amazonS3.getObject(s3BucketName, fileName).getObjectContent();
-
-        return findImgUrl(fileName);
+        String result = findImgUrl(fileName);
+        return result;
     }
 
 
 
     @Override
     public String findImgUrl(String fileName) {
-        String path = fileName;
+        String path = "/" + fileName;
         try{
-            return amazonS3.getUrl(s3BucketName, path).toString();
+             String result =  amazonS3.getUrl(s3BucketName, path).toString();
+            return result;
         }catch (Exception e){
             throw new BusinessLogicException(ExceptionCode.FILE_IS_NOT_EXIST_IN_BUCKET);
         }

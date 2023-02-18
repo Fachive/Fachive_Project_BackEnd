@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.List;
@@ -140,14 +141,15 @@ public class UserEntityController {
             @io.swagger.annotations.ApiResponse(
                     response = UserEntity.class, message = "created", code=201)
     )
+    @Transactional
     @PostMapping("auth/post")// 유저 등록 test pass
     public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고")
                                              @ModelAttribute PostUserDto postUserDto) throws IOException {
        log.info("신규 유저를 등록합니다.");
         postUserDto.setPassword(passwordEncoder.encode(postUserDto.getPassword()));//password encode 적용
         UserEntity postingUserEntity= userMapper.userPostDtoToUserEntity(postUserDto);
-
-        if(postUserDto.getMultipartFileList().isEmpty()){
+        boolean test = postUserDto.getMultipartFileList().isEmpty();
+        if(test){
 
             String defaultProfileImgUri = s3FileService.findByName("기본 프로필 이미지.jpg");
             S3ImageInfo profileImg  = S3ImageInfo.builder().fileName("기본 프로필 이미지.jpg").fileURI(defaultProfileImgUri).build();
