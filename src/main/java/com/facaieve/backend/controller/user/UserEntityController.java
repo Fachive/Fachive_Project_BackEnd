@@ -116,7 +116,7 @@ public class UserEntityController {
         if(userEntity != null){
 
             log.info("토큰을 발급합니다");
-            final String token = tokenProvider.create(userMapper.userEntityToJwtRequest(userEntity));
+            final String token = "Bearer " + tokenProvider.create(userMapper.userEntityToJwtRequest(userEntity)) ;
             UserDto.ResponseUserAfterLoginDto responseUserAfterLoginDto = userMapper.userEntityToResponseUserAfterLogin(userEntity);
             responseUserAfterLoginDto.setToken(token);
             return ResponseEntity.ok().body(responseUserAfterLoginDto);

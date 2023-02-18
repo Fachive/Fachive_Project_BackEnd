@@ -50,6 +50,7 @@ public class CategoryService {
 
 
     public CategoryEntity getCategory(CategoryEntity categoryEntity){
+
         if(categoryEntity.getCategoryName().equals("total")){
             log.info("전체 카테고리로 검색합니다. {}", categoryEntity);
             return CategoryEntity.builder().categoryName("total").build();
