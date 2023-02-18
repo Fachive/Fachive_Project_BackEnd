@@ -20,8 +20,9 @@ public class CategoryService {
     CategoryRepository categoryRepository;
 
     public CategoryEntity createCategoryEntity(CategoryEntity categoryEntity){
-        if(categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName())!=null){
-            throw new RuntimeException("there is already exists category");
+
+        if(categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName()).isPresent()){
+            throw new BusinessLogicException(ExceptionCode.DUPLICATE_CATEGORY_NAME);
 
         }else{
             CategoryEntity savedCategoryEntity  = categoryRepository.save(categoryEntity);
