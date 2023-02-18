@@ -66,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger/**",
                         "/webjars/**",
                         "/v3/api-docs"
-                        ,"/user/auth/**"
+                        ,"/user/auth/**","*/*"
                 ,"/email/confirm-email").permitAll()// main page 는 열어둠 todo 마지막에 배포할 때는 제외하고 배포할 것
 
                 .anyRequest() // **/auth/**이외의 모든 경로는 인증 해야됨.
