@@ -51,7 +51,7 @@ public class S3FileService implements FileServiceCRUD{
 
     @Override
     public String findImgUrl(String fileName) {
-        String path = "/" + fileName;
+        String path =  fileName;
         try{
              String result =  amazonS3.getUrl(s3BucketName, path).toString();
             return result;
