@@ -49,14 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .requiresChannel().anyRequest().requiresSecure(); todo 추후에 설정해서 HPPPS 로 막을 것
 //                .headers().httpStrictTransportSecurity();
 
-                .cors().configurationSource(request -> {
-                    var cors = new CorsConfiguration();
-                    cors.setAllowedOriginPatterns(List.of("*"));
-                    cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
-                    cors.setAllowedHeaders(List.of("*"));
-                    return cors;
-                }) // WebMvcConfig에서 이미 설정했으므로 기본 cors 설정. // WebMvcConfig에서 이미 설정했으므로 기본 cors 설정.
-                .and()
+          
                 .csrf()// csrf는 현재 사용하지 않으므로 disable
                 .disable()
                 .httpBasic()// token을 사용하므로 basic 인증 disable
@@ -93,6 +86,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 jwtAuthenticationFilter,
                 CorsFilter.class
         );
+        http.cors().configurationSource(corsConfigurationSource());
+
     }
 
     @Override
@@ -112,6 +107,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // This example uses an in-memory implementation, but you may want to use a database-backed implementation for production use
         InMemoryTokenRepositoryImpl tokenRepository = new InMemoryTokenRepositoryImpl();
         return tokenRepository;
+    }
+    
+     @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedOrigin("*");
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
     
 
