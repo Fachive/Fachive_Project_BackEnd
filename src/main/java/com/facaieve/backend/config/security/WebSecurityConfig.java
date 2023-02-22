@@ -160,8 +160,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
-        configuration.addAllowedOrigin("*");
-        configuration.setAllowCredentials(true);
+        configuration.addAllowedOriginPattern("*");
+//        configuration.setAllowCredentials(true); // 다음 에러로 변경 addAllowedOriginPattern로 대체 When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header.
 
 
         configuration.addAllowedHeader("*");//모든 종류의 헤더값 공유 허용
