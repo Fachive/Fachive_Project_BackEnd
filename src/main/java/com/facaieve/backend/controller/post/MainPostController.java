@@ -5,7 +5,7 @@ import com.facaieve.backend.dto.post.MainPostDto;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
-import com.facaieve.backend.entity.post.PortfolioEntity;
+
 import com.facaieve.backend.mapper.post.FashionPickupMapper;
 import com.facaieve.backend.mapper.post.FundingMapper;
 import com.facaieve.backend.mapper.post.PortfolioMapper;

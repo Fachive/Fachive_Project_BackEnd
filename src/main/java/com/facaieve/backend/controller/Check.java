@@ -3,18 +3,17 @@ package com.facaieve.backend.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-
+@RequestMapping("home")
 public class Check {
-    @GetMapping("/")
-    public String check(){
-        return UUID.randomUUID().toString();
+    @GetMapping
+    public ResponseEntity<?> home(@RequestParam String token){
+        return ResponseEntity.ok().body(token);
     }
 }
