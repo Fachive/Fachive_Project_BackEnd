@@ -76,8 +76,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .cors()
                 .and()
-
-                // WebMvcConfig에서 이미 설정했으므로 기본 cors 설정.
                 .csrf()// csrf는 현재 사용하지 않으므로 disable
                 .disable()
                 .httpBasic()// token을 사용하므로 basic 인증 disable
