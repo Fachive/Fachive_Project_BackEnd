@@ -17,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -49,8 +52,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .requiresChannel().anyRequest().requiresSecure(); todo 추후에 설정해서 HPPPS 로 막을 것
 //                .headers().httpStrictTransportSecurity();
 
-                .cors() // WebMvcConfig에서 이미 설정했으므로 기본 cors 설정.
+                .cors()
                 .and()
+                // WebMvcConfig에서 이미 설정했으므로 기본 cors 설정.
                 .csrf()// csrf는 현재 사용하지 않으므로 disable
                 .disable()
                 .httpBasic()// token을 사용하므로 basic 인증 disable
@@ -106,6 +110,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // This example uses an in-memory implementation, but you may want to use a database-backed implementation for production use
         InMemoryTokenRepositoryImpl tokenRepository = new InMemoryTokenRepositoryImpl();
         return tokenRepository;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }
