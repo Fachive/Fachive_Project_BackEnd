@@ -47,7 +47,7 @@ public class UserService {
         if(userEntity.isEmailVerified()){
             return true;
         }else{
-            throw new BusinessLogicException(EMAIL_AUTHENTICATION_NEED);
+            throw new BusinessLogicException(EMAIL_AUTHENTICATION_NEED);// 이메일 인증을 이용해서 오류 던짐
         }
     }
 

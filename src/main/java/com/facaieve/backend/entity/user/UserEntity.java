@@ -14,6 +14,7 @@ import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.entity.post.FundingEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
 import javax.persistence.*;
+import javax.transaction.Transactional;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -128,6 +129,16 @@ public class UserEntity extends BaseEntity implements UserDetails, Serializable 
     @Schema(description = "마이픽을 설정한 게시물 및 댓글")
     @OneToMany(mappedBy = "pickingUser", cascade = CascadeType.PERSIST)
     List<MyPickEntity>  myPickEntityList = new ArrayList<MyPickEntity>();
+
+    //사진과 이름을 업데이트함
+    public UserEntity update(String displayName, String picture ){
+        this.displayName = displayName;
+        this.profileImg = S3ImageInfo.builder()
+                .userEntity(this)
+                .fileURI(picture)
+                .build();
+        return this;
+    }
 
 
     @Override

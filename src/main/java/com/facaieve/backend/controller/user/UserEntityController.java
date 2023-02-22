@@ -17,6 +17,7 @@ import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.email.EmailTokenService;
 import com.facaieve.backend.service.image.ImageService;
 import com.facaieve.backend.service.user.UserService;
+import com.nimbusds.oauth2.sdk.AuthorizationResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,9 +38,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,8 +52,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
+import java.security.Provider;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,6 +84,9 @@ public class UserEntityController {
     @Autowired
     EmailTokenService emailTokenService;//이메일 토큰을 만들어서 인증하는 서비스 클래스
 
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     //todo 로그인 할 때 이메일 인증 여부 검증하는 메소드 작성할것
     //todo 이메일을 전송하는 주소 달리 할것
 //
@@ -92,9 +104,6 @@ public class UserEntityController {
 //        }
 //
 //    }
-
-
-
     @Operation(summary = "유저 로그인 메서드 예제", description = "json 바디값을 통한 로그인 메서드")//대상 api의 대한 설명을 작성하는 어노테이션
     @ApiResponses({
             @ApiResponse(responseCode = "201" ,description = "사용자가 정상 로그인됨", content = @Content(schema = @Schema(implementation = UserDto.SignInUserDto.class))),
@@ -106,7 +115,7 @@ public class UserEntityController {
             @io.swagger.annotations.ApiResponse(
                     response = UserDto.ResponseUserAfterLoginDto.class, message = "login", code=201)
     )
-    @PostMapping("auth/signin")//로그인을 위한 api 아이디와 비밀번호만을 가진 DTO 받음 Test pass
+    @PostMapping("auth/login")//로그인을 위한 api 아이디와 비밀번호만을 가진 DTO 받음 Test pass
     public ResponseEntity<?> authenticate(@RequestBody UserDto.SignInUserDto signInUserDto){
 
         log.info("유저정보를 찾습니다");
@@ -116,7 +125,7 @@ public class UserEntityController {
         if(userEntity != null){
 
             log.info("토큰을 발급합니다");
-            final String token = tokenProvider.create(userMapper.userEntityToJwtRequest(userEntity));
+            final String token = "Bearer :" + tokenProvider.create(userMapper.userEntityToJwtRequest(userEntity));// 수정 완료
             UserDto.ResponseUserAfterLoginDto responseUserAfterLoginDto = userMapper.userEntityToResponseUserAfterLogin(userEntity);
             responseUserAfterLoginDto.setToken(token);
             return ResponseEntity.ok().body(responseUserAfterLoginDto);
@@ -140,7 +149,7 @@ public class UserEntityController {
             @io.swagger.annotations.ApiResponse(
                     response = UserEntity.class, message = "created", code=201)
     )
-    @PostMapping("auth/post")// 유저 등록 test pass
+    @PostMapping("auth/sighup")// 유저 등록 test pass
     public ResponseEntity postUserEntity(@Parameter(description = "POST DTO", required = true, example = "문서 참고")
                                              @ModelAttribute PostUserDto postUserDto) throws IOException {
        log.info("신규 유저를 등록합니다.");
