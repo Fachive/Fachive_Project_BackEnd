@@ -74,7 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .requiresChannel().anyRequest().requiresSecure(); todo 추후에 설정해서 HPPPS 로 막을 것
 //                .headers().httpStrictTransportSecurity();
 
-                .cors().disable()
+                .cors()
+                .and()
 
                 // WebMvcConfig에서 이미 설정했으므로 기본 cors 설정.
                 .csrf()// csrf는 현재 사용하지 않으므로 disable
