@@ -20,10 +20,14 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
@@ -31,7 +35,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.swing.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,11 +80,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+        http.addFilterBefore(new JwtAuthenticationFilter(tokenProvider), LogoutFilter.class);
+
         // http 시큐리티 빌더
         http
-//                .requiresChannel().anyRequest().requiresSecure(); todo 추후에 설정해서 HPPPS 로 막을 것
-//                .headers().httpStrictTransportSecurity();
-
                 .cors()
                 .and()
                 .csrf()// csrf는 현재 사용하지 않으므로 disable
@@ -103,24 +111,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/oauth/unlink").authenticated()
                 .antMatchers("/oauth/**").permitAll()
                 .anyRequest()// **/auth/**이외의 모든 경로는 인증 해야됨.
-                .authenticated()// 이 외의 모등 요청은 인증을
+                .authenticated();// 이 외의 모등 요청은 인증을
+
+
+        http.oauth2Login()
+                .userInfoEndpoint().userService(customOAuth2Service)
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login()
                 .successHandler(oAuth2SuccessHandler)
-                .userInfoEndpoint().userService(customOAuth2Service);
-        http.addFilterBefore( new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .failureHandler(new AuthenticationEntryPointFailureHandler(new AuthenticationEntryPoint() {
+                    @Override
+                    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
-        http.cors().configurationSource(corsConfigurationSource());
+                    }
+                }));
 
-        // filter 등록.
-        // 매 요청마다
-        // CorsFilter 실행한 후에
-        // jwtAuthenticationFilter 실행한다.
-        http.addFilterAfter(
-                jwtAuthenticationFilter,
-                CorsFilter.class
-        );
+
+
+        http.logout()
+                .deleteCookies("JSESSIONID");
+
         http.cors().configurationSource(corsConfigurationSource());
 
     }
