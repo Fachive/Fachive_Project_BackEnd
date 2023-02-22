@@ -71,17 +71,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // swagger
 
-        web.ignoring().antMatchers("/**/auth/**",
+        web.ignoring().antMatchers(
                 "/v2/api-docs",  "/configuration/ui",
-
                 "/swagger-resources", "/configuration/security",
-                "/swagger-ui.html", "/webjars/**", "/swagger/**");
+                "/swagger-ui.html", "/webjars/**", "/swagger/**",
+                "/favicon.ico", "/**/favicon.ico");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http.addFilterBefore(new JwtAuthenticationFilter(tokenProvider), LogoutFilter.class);
+
 
         // http 시큐리티 빌더
         http
@@ -169,7 +170,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
-        configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedOriginPattern("http://localhost:8080");
+        configuration.addAllowedOriginPattern("http://ec2-54-180-7-198.ap-northeast-2.compute.amazonaws.com:8080/");
 //        configuration.setAllowCredentials(true); // 다음 에러로 변경 addAllowedOriginPattern로 대체 When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header.
 
 
