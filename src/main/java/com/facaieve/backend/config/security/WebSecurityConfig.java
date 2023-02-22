@@ -54,6 +54,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private final CustomOidcUserService oidcUserService;
 
+    @Autowired
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/static/css/**, /static/js/**, *.ico");
@@ -110,6 +113,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.cors().configurationSource(corsConfigurationSource());
 
+        // filter 등록.
+        // 매 요청마다
+        // CorsFilter 실행한 후에
+        // jwtAuthenticationFilter 실행한다.
+        http.addFilterAfter(
+                jwtAuthenticationFilter,
+                CorsFilter.class
+        );
+        http.cors().configurationSource(corsConfigurationSource());
 
     }
 
@@ -131,6 +143,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         InMemoryTokenRepositoryImpl tokenRepository = new InMemoryTokenRepositoryImpl();
         return tokenRepository;
     }
+
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -141,9 +154,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
-        List<String> allowedHeaders = new ArrayList<>();
-        allowedHeaders.add("Authorization");
-
+            List<String> allowedHeaders = new ArrayList<>();
+            allowedHeaders.add("Authorization");
 
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedMethod("*");
@@ -151,15 +163,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedOrigin("*");
         configuration.setAllowCredentials(true);
 
+
         configuration.addAllowedHeader("*");//모든 종류의 헤더값 공유 허용
         configuration.addAllowedMethod("*");//교차공유시 모든 http요청 허용
         configuration.setExposedHeaders(allowedHeaders);
+
 
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 
 }
 
