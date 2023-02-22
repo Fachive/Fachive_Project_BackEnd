@@ -1,17 +1,11 @@
 
 package com.facaieve.backend.mapper.user;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.facaieve.backend.dto.UserDto;
-import com.facaieve.backend.dto.security.JwtRequest;
-import com.facaieve.backend.entity.image.S3ImageInfo;
+import com.facaieve.backend.security.jwt.JwtRequest;
 import com.facaieve.backend.entity.user.UserEntity;
 import com.facaieve.backend.entity.user.WithdrawalEntity;
 import com.facaieve.backend.stubDate.UserStubData;
-import org.apache.catalina.User;
 import org.mapstruct.Mapper;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.util.Random;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

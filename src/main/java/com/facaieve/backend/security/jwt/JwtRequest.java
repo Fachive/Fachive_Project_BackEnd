@@ -1,4 +1,4 @@
-package com.facaieve.backend.dto.security;
+package com.facaieve.backend.security.jwt;
 
 import com.facaieve.backend.Constant.UserRole;
 import lombok.Builder;

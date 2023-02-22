@@ -1,13 +1,13 @@
 package com.facaieve.backend.security;
 
 import com.facaieve.backend.Constant.UserRole;
-import com.facaieve.backend.dto.security.JwtRequest;
-import com.facaieve.backend.entity.user.UserEntity;
+import com.facaieve.backend.security.jwt.JwtRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -26,20 +26,6 @@ public class TokenProvider {
         Date expiryDate = Date.from(
                 Instant.now()
                         .plus(1, ChronoUnit.DAYS));
-
-  /*
-  { // header
-    "alg":"HS512"
-  }.
-  { // payload
-    "sub":"40288093784915d201784916a40c0001",
-    "iss": "demo app",
-    "iat":1595733657,
-    "exp":1596597657
-  }.
-  // SECRET_KEY를 이용해 서명한 부분
-  Nn4d1MOVLZg79sfFACTIpCPKqWmpZMZQsbNrXdJJNWkRv50_l7bPLQPwhMobT4vBOG6Q3JYjhDrKFlBSaUxZOg
-   */
         // JWT Token 생성
         return Jwts.builder()
                 // header에 들어갈 내용 및 서명을 하기 위한 SECRET_KEY
@@ -51,6 +37,43 @@ public class TokenProvider {
                 .setIssuedAt(new Date()) // iat
                 .setExpiration(expiryDate) // exp
                 .compact();
+    }
+
+
+    public Token createToken(User user){
+        // 기한 지금으로부터 1일로 설정
+        Date expiryDate = Date.from(
+                Instant.now()
+                        .plus(1, ChronoUnit.DAYS));
+        // JWT Token 생성
+              String accessToken = Jwts.builder()
+                // header에 들어갈 내용 및 서명을 하기 위한 SECRET_KEY
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+                // payload에 들어갈 내용
+                .setSubject(user.getUsername()) // sub 우리의 경우에 사용자의 이메일을 사용함.
+                .claim("role",user.getAuthorities())//권한도 함께 넣음
+                .setIssuer("fachiev app") // iss
+                .setIssuedAt(new Date()) // iat
+                .setExpiration(expiryDate) // exp
+                .compact();
+
+        Date expiryDateForRefresh = Date.from(
+                Instant.now()
+                        .plus(10, ChronoUnit.DAYS));
+
+        String refreshToken = Jwts.builder()
+                // header에 들어갈 내용 및 서명을 하기 위한 SECRET_KEY
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+                // payload에 들어갈 내용
+                .setSubject(user.getUsername()) // sub 우리의 경우에 사용자의 이메일을 사용함.
+                .setIssuedAt(new Date()) // iat
+                .setExpiration(expiryDateForRefresh) // exp
+                .compact();
+
+        return Token.builder()
+                .refreshToken(refreshToken)
+                .accessToken(accessToken)
+                .build();
     }
 
 
@@ -74,6 +97,7 @@ public class TokenProvider {
                 .getBody()
                 .get("role").toString());
     }
+
 
 }
 

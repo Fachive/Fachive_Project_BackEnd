@@ -1,4 +1,7 @@
-package com.facaieve.backend.security;
+package com.facaieve.backend.security.jwt;
+import com.facaieve.backend.security.TokenProvider;
+import com.facaieve.backend.security.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -21,16 +24,24 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {//OncePerRequestFilter 를 사용해서 요청당 한번만 수행될 수 있도록 만듦
 
+    public JwtAuthenticationFilter(TokenProvider tokenProvider){
+        this.tokenProvider = tokenProvider;
+    }
+
     @Autowired
     private TokenProvider tokenProvider;
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
 
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html; charset=UTF-8");//한글깨짐 방지용
+            String username = request.getParameter("email");
+            String password = request.getParameter("password");
+            log.info("username: {}",username); log.info("password: {}",password);
 
             // 요청에서 토큰 가져오기.
             String token = parseBearerToken(request);
@@ -38,9 +49,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {//OncePerRequ
             // 토큰 검사하기. JWT이므로 인가 서버에 요청 하지 않고도 검증 가능.
             if (token != null && !token.equalsIgnoreCase("null")) {
                 // userId 가져오기. 위조 된 경우 예외 처리 된다.
-                String userEmail = tokenProvider.validateAndGetUserEmail(token);//우리의 경우에 사용자의 이메일을 기준으로 만듦
+                String userEmail = tokenProvider.validateAndGetUserEmail(token);//우리의 경우에 사용자의 이메일을 기준으로 만듦 넘어온 토큰을 검증함
                 log.info("Authenticated user Email : " + userEmail );
                 // 인증 완료; SecurityContextHolder에 등록해야 인증된 사용자라고 생각한다.
+//                UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+//
+//                AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+//                        userDetails.getUsername(),userDetails.getPassword(),userDetails.getAuthorities()); // todo 추후에 변경할것
                 AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userEmail, // 인증된 사용자의 정보. 문자열이 아니어도 아무거나 넣을 수 있다. 보통 UserDetails라는 오브젝트를 넣는데, 우리는 안 만들었음.
                         null, //
@@ -66,5 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {//OncePerRequ
         }
         return null;
     }
+
+
 }
 
