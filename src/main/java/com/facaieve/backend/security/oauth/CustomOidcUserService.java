@@ -23,6 +23,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -51,17 +52,22 @@ public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest,
         return oidcUser;
     }
 
-
-
-    private UserEntity saveOrUpdate(OAuthAttributes attributes){
+    @Transactional
+    public UserEntity saveOrUpdate(OAuthAttributes attributes){
         Optional<UserEntity> findUserEntity = userRepository.findByEmail(attributes.getEmail());
 
         if(findUserEntity.isPresent()){
             UserEntity userEntity = findUserEntity.get();
+            getEmailConfirm(userEntity);
             userEntity.update(attributes.getName(), attributes.getPicture());
             return userEntity;
         }else{
             return userRepository.save(attributes.toEntity());
         }
+    }
+
+
+    private void getEmailConfirm(UserEntity userEntity) {
+        userEntity.setEmailVerified(true);
     }
 }

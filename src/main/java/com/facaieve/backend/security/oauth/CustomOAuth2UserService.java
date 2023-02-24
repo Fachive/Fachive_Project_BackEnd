@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -30,9 +31,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2UserService<OAuth2UserRequest,OAuth2User> delegate = new DefaultOAuth2UserService();
+
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
+
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
+
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
@@ -45,15 +49,17 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(userEntity.getRole().toString()))
                 ,memberAttribute
-                ,userNameAttributeName);//이게 왜 email
+                ,"email");//이게 왜 email
 
     }
 
-    private UserEntity saveOrUpdate(OAuthAttributes attributes){
+    @Transactional
+    public UserEntity saveOrUpdate(OAuthAttributes attributes){
         Optional<UserEntity> findUserEntity = userRepository.findByEmail(attributes.getEmail());
 
         if(findUserEntity.isPresent()){
             UserEntity userEntity = findUserEntity.get();
+            getEmailConfirm(userEntity);
             userEntity.update(attributes.getName(), attributes.getPicture());
             return userEntity;
         }else{
@@ -62,4 +68,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
 
+    private void getEmailConfirm(UserEntity userEntity) {
+        userEntity.setEmailVerified(true);
+    }
 }
