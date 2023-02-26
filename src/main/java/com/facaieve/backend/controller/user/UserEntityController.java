@@ -274,4 +274,15 @@ public class UserEntityController {
     }
 
 
+    @DeleteMapping("/delete")// 유저 삭제(테스트용)
+    public ResponseEntity deleteUser(@RequestParam Long myUserEntityId){
+        UserEntity deletingUser  = userService.findUserEntityById(myUserEntityId);
+
+        userService.deleteUserEntity(deletingUser);
+        log.info("유저가 삭제되었음");
+        return new ResponseEntity( //페이지 정보와 함께 복수 객체 반환
+                HttpStatus.OK);
+    }
+
+
 }

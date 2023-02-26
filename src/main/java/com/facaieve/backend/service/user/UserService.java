@@ -123,6 +123,15 @@ public class UserService {
         log.info("유저를 탈퇴 처리하였습니다 ");
     }/* 엔티티로 유저 삭제*/
 
+    public void realDeleteUser(final UserEntity deleteUserEntity) {
+
+        userRepository.deleteById(deleteUserEntity.getUserEntityId());
+        log.info("유저를 탈퇴 처리하였습니다 ");
+    }
+
+
+
+
     public List<Integer> userPostingCount(UserEntity userEntity) {// 포트폴리오, 패션픽업, 펀딩 순으로 유저가 작성한 게시물의 수를 List로 반환
         List<Integer> userPostCountList = new ArrayList<>();
         UserEntity foundUserEntity = userRepository.findById(userEntity.getUserEntityId()).orElseThrow();
