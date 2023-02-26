@@ -20,7 +20,7 @@ public class OAuthAttributes {
     private String name;
     private String email;
     private String picture;
-
+                                      //"naver, google, kakao" "attributekey"
     public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes){
 
         switch (registrationId) {
