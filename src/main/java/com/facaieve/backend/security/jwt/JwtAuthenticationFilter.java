@@ -44,10 +44,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {//OncePerRequ
         if (!Objects.isNull(authorization)){
             try {
 
-                String username = request.getParameter("email");
-                String password = request.getParameter("password");
-            log.info("username: {}",username); log.info("password: {}",password);
-
                 // 요청에서 토큰 가져오기.
                 String token = parseBearerToken(request);
 //            log.info("Filter is running...");

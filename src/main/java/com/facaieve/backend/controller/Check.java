@@ -16,4 +16,9 @@ public class Check {
     public ResponseEntity<?> home(@RequestParam String token){
         return ResponseEntity.ok().body(token);
     }
+
+    @GetMapping("/check")
+    public ResponseEntity<?> check(@AuthenticationPrincipal String userId){
+        return ResponseEntity.ok().body(userId);
+    }
 }

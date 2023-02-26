@@ -106,7 +106,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v3/api-docs"
                         , "/user/auth/**"
                         , "/email/confirm-email"
-                        ,"/login/oauth2/code/").permitAll()// main page 는 열어둠 todo 마지막에 배포할 때는 제외하고 배포할 것
+                        ,"/login/oauth2/code/"
+                ,"/fashionpickup/**").permitAll()// main page 는 열어둠 todo 마지막에 배포할 때는 제외하고 배포할 것
                 .antMatchers("/oauth/**", "/login").permitAll()//소셜 로그인을 위한 경로 허용함
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/authorize", "/authorize/refresh", "/users").anonymous()
