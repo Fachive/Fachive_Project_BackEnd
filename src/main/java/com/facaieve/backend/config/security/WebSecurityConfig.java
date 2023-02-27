@@ -97,7 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)// restful 하게 구현하기 위해서 설정함
             .and()
                 .authorizeRequests()// **/auth/** 경로는 인증 안해도 됨.
-                .antMatchers("/**/auth/**",
+                .antMatchers("/**/auth/**", "/**/email/**",
                         "/", "/home/**",
                         "/swagger-ui/**",
                         "/swagger-resources/**",

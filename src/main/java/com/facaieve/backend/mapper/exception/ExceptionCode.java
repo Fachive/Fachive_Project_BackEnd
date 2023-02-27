@@ -34,7 +34,7 @@ public enum ExceptionCode {
     POST_NOT_FOUND(NOT_FOUND, "해당 포스트를 찾을 수 없습니다"),
     CHATROOM_NOT_FOUND(NOT_FOUND, "해당 채팅이 존재하지 않습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND,"해당 댓들을 찾을 수 없습니다"),
-    EMAIL_TOKEN_NOT_FOUND(NOT_FOUND,"해당 이메일 토큰을 찾을 수 없습니다"),
+    EMAIL_TOKEN_NOT_FOUND(NOT_FOUND,"해당 이메일 토큰을 찾을 수 없습니다. 다시 입력해주세요"),
 
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */

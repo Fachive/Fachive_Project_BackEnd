@@ -5,6 +5,7 @@ import com.facaieve.backend.dto.email.EmailSuccessDTO;
 import com.facaieve.backend.mapper.exception.BusinessLogicException;
 import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.service.email.EmailService;
+import com.facaieve.backend.service.email.EmailTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,12 +13,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -28,6 +27,9 @@ import javax.validation.Valid;
 public class EmailController {
     @Autowired
     EmailService emailService;
+    @Autowired
+    EmailTokenService emailTokenService;
+
 
 
     @Operation(summary = "회원가입 후 이메일 검증을 위한 토큰값을 입력하는 api",
@@ -40,11 +42,20 @@ public class EmailController {
     @GetMapping("/confirm-email") // test pass
     public ResponseEntity<?> viewConfirmEmail(@Valid @RequestParam String token) { // token 이 Null 값이라면 오를 발생시킨다.
         try {
-            EmailSuccessDTO.Answer result = emailService.verifyEmail(token);//토큰을 확인하는 서비스
+//            EmailSuccessDTO.Answer result = emailService.verifyEmail(token);//토큰을 확인하는 서비스
+           boolean result = emailService.verifyEmail(token);//토큰을 확인하는 서비스
+
             return ResponseEntity.ok().body(result);
         } catch (BusinessLogicException exception) {
             throw new BusinessLogicException(ExceptionCode.EMAIL_AUTHENTICATION_NEED);
         }
     }
 
+
+    @PostMapping("/create/token") // test pass
+    public ResponseEntity<?> createEmailToken(@Valid @RequestParam String email) { // token 이 Null 값이라면 오를 발생시킨다.
+
+        String emailToken = emailTokenService.createEmailToken(email);//토큰 생성 + 메일 전송
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 }
