@@ -1,9 +1,7 @@
 package com.facaieve.backend.entity.email;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,7 +10,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
+@Getter
+@Setter
 public class EmailTokenEntity {//email token 을 저장하기 위한 table
 
     private static final long EMAIL_TOKEN_EXPIRATION_TIME_VALUE = 5L;    // 이메일 토큰 만료 시간
@@ -47,6 +46,7 @@ public class EmailTokenEntity {//email token 을 저장하기 위한 table
     // 토큰 만료
     public void setTokenToUsed() {
         this.expired = true;
+
     }
 }
 

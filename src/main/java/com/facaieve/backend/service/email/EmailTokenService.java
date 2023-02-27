@@ -68,4 +68,14 @@ public class EmailTokenService {
         return emailToken;
     }
 
+    public EmailTokenEntity checkIsEmailTokenConfirmed(String token) throws BusinessLogicException {
+
+        //expired 되기 전의 token 을 찾음
+        log.info("이메일 토큰을 찾습니다");
+        Optional<EmailTokenEntity> emailToken = emailTokenRepository.findByTokenAndExpiryDateAfterAndExpired(token, LocalDateTime.now(), true);
+
+        // 토큰이 없다면 예외 발생
+        return emailToken.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMAIL_TOKEN_NOT_FOUND));
+    }
+
 }

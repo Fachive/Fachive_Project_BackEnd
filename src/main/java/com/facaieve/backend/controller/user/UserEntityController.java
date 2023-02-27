@@ -171,13 +171,23 @@ public class UserEntityController {
         }
 
         postingUserEntity.getProfileImg().addUserEntity(postingUserEntity);
+        if(emailTokenService.checkIsEmailTokenConfirmed(postUserDto.getEmailToken()).isExpired()){//인증이 된 이메일이라면
+            postingUserEntity.setEmailVerified(true);
+        }
+        else throw  new BusinessLogicException(ExceptionCode.EMAIL_AUTHENTICATION_NEED);
+
         UserEntity postedUserEntity = userService.createUserEntity(postingUserEntity);
 
         UserDto.ResponseUserDto2 responseUserDto2 = userMapper.userEntityToResponseDto2(postedUserEntity);
+        /*
         String emailToken = emailTokenService.createEmailToken(postedUserEntity.getEmail());// 이메일 인증 문자열을 만들고 전송하는 메소드
 
         responseUserDto2.setEmailToken(emailToken);//프론트 엔드에게 email token 값을 전송하기 위해서 사용함
+        */
+
+
         log.info("프론트엔드에게 이메일 인증 문자열을 전송합니다");
+
 
         return new ResponseEntity(responseUserDto2, HttpStatus.CREATED);
 
@@ -278,7 +288,7 @@ public class UserEntityController {
     public ResponseEntity deleteUser(@RequestParam Long myUserEntityId){
         UserEntity deletingUser  = userService.findUserEntityById(myUserEntityId);
 
-        userService.deleteUserEntity(deletingUser);
+        userService.realDeleteUser(deletingUser);
         log.info("유저가 삭제되었음");
         return new ResponseEntity( //페이지 정보와 함께 복수 객체 반환
                 HttpStatus.OK);

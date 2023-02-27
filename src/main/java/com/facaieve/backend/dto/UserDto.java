@@ -49,6 +49,9 @@ public class UserDto {
         @Schema(description = "재직회사")
         String Company;
 
+        @Schema(description = "이메일 컨트롤러 api를 통해 인증이 끝난 이메일의 토큰값")
+        String emailToken;
+
         @Schema(description = "사진 URI")
         List<MultipartFile> multipartFileList = new ArrayList<>();
     }
@@ -168,12 +171,9 @@ public class UserDto {
         @Schema(description = "유저 이메일")
         String profileImg;
 
-        //Front end requirements
-        @Schema(description = "email 인증 토큰")
-        String emailToken;
 
         public static ResponseUserDto2 of(UserEntity userEntity, String ImageUri, String emailToken) {
-            return new ResponseUserDto2(userEntity.getDisplayName(), userEntity.getEmail(), ImageUri, emailToken);
+            return new ResponseUserDto2(userEntity.getDisplayName(), userEntity.getEmail(), ImageUri);
         }
     }
 

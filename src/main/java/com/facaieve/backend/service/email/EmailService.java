@@ -24,22 +24,22 @@ public class EmailService {
      UserService userService;
 
     @Transactional
-    public EmailSuccessDTO.Answer verifyEmail(String token) throws BusinessLogicException {
+    public boolean verifyEmail(String token) throws BusinessLogicException {
         // 이메일 토큰을 찾아옴
         EmailTokenEntity findEmailToken = emailTokenService.findByTokenAndExpiryDateAfterAndExpired(token);
         // TODO: 여기서부터는 이메일 성공 인증 로직을 구현합니다.
-        // 토큰의 유저 ID를 이용하여 유저 인증 정보를 가져온다.
-        Optional<UserEntity> findUser = userService.findByEmail(findEmailToken.getUserEmail());
+                    // 토큰의 유저 ID를 이용하여 유저 인증 정보를 가져온다.
+                    //        Optional<UserEntity> findUser = userService.findByEmail(findEmailToken.getUserEmail());
         findEmailToken.setTokenToUsed();    // 사용 완료
-
-        if (findUser.isPresent()) {
+/*      if (findUser.isPresent()) {
             UserEntity user = findUser.get();
                     user.emailVerifiedSuccess();//멤버의 인증 변수를 ture 로 전환함
             EmailSuccessDTO.Answer success = new EmailSuccessDTO.Answer(user.getEmail(), true);
                     return success;
-        } else {
+       } else {
             EmailSuccessDTO.Answer success = new EmailSuccessDTO.Answer(false);
             return success;
-        }
+        } */
+        return true; // 토큰이 검증되었고 사용완료됨을 확인
     }
 }
