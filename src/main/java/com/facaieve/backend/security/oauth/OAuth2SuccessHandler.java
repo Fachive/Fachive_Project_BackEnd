@@ -45,7 +45,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("{}", token);
 
 
-        targetUrl = UriComponentsBuilder.fromUriString("https://fachive.netlify.app/oauth2/login")//redirect url 만드는 부분
+        targetUrl = UriComponentsBuilder.fromUriString("https://fachive.netlify.app")//redirect url 만드는 부분
                 .queryParam("token", token)
                 .build().toUriString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
