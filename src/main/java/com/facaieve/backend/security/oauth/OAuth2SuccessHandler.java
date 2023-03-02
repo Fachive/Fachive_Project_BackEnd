@@ -43,7 +43,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = tokenProvider.create(jwtRequest);
         log.info("{}", token);
 
-        targetUrl = UriComponentsBuilder.fromUriString("/home")//redirect url 만드는 부분
+        targetUrl = UriComponentsBuilder.fromUriString("/")//redirect url 만드는 부분
                 .queryParam("token", token)
                 .build().toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
