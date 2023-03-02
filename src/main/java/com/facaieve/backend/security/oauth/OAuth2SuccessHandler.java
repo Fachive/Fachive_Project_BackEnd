@@ -7,6 +7,7 @@ import com.facaieve.backend.service.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -43,10 +44,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = tokenProvider.create(jwtRequest);
         log.info("{}", token);
 
-        targetUrl = UriComponentsBuilder.fromUriString("/home")//redirect url 만드는 부분
+        targetUrl = UriComponentsBuilder.fromUriString("https://fachive.netlify.app/oauth2/login")//redirect url 만드는 부분
                 .queryParam("token", token)
                 .build().toUriString();
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_OK);
+        getRedirectStrategy().sendRedirect(request, response,targetUrl);
     }
 
 }
