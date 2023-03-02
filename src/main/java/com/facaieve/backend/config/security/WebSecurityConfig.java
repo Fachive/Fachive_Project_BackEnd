@@ -164,10 +164,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
-            List<String> allowedHeaders = new ArrayList<>();
-            allowedHeaders.add("Authorization");
+        List<String> allowedHeaders = new ArrayList<>();
+        allowedHeaders.add("Authorization");
 
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedMethod("*");
@@ -190,7 +191,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 
 }
 

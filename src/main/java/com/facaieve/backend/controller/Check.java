@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("home")
+@RequestMapping("/")
 public class Check {
     @GetMapping
     public ResponseEntity<?> home(@RequestParam String token){
