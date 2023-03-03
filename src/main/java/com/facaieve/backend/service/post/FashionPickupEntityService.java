@@ -73,10 +73,12 @@ public class FashionPickupEntityService {
     public void setCondition(String sortWay) {
 
         switch (sortWay) {
-            case "myPick":
+            case "마이픽":
                 this.condition = new FindFashionPickupEntitiesByMyPicks(fashionPickupRepository);
-            case "update":
+                break;
+            case "최신순":
                 this.condition = new FindFashionPickupEntitiesByDueDate(fashionPickupRepository);
+                break;
             default:
                 this.condition = new FindFashionPickupEntitiesByViews(fashionPickupRepository);
         }

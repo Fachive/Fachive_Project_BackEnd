@@ -36,14 +36,15 @@ public class FundingEntityService {
     public void setCondition(String sortWay) {
 
         switch (sortWay){
-            case "myPick" :  this.condition= new FindFundingEntitiesByMyPicks(fundingRepository);
+            case "마이픽" :  this.condition= new FindFundingEntitiesByMyPicks(fundingRepository);
                 break;
-            case "update" :  this.condition= new FindFundingEntitiesByDueDate(fundingRepository);
+            case "최신순" :  this.condition= new FindFundingEntitiesByDueDate(fundingRepository);
                 break;
             default :  this.condition = new FindFundingEntitiesByDueDate(fundingRepository);
                 break;
         }
     }
+
 
     public Page<FundingEntity>  findFundingEntitiesByCondition(CategoryEntity categoryEntity, int pageIndex, int elementNum){
         return condition.conditionSort(categoryEntity,pageIndex,elementNum);
