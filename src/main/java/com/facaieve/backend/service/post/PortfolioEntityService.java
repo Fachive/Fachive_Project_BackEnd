@@ -68,10 +68,10 @@ public class PortfolioEntityService {
 
     public void setCondition(String sortWay) {
         switch (sortWay) {
-            case "myPick":
+            case "마이픽":
                 this.condition = new FindPortfolioPickupEntitiesByMyPicks(portfolioRepository);
                 break;
-            case "update":
+            case "최신순":
                 this.condition = new FindPortfolioEntitiesByDueDate(portfolioRepository);
                 break;
             default:
