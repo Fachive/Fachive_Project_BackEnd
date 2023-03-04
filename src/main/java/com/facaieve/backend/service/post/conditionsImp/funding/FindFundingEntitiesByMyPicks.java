@@ -28,7 +28,7 @@ public class FindFundingEntitiesByMyPicks implements Condition<FundingEntity, Ca
         PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("myPicks").descending());
         Page<FundingEntity> fundingEntities;
 
-        if(categoryEntity.getCategoryName().equals("total")) {
+        if(categoryEntity.getCategoryName().equals("전체")) {
             fundingEntities = fundingRepository.findAll(pageRequest);
         }
         else{

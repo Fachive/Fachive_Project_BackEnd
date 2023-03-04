@@ -23,7 +23,7 @@ public class FindFundingEntitiesByViews implements Condition<FundingEntity, Cate
     public Page<FundingEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
         PageRequest pageRequest = PageRequest.of(pageIndex-1, elementNum, Sort.by("views").descending());
 
-        if(categoryEntity.getCategoryName().equals("total")){
+        if(categoryEntity.getCategoryName().equals("전체")){
             return fundingRepository.findAll(pageRequest);
         }
         else {
