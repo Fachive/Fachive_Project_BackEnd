@@ -27,7 +27,7 @@ public class FindFundingEntitiesByDueDate implements Condition<FundingEntity, Ca
 
         PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("regTime").descending());
 
-        if(categoryEntity.getCategoryName().equals("total")){
+        if(categoryEntity.getCategoryName().equals("전체")){
             return fundingRepository.findAll(pageRequest);
         }
             else{ return fundingRepository.findFundingEntitiesByCategoryEntity(categoryEntity, pageRequest);

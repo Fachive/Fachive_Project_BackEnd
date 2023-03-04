@@ -52,9 +52,9 @@ public class CategoryService {
 
     public CategoryEntity getCategory(CategoryEntity categoryEntity){
         boolean test = categoryRepository.existsCategoryEntityByCategoryName(categoryEntity.getCategoryName());
-        if(categoryEntity.getCategoryName().equals("total")){
+        if(categoryEntity.getCategoryName().equals("전체")){
             log.info("전체 카테고리로 검색합니다. {}", categoryEntity);
-            return CategoryEntity.builder().categoryName("total").build();
+            return CategoryEntity.builder().categoryName("전체").build();
         }
         else if(test){
             return categoryRepository.findCategoryEntityByCategoryName(categoryEntity.getCategoryName()).orElseThrow(()

@@ -24,7 +24,7 @@ public class FindPortfolioEntitiesByDueDate implements Condition<PortfolioEntity
         PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("regTime").descending());
         Page<FashionPickupEntity> fashionPickupEntities;
 
-        if(categoryEntity.getCategoryName().equals("total")){
+        if(categoryEntity.getCategoryName().equals("전체")){
             return portfolioRepository.findAll(pageRequest);
         }
         else{

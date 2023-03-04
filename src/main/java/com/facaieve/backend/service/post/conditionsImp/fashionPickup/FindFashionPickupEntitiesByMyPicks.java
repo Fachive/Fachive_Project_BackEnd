@@ -30,7 +30,7 @@ public class FindFashionPickupEntitiesByMyPicks implements Condition<FashionPick
         PageRequest pageRequest = PageRequest.of(pageIndex - 1, elementNum, Sort.by("myPicks").descending());
         Page<FashionPickupEntity> fashionPickupEntities;
 
-        if(categoryEntity.getCategoryName().equals("total")){
+        if(categoryEntity.getCategoryName().equals("전체")){
             fashionPickupEntities =  fashionPickupRepository.findAll(pageRequest);
         }
         else {

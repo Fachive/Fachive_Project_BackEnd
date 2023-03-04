@@ -72,8 +72,8 @@ public class FundingEntityController {
             @ApiResponse(responseCode = "500", description = "서버에서 에러가 발생하였습니다.")
     })
     @GetMapping("auth/mainFunding")//test pass
-    public ResponseEntity getFundingEntitySortingCategoryConditions(@Parameter(name="categoryName" ,description="카테고리(total, 상의, 아우터, 바지,원피스, 스커트, 액세서리, 정장, 드레스) 문자열로 명시하면됨 기본값은 total 로 설정 되어있음 나머지 다른 유형의 post 동일함")
-                                                                        @RequestParam(required = false, defaultValue = "total") String categoryName,
+    public ResponseEntity getFundingEntitySortingCategoryConditions(@Parameter(name="categoryName" ,description="카테고리(전체, 상의, 아우터, 바지,원피스, 스커트, 액세서리, 정장, 드레스) 문자열로 명시하면됨 기본값은 total 로 설정 되어있음 나머지 다른 유형의 post 동일함")
+                                                                        @RequestParam(required = false, defaultValue = "전체") String categoryName,
                                                                     @Parameter(name="sortWay" ,description="정렬 방식: 마이픽, 조회수, 최신순 default: 마이픽")
                                                                         @RequestParam(required = false, defaultValue = "마이픽") String sortWay,
                                                                     @Parameter(name="pageIndex" ,description="페이지 인덱스 기본값 1")

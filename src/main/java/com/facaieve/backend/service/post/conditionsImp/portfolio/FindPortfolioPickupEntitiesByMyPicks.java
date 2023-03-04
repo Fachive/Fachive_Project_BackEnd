@@ -24,7 +24,7 @@ public class FindPortfolioPickupEntitiesByMyPicks implements Condition<Portfolio
         PageRequest pageRequest =  PageRequest.of(pageIndex - 1, elementNum, Sort.by("myPicks").descending());
         Page<PortfolioEntity> portfolioEntities;
 
-        if(categoryEntity.getCategoryName().equals("total")){
+        if(categoryEntity.getCategoryName().equals("전체")){
             portfolioEntities = portfolioRepository.findAll(pageRequest);
         }
         else {

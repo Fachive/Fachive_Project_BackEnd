@@ -20,7 +20,7 @@ public class FindPortfolioPickupEntitiesByViews implements Condition<PortfolioEn
     public Page<PortfolioEntity> conditionSort(CategoryEntity categoryEntity, int pageIndex, int elementNum) {
        PageRequest pageRequest =  PageRequest.of(pageIndex-1, elementNum, Sort.by("views").descending());
 
-       if(categoryEntity.getCategoryName().equals("total")){
+       if(categoryEntity.getCategoryName().equals("전체")){
            return portfolioRepository.findAll(pageRequest);
        }
         return  portfolioRepository.findPortfolioEntitiesByCategoryEntity(categoryEntity,pageRequest);
