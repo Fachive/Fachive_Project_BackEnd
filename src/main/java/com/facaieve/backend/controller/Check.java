@@ -1,6 +1,10 @@
 package com.facaieve.backend.controller;
 
+import com.facaieve.backend.dto.UserDto;
+import com.facaieve.backend.security.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,10 +15,22 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
+@RequiredArgsConstructor
+
 public class Check {
+    @Autowired
+    TokenProvider tokenProvider;
     @GetMapping
     public ResponseEntity<?> home(@RequestParam String token){
-        return ResponseEntity.ok().body(token);
+
+        String userEmail = tokenProvider.validateAndGetUserEmail(token);
+        String [] emailBuf = userEmail.split("@");
+
+        return ResponseEntity.ok().body( UserDto.UserInfoAndToken.builder()
+                .token(token)
+                .displayName(emailBuf[0])
+                .email(userEmail)
+                .build());
     }
 
     @GetMapping("/check")

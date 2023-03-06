@@ -59,10 +59,6 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
     implementation 'org.springframework.security:spring-security-oauth2-client'
     implementation 'org.springframework.security:spring-security-oauth2-jose'
-
-
-
-
 }
 //plain.jar 파일은 만들어 지지않도록 build gradle 설정함.
 jar {

@@ -219,5 +219,26 @@ public class UserDto {
         String profileImg;
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Schema(description = "토큰과 함께 유저 정보를 반환하는 dto")
+    public static class UserInfoAndToken{
+
+        @Schema
+        String token;
+
+        @Email
+        @Schema(description = "유저 이메일")
+        String email;
+
+        @Schema(description = "유저 닉네임")
+        String displayName;
+
+    }
+
+
 
 }
