@@ -3,6 +3,8 @@ package com.facaieve.backend.service.post;
 import com.facaieve.backend.dto.post.PortfolioDto;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.post.PortfolioEntity;
+import com.facaieve.backend.mapper.exception.BusinessLogicException;
+import com.facaieve.backend.mapper.exception.ExceptionCode;
 import com.facaieve.backend.repository.post.PortfolioRepository;
 import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioEntitiesByDueDate;
 import com.facaieve.backend.service.post.conditionsImp.portfolio.FindPortfolioPickupEntitiesByMyPicks;
@@ -52,7 +54,7 @@ public class PortfolioEntityService {
     }
 
     public PortfolioEntity findPortfolioEntity(Long foundingPortfolioEntityId) {// 포트폴리오 게시물 호출(1개)
-        PortfolioEntity foundPortfolio = portfolioRepository.findById(foundingPortfolioEntityId).orElseThrow();
+        PortfolioEntity foundPortfolio = portfolioRepository.findById(foundingPortfolioEntityId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.NO_SUCH_POST_ENTITY));
         foundPortfolio.plusViewNum();
         portfolioRepository.save(foundPortfolio);
         return foundPortfolio;

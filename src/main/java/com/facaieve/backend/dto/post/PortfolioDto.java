@@ -1,5 +1,6 @@
 package com.facaieve.backend.dto.post;
 
+import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.comment.TotalCommentDTO;
 import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
@@ -251,6 +252,9 @@ public class PortfolioDto {
 
         @Schema(description = "댓글 객체")
         List<TotalCommentDTO.ResponseCommentDTO> responseCommentDTOList = new ArrayList<>();
+
+        @Schema(description = "작성자 정보")
+        UserDto.ResponseUserDto2 userInfo;
     }
 
 

@@ -175,7 +175,7 @@ public class UserDto {
         String profileImg;
 
 
-        public static ResponseUserDto2 of(UserEntity userEntity, Long userId, String ImageUri, String emailToken) {
+        public static ResponseUserDto2 of(UserEntity userEntity, String ImageUri) {
             return new ResponseUserDto2(userEntity.getDisplayName(), userEntity.getUserEntityId(),userEntity.getEmail(), ImageUri);
         }
     }
@@ -244,6 +244,10 @@ public class UserDto {
         String displayName;
 
     }
+
+
+
+
 
 
 

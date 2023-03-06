@@ -1,5 +1,6 @@
 package com.facaieve.backend.mapper.post;
 
+import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.comment.TotalCommentDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.post.PortfolioDto;
@@ -61,6 +62,7 @@ public interface PortfolioMapper{
                         .map(S3ImageInfo::getFileURI).collect(Collectors.toList()))
                 .responseCommentDTOList(portfolioEntity.getCommentList().stream()
                         .map(this::portfolioCommentEntityToResponseCommentDto).collect(Collectors.toList()))
+                .userInfo(UserDto.ResponseUserDto2.of(portfolioEntity.getUserEntity(), portfolioEntity.getUserEntity().getProfileImg().getFileURI()))
                 .build();
     }
 
