@@ -1,5 +1,6 @@
 package com.facaieve.backend.mapper.post;
 
+import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.comment.TotalCommentDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.dto.post.FashionPickupDto;
@@ -74,6 +75,7 @@ public interface FashionPickupMapper {
                         .collect(Collectors.toList()))
                 .responseCommentDTOList(fashionPickupEntity.getCommentList()
                         .stream().map(this::fashionCommentEntityToResponseCommentDto).collect(Collectors.toList()))
+                .userInfo(UserDto.ResponseUserDto2.of(fashionPickupEntity.getUserEntity(), fashionPickupEntity.getUserEntity().getProfileImg().getFileURI()))
                 .build();
     }
 

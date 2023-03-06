@@ -1,11 +1,13 @@
 package com.facaieve.backend.dto.post;
 
+import com.facaieve.backend.dto.UserDto;
 import com.facaieve.backend.dto.comment.TotalCommentDTO;
 import com.facaieve.backend.dto.etc.CategoryDTO;
 import com.facaieve.backend.dto.etc.TagDTO;
 import com.facaieve.backend.entity.crossReference.FashionPickupEntityToTagEntity;
 import com.facaieve.backend.entity.etc.CategoryEntity;
 import com.facaieve.backend.entity.image.S3ImageInfo;
+import com.facaieve.backend.entity.user.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -275,6 +277,9 @@ public class FashionPickupDto {
 
         @Schema(description = "댓글 객체")
         List<TotalCommentDTO.ResponseCommentDTO> responseCommentDTOList = new ArrayList<>();
+
+        @Schema(description = "작성자 정보")
+        UserDto.ResponseUserDto2 userInfo;
     }
 
 
