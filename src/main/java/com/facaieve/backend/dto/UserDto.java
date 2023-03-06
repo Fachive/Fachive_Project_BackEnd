@@ -164,6 +164,9 @@ public class UserDto {
         @Schema(description = "유저 닉네임")
         String displayName;
 
+        @Schema(description = "유저 ID")
+        Long userId;
+
         @Email
         @Schema(description = "유저 이메일")
         String email;
@@ -172,8 +175,8 @@ public class UserDto {
         String profileImg;
 
 
-        public static ResponseUserDto2 of(UserEntity userEntity, String ImageUri, String emailToken) {
-            return new ResponseUserDto2(userEntity.getDisplayName(), userEntity.getEmail(), ImageUri);
+        public static ResponseUserDto2 of(UserEntity userEntity, Long userId, String ImageUri, String emailToken) {
+            return new ResponseUserDto2(userEntity.getDisplayName(), userEntity.getUserEntityId(),userEntity.getEmail(), ImageUri);
         }
     }
 
@@ -204,6 +207,9 @@ public class UserDto {
 
         @Schema(description = "유저 닉네임")
         String displayName;
+
+        @Schema(description = "유저 ID")
+        Long userId;
 
         @Schema(description = "유저의 권한")
         UserRole role;

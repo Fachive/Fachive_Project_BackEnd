@@ -52,7 +52,7 @@ public interface UserMapper {
         responseUserDto2.setDisplayName( userEntity.getDisplayName() );
         responseUserDto2.setEmail( userEntity.getEmail() );
         responseUserDto2.setProfileImg(userEntity.getProfileImg().getFileURI());
-
+        responseUserDto2.setUserId(userEntity.getUserEntityId());
 
         return responseUserDto2;
     }
@@ -67,6 +67,7 @@ public interface UserMapper {
                         .email(userEntity.getEmail())
                         .profileImg(userEntity.getProfileImg().getFileURI())
                         .role(userEntity.getRole())
+                        .userId(userEntity.getUserEntityId())
                         .build();
     }
     //jwt 요청시 다른 인터페이스를 적용하기 위한 DTO로 변환하기 위해서 사용하는 mapper

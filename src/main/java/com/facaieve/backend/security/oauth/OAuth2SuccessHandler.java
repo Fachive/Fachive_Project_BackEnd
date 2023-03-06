@@ -43,7 +43,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String token = tokenProvider.create(jwtRequest);
         log.info("{}", token);
-
+        String a = request.getRequestURI();
 
         targetUrl = UriComponentsBuilder.fromUriString("https://fachive.netlify.app")//redirect url 만드는 부분
                 .queryParam("token", token)
