@@ -57,7 +57,7 @@ public class MainPostController {
     public ResponseEntity get10Each(){
 
 
-        CategoryEntity categoryEntity = categoryService.getCategory(CategoryEntity.builder().categoryName("total").build());
+        CategoryEntity categoryEntity = categoryService.getCategory(CategoryEntity.builder().categoryName("전체").build());
 
         fashionPickupEntityService.setCondition("views");
         fundingEntityService.setCondition("views");
