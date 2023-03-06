@@ -61,7 +61,6 @@ public interface UserMapper {
         if( userEntity == null){
             return null;
         }
-
         return UserDto.ResponseUserAfterLoginDto.builder()
                         .displayName(userEntity.getDisplayName())
                         .email(userEntity.getEmail())
