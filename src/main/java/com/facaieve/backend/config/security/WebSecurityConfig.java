@@ -173,8 +173,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
-        configuration.addAllowedOriginPattern("http://localhost:8080");
-        configuration.addAllowedOriginPattern("http://localhost:3000");
+        configuration.addAllowedOriginPattern("localhost:8080");
+        configuration.addAllowedOriginPattern("localhost:3000");
         configuration.addAllowedOriginPattern("https://fachive.netlify.app");
         configuration.addAllowedOriginPattern("https://fachive.kro.kr");
         configuration.addAllowedOriginPattern("http://fachive.kro.kr");
