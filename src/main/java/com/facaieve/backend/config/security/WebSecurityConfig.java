@@ -183,8 +183,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedHeader("*");//모든 종류의 헤더값 공유 허용
         configuration.addAllowedMethod("*");//교차공유시 모든 http요청 허용
         configuration.setExposedHeaders(allowedHeaders);
-
-
+        configuration.addExposedHeader("Authorization");
+        configuration.addExposedHeader("Authentication");
+//        configuration.addExposedHeader("RefreshToken");
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
