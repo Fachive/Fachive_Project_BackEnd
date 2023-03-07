@@ -175,7 +175,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedOriginPattern("http://localhost:8080");
         configuration.addAllowedOriginPattern("http://localhost:3000");
         configuration.addAllowedOriginPattern("https://fachive.netlify.app");
-        configuration.addAllowedOriginPattern("https://fachive.kro.kr/");
+        configuration.addAllowedOriginPattern("https://fachive.kro.kr");
+        configuration.addAllowedOriginPattern("http://fachive.kro.kr");
 //        configuration.addAllowedOriginPattern("http://ec2-54-180-7-198.ap-northeast-2.compute.amazonaws.com:8080/");
 //        configuration.setAllowCredentials(true); // 다음 에러로 변경 addAllowedOriginPattern로 대체 When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header.
 
@@ -185,6 +186,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setExposedHeaders(allowedHeaders);
         configuration.addExposedHeader("Authorization");
         configuration.addExposedHeader("Authentication");
+
 //        configuration.addExposedHeader("RefreshToken");
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
