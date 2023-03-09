@@ -13,6 +13,7 @@ import com.facaieve.backend.mapper.post.FashionPickupMapper;
 import com.facaieve.backend.dto.post.FashionPickupDto;
 import com.facaieve.backend.entity.post.FashionPickupEntity;
 import com.facaieve.backend.mapper.post.PostImageMapper;
+import com.facaieve.backend.security.CustomUserDetailsService;
 import com.facaieve.backend.service.aswS3.S3FileService;
 import com.facaieve.backend.service.etc.CategoryService;
 import com.facaieve.backend.service.etc.TagService;
@@ -30,7 +31,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -53,7 +57,7 @@ public class FashionPickupEntityController {
     TagMapper tagMapper;
     UserService userService;
     TotalCommentMapper totalCommentMapper;
-
+    CustomUserDetailsService customUserDetailsService;
 
 
     @Operation(summary = "N 개 반환하는 메소드",

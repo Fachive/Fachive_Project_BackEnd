@@ -76,6 +76,7 @@ public interface FashionPickupMapper {
                 .responseCommentDTOList(fashionPickupEntity.getCommentList()
                         .stream().map(this::fashionCommentEntityToResponseCommentDto).collect(Collectors.toList()))
                 .userInfo(UserDto.ResponseUserDto2.of(fashionPickupEntity.getUserEntity(), fashionPickupEntity.getUserEntity().getProfileImg().getFileURI()))
+
                 .build();
     }
 

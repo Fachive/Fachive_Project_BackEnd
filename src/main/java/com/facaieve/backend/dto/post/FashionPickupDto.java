@@ -269,6 +269,7 @@ public class FashionPickupDto {
         @Schema(description ="추천수")
         Integer myPicks = 0;
 
+
         @Schema(description = "게시글 태그")
         List<TagDTO.ResponseTagDTO> tagList = new ArrayList<>();
 
