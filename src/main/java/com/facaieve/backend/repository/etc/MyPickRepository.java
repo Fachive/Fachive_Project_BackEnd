@@ -12,12 +12,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MyPickRepository extends JpaRepository<MyPickEntity,Long> {
 
     List<MyPickEntity> findMyPickEntitiesByPickingUser(UserEntity pickingUser);
     boolean existsByPickingUser(UserEntity pickingUser);
+
+
+    Optional<MyPickEntity> findById(Long aLong);
 
 
     void deleteByPortfolioEntityAndPickingUser(PortfolioEntity portfolioEntity, UserEntity pickingUser);
