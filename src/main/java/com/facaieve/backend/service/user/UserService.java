@@ -106,7 +106,7 @@ public class UserService {
 
     public UserEntity getByCredentials(final String email, final String password, final PasswordEncoder passwordEncoder) {
 
-        UserEntity originalUser = userRepository.findByEmail(email).orElseThrow();
+        UserEntity originalUser = userRepository.findByEmail(email).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
         if(originalUser != null && passwordEncoder.matches(password,originalUser.getPassword())){
             return originalUser;
         }
