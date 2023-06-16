@@ -36,4 +36,3 @@
 
   <br>
 </div>
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/67648066-0770-4e13-b26b-de8eedf80191/Untitled.png)
