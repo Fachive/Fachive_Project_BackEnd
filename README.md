@@ -1,5 +1,7 @@
 # Fachive_Project_BackEnd
 
+![fachive](https://github.com/Fachive/Fachive_Project_BackEnd/assets/96905460/51469464-06b6-4a9d-b2ad-f4b440751dd5)
+
 페카이브 프로젝트의 백엔드 레포지토리입니다.
 
 - 페카이브란?
@@ -36,4 +38,4 @@
 
   <br>
 </div>
-![fachive](https://github.com/Fachive/Fachive_Project_BackEnd/assets/96905460/51469464-06b6-4a9d-b2ad-f4b440751dd5)
+
